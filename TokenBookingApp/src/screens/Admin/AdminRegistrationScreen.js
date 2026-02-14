@@ -11,24 +11,37 @@ import {
   Alert,
 } from "react-native";
 
-const AdminLoginScreen = ({navigation}) => {
+const AdminRegistrationScreen = ({navigation}) => {
+
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const handleLogin = () => {
-    if (!email || !password) {
+  const handleRegister = () => {
+    if (!name || !email || !password || !confirmPassword) {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
 
     if (!email.includes("@")) {
-      Alert.alert("Error", "Please enter a valid email address");
+      Alert.alert("Error", "Enter a valid email");
       return;
     }
 
-    console.log("Admin Login:", { email, password });
-    Alert.alert("Success", "Admin login functionality goes here");
+    if (password.length < 6) {
+      Alert.alert("Error", "Password must be at least 6 characters");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match");
+      return;
+    }
+
+    Alert.alert("Success", "Admin Registered Successfully!");
+    navigation.navigate("AdminLogin");
   };
 
   return (
@@ -41,12 +54,25 @@ const AdminLoginScreen = ({navigation}) => {
           
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.title}>Admin Panel</Text>
-            <Text style={styles.subtitle}>Sign in as Admin</Text>
+            <Text style={styles.title}>Admin Registration</Text>
+            <Text style={styles.subtitle}>
+              Create a new admin account
+            </Text>
           </View>
 
           {/* Form */}
           <View style={styles.form}>
+
+            {/* Name */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Full Name</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter full name"
+                value={name}
+                onChangeText={setName}
+              />
+            </View>
 
             {/* Email */}
             <View style={styles.inputContainer}>
@@ -54,11 +80,10 @@ const AdminLoginScreen = ({navigation}) => {
               <TextInput
                 style={styles.input}
                 placeholder="Enter admin email"
-                placeholderTextColor="#999"
-                value={email}
-                onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
               />
             </View>
 
@@ -69,52 +94,55 @@ const AdminLoginScreen = ({navigation}) => {
                 <TextInput
                   style={styles.passwordInput}
                   placeholder="Enter password"
-                  placeholderTextColor="#999"
+                  secureTextEntry={!isPasswordVisible}
                   value={password}
                   onChangeText={setPassword}
-                  secureTextEntry={!isPasswordVisible}
                 />
                 <TouchableOpacity
                   onPress={() =>
                     setIsPasswordVisible(!isPasswordVisible)
                   }
-                  style={styles.eyeButton}
                 >
-                  <Text style={styles.eyeText}>
+                  <Text style={styles.eye}>
                     {isPasswordVisible ? "👁️" : "👁️‍🗨️"}
                   </Text>
                 </TouchableOpacity>
               </View>
             </View>
 
-            {/* Forgot Password */}
-            <TouchableOpacity style={styles.forgotPassword}>
-              <Text style={styles.forgotPasswordText}>
-                Forgot Password?
-              </Text>
-            </TouchableOpacity>
+            {/* Confirm Password */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Confirm Password</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm password"
+                secureTextEntry={!isPasswordVisible}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+              />
+            </View>
 
-            {/* Login Button */}
+            {/* Register Button */}
             <TouchableOpacity
-              style={styles.loginButton}
-              onPress={handleLogin}
+              style={styles.registerButton}
+              onPress={handleRegister}
             >
-              <Text style={styles.loginButtonText}>
-                Login as Admin
+              <Text style={styles.registerButtonText}>
+                Register as Admin
               </Text>
             </TouchableOpacity>
-            {/* Sign Up Link */}
-<View style={styles.signupContainer}>
-  <Text style={styles.signupText}>
-    New User?{" "}
-  </Text>
-  <TouchableOpacity
-    onPress={() => navigation.navigate("AdminRegister")}
-  >
-    <Text style={styles.signupLink}>Sign Up</Text>
-  </TouchableOpacity>
-</View>
 
+            {/* Login Link */}
+            <View style={styles.loginContainer}>
+              <Text style={styles.loginText}>
+                Already have an account?{" "}
+              </Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("AdminLogin")}
+              >
+                <Text style={styles.loginLink}>Login</Text>
+              </TouchableOpacity>
+            </View>
 
           </View>
         </View>
@@ -123,7 +151,7 @@ const AdminLoginScreen = ({navigation}) => {
   );
 };
 
-export default AdminLoginScreen;
+export default AdminRegistrationScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -139,10 +167,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   header: {
-    marginBottom: 40,
+    marginBottom: 30,
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: "bold",
     color: "#1a1a1a",
     marginBottom: 8,
@@ -151,17 +179,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#666",
   },
-  form: {
-    width: "100%",
-  },
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: 18,
   },
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1a1a1a",
-    marginBottom: 8,
+    marginBottom: 6,
   },
   input: {
     height: 50,
@@ -169,65 +193,49 @@ const styles = StyleSheet.create({
     borderColor: "#e0e0e0",
     borderRadius: 8,
     paddingHorizontal: 16,
-    fontSize: 16,
     backgroundColor: "#f9f9f9",
   },
   passwordContainer: {
     flexDirection: "row",
     alignItems: "center",
-    height: 50,
     borderWidth: 1,
     borderColor: "#e0e0e0",
     borderRadius: 8,
     backgroundColor: "#f9f9f9",
+    paddingHorizontal: 12,
   },
   passwordInput: {
     flex: 1,
-    paddingHorizontal: 16,
-    fontSize: 16,
+    height: 50,
   },
-  eyeButton: {
-    padding: 12,
-  },
-  eyeText: {
+  eye: {
     fontSize: 20,
   },
-  forgotPassword: {
-    alignSelf: "flex-end",
-    marginBottom: 24,
-  },
-  forgotPasswordText: {
-    color: "#007AFF",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  loginButton: {
+  registerButton: {
     height: 50,
     backgroundColor: "#28a745",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 10,
   },
-  loginButtonText: {
+  registerButtonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
   },
-  signupContainer: {
-  flexDirection: "row",
-  justifyContent: "center",
-  marginTop: 25,
-},
-
-signupText: {
-  fontSize: 14,
-  color: "#666",
-},
-
-signupLink: {
-  fontSize: 14,
-  color: "#007AFF",
-  fontWeight: "600",
-},
-
+  loginContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 20,
+  },
+  loginText: {
+    fontSize: 14,
+    color: "#666",
+  },
+  loginLink: {
+    fontSize: 14,
+    color: "#007AFF",
+    fontWeight: "600",
+  },
 });
