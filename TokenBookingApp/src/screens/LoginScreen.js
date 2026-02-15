@@ -11,7 +11,7 @@ import {
   Alert,
 } from 'react-native';
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -100,7 +100,9 @@ const LoginScreen = () => {
             {/* Sign Up Link */}
             <View style={styles.signupContainer}>
               <Text style={styles.signupText}>Don't have an account? </Text>
-              <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+             <TouchableOpacity
+                     onPress={() => navigation.navigate("UserRegister")}
+                   >
                 <Text style={styles.signupLink}>Sign Up</Text>
               </TouchableOpacity>
             </View>

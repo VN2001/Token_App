@@ -1,21 +1,20 @@
-import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
-import SplashScreen from "../screens/SplashScreen";
-import AdminLoginScreen from "../screens/Admin/AdminLoginScreen"
+import RoleSelectionScreen from "../screens/RoleSelectionScreen";
+import LoginScreen from "../screens/LoginScreen";
+import AdminLoginScreen from "../screens/Admin/AdminLoginScreen";
+import AdminRegistration  from "../screens/Admin/AdminRegistrationScreen"
 import RegisterScreen from "../screens/RegisterScreen";
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Splash" component={SplashScreen} />
-        <Stack.Screen name="Login" component={AdminLoginScreen} />
-          <Stack.Screen name="Register" component={RegisterScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="RoleSelection" component={RoleSelectionScreen} />
+      <Stack.Screen name="UserLogin" component={LoginScreen} />
+      <Stack.Screen name="AdminLogin" component={AdminLoginScreen} />
+      <Stack.Screen name="AdminRegister" component={AdminRegistration}/>
+      <Stack.Screen name="UserRegister" component={RegisterScreen}/>
+    </Stack.Navigator>
   );
 };
 

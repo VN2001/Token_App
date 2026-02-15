@@ -11,7 +11,7 @@ import {
   Alert,
 } from 'react-native';
 
-const RegisterForm = () => {
+const RegisterForm = ({ navigation }) => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -229,7 +229,8 @@ const RegisterForm = () => {
           {/* Login Link */}
           <View style={styles.loginContainer}>
             <Text style={styles.loginText}>Already have an account? </Text>
-            <TouchableOpacity onPress={() => console.log('Navigate to login')}>
+           <TouchableOpacity
+           onPress={() => navigation.navigate("UserLogin")} >
               <Text style={styles.loginLink}>Login</Text>
             </TouchableOpacity>
           </View>
