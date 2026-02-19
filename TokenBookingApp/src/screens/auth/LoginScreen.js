@@ -53,34 +53,36 @@ const LoginScreen = ({ navigation }) => {
   const [errors, setErrors] = useState({});
 
   const handleLogin = () => {
-    const newErrors = {};
-    if (!email) newErrors.email = 'Email is required';
-    else if (!email.includes('@')) newErrors.email = 'Please enter a valid email address';
-    if (!password) newErrors.password = 'Password is required';
-    setErrors(newErrors);
+  const newErrors = {};
+  if (!email) newErrors.email = 'Email is required';
+  else if (!email.includes('@')) newErrors.email = 'Please enter a valid email address';
+  if (!password) newErrors.password = 'Password is required';
+  setErrors(newErrors);
 
-    if (Object.keys(newErrors).length === 0) {
-      console.log('Login attempt with:', { email, password });
-      Alert.alert('Success', 'Login functionality would go here!');
-    }
-  };
+  if (Object.keys(newErrors).length === 0) {
+    navigation.navigate('UserDashboard'); // ✅ Navigate on success
+  }
+};
 
   const clearError = (field) => {
     if (errors[field]) setErrors({ ...errors, [field]: '' });
   };
 
   return (
-    <LinearGradient
-      colors={["#4A9E96", "#A8CECA", "#D6E9E7"]}
-      locations={[0, 0.5, 1]}
-      style={styles.gradient}
+   <LinearGradient colors={["#4A9E96", "#A8CECA", "#D6E9E7"]} locations={[0, 0.5, 1]} style={styles.gradient}>
+  <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
+  
+  <KeyboardAvoidingView
+    behavior={Platform.OS === 'ios' ? 'padding' : undefined} // ✅ undefined on Android
+    style={styles.kav}
+  >
+    <ScrollView
+      contentContainerStyle={styles.scrollContent}
+      keyboardShouldPersistTaps="handled"   // ✅ Key fix
+      showsVerticalScrollIndicator={false}
+      bounces={false}
     >
-      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.kav}
-      >
-        <View style={styles.content}>
+      <View style={styles.content}>
 
           {/* Back button */}
           <TouchableOpacity
@@ -200,6 +202,7 @@ const LoginScreen = ({ navigation }) => {
 
           </View>
         </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </LinearGradient>
   );
@@ -212,6 +215,10 @@ const styles = StyleSheet.create({
   kav: {
     flex: 1,
   },
+  scrollContent: {
+  flexGrow: 1,          // ✅ allows content to expand
+  justifyContent: 'center',
+},
   content: {
     flex: 1,
     paddingHorizontal: 22,
