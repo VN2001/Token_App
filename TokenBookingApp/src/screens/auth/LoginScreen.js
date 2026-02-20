@@ -56,19 +56,28 @@ const ClockFace = () => (
 // ─── Screen Content ───────────────────────────────────────────────────────────
 
 const ScreenContent = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+
+  const [email, setEmail] = useState(TEST_EMAIL);
+  const [password, setPassword] = useState(TEST_PASSWORD);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [errors, setErrors] = useState({});
 const [focusedField, setFocusedField] = useState(null);
+const TEST_EMAIL = 'test@hora.com';
+  const TEST_PASSWORD = 'password123';
   const handleLogin = () => {
     const newErrors = {};
     if (!email) newErrors.email = 'Email is required';
     else if (!email.includes('@')) newErrors.email = 'Please enter a valid email address';
     if (!password) newErrors.password = 'Password is required';
     setErrors(newErrors);
+
     if (Object.keys(newErrors).length === 0) {
-      Alert.alert('Success', 'Login functionality would go here!');
+      if (email === TEST_EMAIL && password === TEST_PASSWORD) {
+        Alert.alert('Success', 'Welcome back! Logged in as test user.');
+         navigation?.navigate('UserDashboard'); // ← uncomment when ready
+      } else {
+        Alert.alert('Login Failed', 'Invalid email or password.');
+      }
     }
   };
 
