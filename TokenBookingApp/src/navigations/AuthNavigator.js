@@ -9,9 +9,11 @@ const Stack = createNativeStackNavigator();
 const AuthNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="/" component={SplashScreen} />
-         <Stack.Screen name="Welcome" component={WelcomeScreen} />
+      {/* ✅ Temporarily move Login to the top */}
+      <Stack.Screen name="/" component={SplashScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
+
+      <Stack.Screen name="Welcome" component={WelcomeScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
     </Stack.Navigator>
   );

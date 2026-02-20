@@ -10,16 +10,20 @@ import {
   Platform,
   Alert,
   StatusBar,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Svg, { Path, Circle } from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 
-// Eye icons using SVG
+// ─── Icons ────────────────────────────────────────────────────────────────────
+
 const EyeOpen = () => (
   <Svg width="22" height="22" viewBox="0 0 24 24" fill="none">
     <Path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z"
       stroke="#4A9E96" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    <Circle cx="12" cy="12" r="3" stroke="#4A9E96" strokeWidth="2" />
+    <Path d="M12 9C10.34 9 9 10.34 9 12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12C15 10.34 13.66 9 12 9Z"
+      stroke="#4A9E96" strokeWidth="2" />
   </Svg>
 );
 
@@ -30,13 +34,48 @@ const EyeClosed = () => (
   </Svg>
 );
 
-// Back arrow
 const BackArrow = () => (
   <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
     <Path d="M19 12H5M5 12L12 19M5 12L12 5"
       stroke="#4A9E96" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
   </Svg>
 );
+
+// ─── InputField — defined OUTSIDE RegisterForm to prevent remounting ──────────
+
+const InputField = ({
+  label, placeholder, keyboardType, autoCapitalize,
+  isPassword, showPw, togglePw, value, onChangeText, error
+}) => (
+  <View style={styles.inputContainer}>
+    <Text style={styles.label}>{label}</Text>
+    <View style={[
+      styles.inputWrapper,
+      error && styles.inputWrapperError,
+    ]}>
+      <TextInput
+        style={styles.input}
+        placeholder={placeholder}
+        placeholderTextColor="#A8CECA"
+        value={value}
+        onChangeText={onChangeText}
+        keyboardType={keyboardType || 'default'}
+        autoCapitalize={autoCapitalize || 'none'}
+        autoCorrect={false}
+        secureTextEntry={isPassword && !showPw}
+        blurOnSubmit={false}
+      />
+      {isPassword && (
+        <TouchableOpacity style={styles.eyeBtn} onPress={togglePw}>
+          {showPw ? <EyeOpen /> : <EyeClosed />}
+        </TouchableOpacity>
+      )}
+    </View>
+    {error ? <Text style={styles.errorText}>⚠ {error}</Text> : null}
+  </View>
+);
+
+// ─── RegisterForm ─────────────────────────────────────────────────────────────
 
 const RegisterForm = ({ navigation }) => {
   const [formData, setFormData] = useState({
@@ -50,7 +89,8 @@ const RegisterForm = ({ navigation }) => {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [focusedField, setFocusedField] = useState(null);
+
+  // ✅ focusedField completely removed — this was causing focus jumping between fields
 
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePhone = (phone) => /^[0-9]{10}$/.test(phone.replace(/[^\d]/g, ''));
@@ -80,39 +120,9 @@ const RegisterForm = ({ navigation }) => {
   };
 
   const updateField = (field, value) => {
-    setFormData({ ...formData, [field]: value });
-    if (errors[field]) setErrors({ ...errors, [field]: '' });
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
   };
-
-  const InputField = ({ label, field, placeholder, keyboardType, autoCapitalize, isPassword, showPw, togglePw }) => (
-    <View style={styles.inputContainer}>
-      <Text style={styles.label}>{label}</Text>
-      <View style={[
-        styles.inputWrapper,
-        focusedField === field && styles.inputWrapperFocused,
-        errors[field] && styles.inputWrapperError,
-      ]}>
-        <TextInput
-          style={styles.input}
-          placeholder={placeholder}
-          placeholderTextColor="#A8CECA"
-          value={formData[field]}
-          onChangeText={(text) => updateField(field, text)}
-          onFocus={() => setFocusedField(field)}
-          onBlur={() => setFocusedField(null)}
-          keyboardType={keyboardType || 'default'}
-          autoCapitalize={autoCapitalize || 'none'}
-          secureTextEntry={isPassword && !showPw}
-        />
-        {isPassword && (
-          <TouchableOpacity style={styles.eyeBtn} onPress={togglePw}>
-            {showPw ? <EyeOpen /> : <EyeClosed />}
-          </TouchableOpacity>
-        )}
-      </View>
-      {errors[field] ? <Text style={styles.errorText}>⚠ {errors[field]}</Text> : null}
-    </View>
-  );
 
   return (
     <LinearGradient
@@ -125,92 +135,109 @@ const RegisterForm = ({ navigation }) => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.kav}
       >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          {/* Back button */}
-          <TouchableOpacity
-            style={styles.backBtn}
-            onPress={() => navigation?.goBack()}
-            activeOpacity={0.7}
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="always"
+            keyboardDismissMode="none"
           >
-            <BackArrow />
-          </TouchableOpacity>
-
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.title}>Create Account</Text>
-            <Text style={styles.subtitle}>Sign up to get started with <Text style={styles.horaAccent}>Hora</Text></Text>
-          </View>
-
-          {/* White card */}
-          <View style={styles.card}>
-            <InputField
-              label="Full Name"
-              field="fullName"
-              placeholder="Enter your full name"
-              autoCapitalize="words"
-            />
-            <InputField
-              label="Email"
-              field="email"
-              placeholder="Enter your email"
-              keyboardType="email-address"
-            />
-            <InputField
-              label="Phone Number"
-              field="phone"
-              placeholder="Enter your phone number"
-              keyboardType="phone-pad"
-            />
-            <InputField
-              label="Password"
-              field="password"
-              placeholder="Enter your password"
-              isPassword
-              showPw={showPassword}
-              togglePw={() => setShowPassword(!showPassword)}
-            />
-            <InputField
-              label="Confirm Password"
-              field="confirmPassword"
-              placeholder="Confirm your password"
-              isPassword
-              showPw={showConfirmPassword}
-              togglePw={() => setShowConfirmPassword(!showConfirmPassword)}
-            />
-
-            {/* Register Button */}
+            {/* Back button */}
             <TouchableOpacity
-              style={styles.registerButton}
-              onPress={handleRegister}
-              activeOpacity={0.85}
+              style={styles.backBtn}
+              onPress={() => navigation?.goBack()}
+              activeOpacity={0.7}
             >
-              <LinearGradient
-                colors={["#4A9E96", "#3D8880"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.registerGradient}
-              >
-                <Text style={styles.registerButtonText}>Create Account</Text>
-              </LinearGradient>
+              <BackArrow />
             </TouchableOpacity>
 
-            {/* Login link */}
-            <View style={styles.loginContainer}>
-              <Text style={styles.loginText}>Already have an account? </Text>
-              <TouchableOpacity onPress={() => navigation?.navigate('Login')}>
-                <Text style={styles.loginLink}>Log In</Text>
-              </TouchableOpacity>
+            {/* Header */}
+            <View style={styles.header}>
+              <Text style={styles.title}>Create Account</Text>
+              <Text style={styles.subtitle}>
+                Sign up to get started with <Text style={styles.horaAccent}>Hora</Text>
+              </Text>
             </View>
-          </View>
-        </ScrollView>
+
+            {/* White card */}
+            <View style={styles.card}>
+              <InputField
+                label="Full Name"
+                placeholder="Enter your full name"
+                autoCapitalize="words"
+                value={formData.fullName}
+                onChangeText={(text) => updateField('fullName', text)}
+                error={errors.fullName}
+              />
+              <InputField
+                label="Email"
+                placeholder="Enter your email"
+                keyboardType="email-address"
+                value={formData.email}
+                onChangeText={(text) => updateField('email', text)}
+                error={errors.email}
+              />
+              <InputField
+                label="Phone Number"
+                placeholder="Enter your phone number"
+                keyboardType="phone-pad"
+                value={formData.phone}
+                onChangeText={(text) => updateField('phone', text)}
+                error={errors.phone}
+              />
+              <InputField
+                label="Password"
+                placeholder="Enter your password"
+                isPassword
+                showPw={showPassword}
+                togglePw={() => setShowPassword(prev => !prev)}
+                value={formData.password}
+                onChangeText={(text) => updateField('password', text)}
+                error={errors.password}
+              />
+              <InputField
+                label="Confirm Password"
+                placeholder="Confirm your password"
+                isPassword
+                showPw={showConfirmPassword}
+                togglePw={() => setShowConfirmPassword(prev => !prev)}
+                value={formData.confirmPassword}
+                onChangeText={(text) => updateField('confirmPassword', text)}
+                error={errors.confirmPassword}
+              />
+
+              {/* Register Button */}
+              <TouchableOpacity
+                style={styles.registerButton}
+                onPress={handleRegister}
+                activeOpacity={0.85}
+              >
+                <LinearGradient
+                  colors={["#4A9E96", "#3D8880"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.registerGradient}
+                >
+                  <Text style={styles.registerButtonText}>Create Account</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              {/* Login link */}
+              <View style={styles.loginContainer}>
+                <Text style={styles.loginText}>Already have an account? </Text>
+                <TouchableOpacity onPress={() => navigation?.navigate('Login')}>
+                  <Text style={styles.loginLink}>Log In</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     </LinearGradient>
   );
 };
+
+// ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   gradient: {
@@ -286,15 +313,6 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     borderWidth: 1.5,
     borderColor: '#D6E9E7',
-  },
-  inputWrapperFocused: {
-    borderColor: '#4A9E96',
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#4A9E96',
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
   },
   inputWrapperError: {
     borderColor: '#FF6B6B',

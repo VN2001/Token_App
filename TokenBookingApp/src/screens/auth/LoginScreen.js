@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -6,38 +6,46 @@ import {
   TouchableOpacity,
   StyleSheet,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
   Platform,
   Alert,
   StatusBar,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path, Circle } from 'react-native-svg';
+import { InteractionManager } from 'react-native';
 
-// Eye icons
+// ─── Icons ────────────────────────────────────────────────────────────────────
+
 const EyeOpen = () => (
   <Svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <Path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z"
-      stroke="#4A9E96" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <Path
+      d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z"
+      stroke="#4A9E96" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+    />
     <Circle cx="12" cy="12" r="3" stroke="#4A9E96" strokeWidth="2" />
   </Svg>
 );
 
 const EyeClosed = () => (
   <Svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <Path d="M17.94 17.94A10.07 10.07 0 0112 20C5 20 1 12 1 12A18.45 18.45 0 015.06 5.06M9.9 4.24A9.12 9.12 0 0112 4C19 4 23 12 23 12A18.5 18.5 0 0120.71 15.71M1 1L23 23"
-      stroke="#4A9E96" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <Path
+      d="M17.94 17.94A10.07 10.07 0 0112 20C5 20 1 12 1 12A18.45 18.45 0 015.06 5.06M9.9 4.24A9.12 9.12 0 0112 4C19 4 23 12 23 12A18.5 18.5 0 0120.71 15.71M1 1L23 23"
+      stroke="#4A9E96" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+    />
   </Svg>
 );
 
-// Back arrow
 const BackArrow = () => (
   <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-    <Path d="M19 12H5M5 12L12 19M5 12L12 5"
-      stroke="#4A9E96" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    <Path
+      d="M19 12H5M5 12L12 19M5 12L12 5"
+      stroke="#4A9E96" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+    />
   </Svg>
 );
 
-// Clock logo for top decoration
 const ClockFace = () => (
   <Svg width="52" height="52" viewBox="0 0 110 110">
     <Path d="M55 55 L55 18" stroke="#FFFFFF" strokeWidth="8" strokeLinecap="round" />
@@ -45,22 +53,21 @@ const ClockFace = () => (
   </Svg>
 );
 
-const LoginScreen = ({ navigation }) => {
+// ─── Screen Content ───────────────────────────────────────────────────────────
+
+const ScreenContent = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [focusedField, setFocusedField] = useState(null);
   const [errors, setErrors] = useState({});
-
+const [focusedField, setFocusedField] = useState(null);
   const handleLogin = () => {
     const newErrors = {};
     if (!email) newErrors.email = 'Email is required';
     else if (!email.includes('@')) newErrors.email = 'Please enter a valid email address';
     if (!password) newErrors.password = 'Password is required';
     setErrors(newErrors);
-
     if (Object.keys(newErrors).length === 0) {
-      console.log('Login attempt with:', { email, password });
       Alert.alert('Success', 'Login functionality would go here!');
     }
   };
@@ -70,158 +77,176 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient
-      colors={["#4A9E96", "#A8CECA", "#D6E9E7"]}
-      locations={[0, 0.5, 1]}
-      style={styles.gradient}
-    >
-      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.kav}
-      >
-        <View style={styles.content}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.content}>
 
-          {/* Back button */}
-          <TouchableOpacity
-            style={styles.backBtn}
-            onPress={() => navigation?.goBack()}
-            activeOpacity={0.7}
-          >
-            <BackArrow />
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.backBtn}
+          onPress={() => navigation?.goBack()}
+          activeOpacity={0.7}
+        >
+          <BackArrow />
+        </TouchableOpacity>
 
-          {/* Clock logo badge */}
-          <View style={styles.logoBadge}>
-            <View style={styles.logoCircle}>
-              <ClockFace />
-            </View>
-          </View>
-
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.title}>Welcome Back</Text>
-            <Text style={styles.subtitle}>
-              Sign in to continue with <Text style={styles.horaAccent}>Hora</Text>
-            </Text>
-          </View>
-
-          {/* White card */}
-          <View style={styles.card}>
-
-            {/* Email */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Email</Text>
-              <View style={[
-                styles.inputWrapper,
-                focusedField === 'email' && styles.inputWrapperFocused,
-                errors.email && styles.inputWrapperError,
-              ]}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter your email"
-                  placeholderTextColor="#A8CECA"
-                  value={email}
-                  onChangeText={(text) => { setEmail(text); clearError('email'); }}
-                  onFocus={() => setFocusedField('email')}
-                  onBlur={() => setFocusedField(null)}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-              </View>
-              {errors.email ? <Text style={styles.errorText}>⚠ {errors.email}</Text> : null}
-            </View>
-
-            {/* Password */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Password</Text>
-              <View style={[
-                styles.inputWrapper,
-                focusedField === 'password' && styles.inputWrapperFocused,
-                errors.password && styles.inputWrapperError,
-              ]}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter your password"
-                  placeholderTextColor="#A8CECA"
-                  value={password}
-                  onChangeText={(text) => { setPassword(text); clearError('password'); }}
-                  onFocus={() => setFocusedField('password')}
-                  onBlur={() => setFocusedField(null)}
-                  secureTextEntry={!isPasswordVisible}
-                  autoCapitalize="none"
-                />
-                <TouchableOpacity
-                  onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-                  style={styles.eyeBtn}
-                >
-                  {isPasswordVisible ? <EyeOpen /> : <EyeClosed />}
-                </TouchableOpacity>
-              </View>
-              {errors.password ? <Text style={styles.errorText}>⚠ {errors.password}</Text> : null}
-            </View>
-
-            {/* Forgot Password */}
-            <TouchableOpacity style={styles.forgotPassword} activeOpacity={0.7}>
-              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-            </TouchableOpacity>
-
-            {/* Login Button */}
-            <TouchableOpacity
-              style={styles.loginButton}
-              onPress={handleLogin}
-              activeOpacity={0.85}
-            >
-              <LinearGradient
-                colors={["#4A9E96", "#3D8880"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.loginGradient}
-              >
-                <Text style={styles.loginButtonText}>Log In</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-
-            {/* Divider */}
-            <View style={styles.divider}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>or</Text>
-              <View style={styles.dividerLine} />
-            </View>
-
-            {/* Sign Up Link */}
-            <View style={styles.signupContainer}>
-              <Text style={styles.signupText}>Don't have an account? </Text>
-              <TouchableOpacity onPress={() => navigation?.navigate('Register')}>
-                <Text style={styles.signupLink}>Sign Up</Text>
-              </TouchableOpacity>
-            </View>
-
+        <View style={styles.logoBadge}>
+          <View style={styles.logoCircle}>
+            <ClockFace />
           </View>
         </View>
-      </KeyboardAvoidingView>
-    </LinearGradient>
+
+        <View style={styles.header}>
+          <Text style={styles.title}>Welcome Back</Text>
+          <Text style={styles.subtitle}>
+            Sign in to continue with <Text style={styles.horaAccent}>Hora</Text>
+          </Text>
+        </View>
+
+        <View style={styles.card}>
+
+          {/* Email */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Email</Text>
+            <View style={[
+              styles.inputWrapper,
+              errors.email && styles.inputWrapperError,
+            ]}>
+              <TextInput
+  style={styles.input}
+  placeholder="Enter your email"
+  placeholderTextColor="#A8CECA"
+  value={email}
+  onChangeText={(text) => { setEmail(text); clearError('email'); }}
+  keyboardType="email-address"
+  autoCapitalize="none"
+  autoCorrect={false}
+  blurOnSubmit={false}
+  // ✅ Add these
+  onFocus={() => {
+    InteractionManager.runAfterInteractions(() => {
+      setFocusedField('email');
+    });
+  }}
+  onBlur={() => {
+    InteractionManager.runAfterInteractions(() => {
+      setFocusedField(null);
+    });
+  }}
+/>
+            </View>
+            {errors.email ? <Text style={styles.errorText}>⚠ {errors.email}</Text> : null}
+          </View>
+
+          {/* Password */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Password</Text>
+            <View style={[
+              styles.inputWrapper,
+              errors.password && styles.inputWrapperError,
+            ]}>
+              <TextInput
+  style={styles.input}
+  placeholder="Enter your password"
+  placeholderTextColor="#A8CECA"
+  value={password}
+  onChangeText={(text) => { setPassword(text); clearError('password'); }}
+  secureTextEntry={!isPasswordVisible}
+  autoCapitalize="none"
+  blurOnSubmit={false}
+  // ✅ Add these
+  onFocus={() => {
+    InteractionManager.runAfterInteractions(() => {
+      setFocusedField('password');
+    });
+  }}
+  onBlur={() => {
+    InteractionManager.runAfterInteractions(() => {
+      setFocusedField(null);
+    });
+  }}
+/>
+              <TouchableOpacity
+  onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+  style={styles.eyeBtn}
+>
+  {isPasswordVisible ? <EyeOpen /> : <EyeClosed />}
+</TouchableOpacity>
+            </View>
+            {errors.password ? <Text style={styles.errorText}>⚠ {errors.password}</Text> : null}
+          </View>
+
+          <TouchableOpacity style={styles.forgotPassword} activeOpacity={0.7}>
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={handleLogin}
+            activeOpacity={0.85}
+          >
+            <LinearGradient
+              colors={["#4A9E96", "#3D8880"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.loginGradient}
+            >
+              <Text style={styles.loginButtonText}>Log In</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>or</Text>
+            <View style={styles.dividerLine} />
+          </View>
+
+          <View style={styles.signupContainer}>
+            <Text style={styles.signupText}>Don't have an account? </Text>
+            <TouchableOpacity onPress={() => navigation?.navigate('Register')}>
+              <Text style={styles.signupLink}>Sign Up</Text>
+            </TouchableOpacity>
+          </View>
+
+        </View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
+
+// ─── Main Screen ──────────────────────────────────────────────────────────────
+
+const LoginScreen = ({ navigation }) => {
+  return (
+    <>
+      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+      {/* ✅ Replace LinearGradient with plain View temporarily */}
+      <View style={[styles.gradient, { backgroundColor: '#4A9E96' }]}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <ScreenContent navigation={navigation} />
+          </View>
+        </KeyboardAvoidingView>
+      </View>
+    </>
+  );
+};
+
+// ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   gradient: {
     flex: 1,
   },
-  kav: {
-    flex: 1,
-  },
   content: {
-    flex: 1,
     paddingHorizontal: 22,
-    paddingTop: 60,
+    paddingTop: 80,
     paddingBottom: 40,
-    justifyContent: 'center',
   },
   backBtn: {
     position: 'absolute',
-    top: 60,
+    top: 20,
     left: 22,
     width: 44,
     height: 44,
