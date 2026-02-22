@@ -21,27 +21,27 @@ import Svg, { Path } from 'react-native-svg';
 const EyeOpen = () => (
   <Svg width="22" height="22" viewBox="0 0 24 24" fill="none">
     <Path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z"
-      stroke="#4A9E96" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      stroke="#7B5FEB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     <Path d="M12 9C10.34 9 9 10.34 9 12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12C15 10.34 13.66 9 12 9Z"
-      stroke="#4A9E96" strokeWidth="2" />
+      stroke="#7B5FEB" strokeWidth="2" />
   </Svg>
 );
 
 const EyeClosed = () => (
   <Svg width="22" height="22" viewBox="0 0 24 24" fill="none">
     <Path d="M17.94 17.94A10.07 10.07 0 0112 20C5 20 1 12 1 12A18.45 18.45 0 015.06 5.06M9.9 4.24A9.12 9.12 0 0112 4C19 4 23 12 23 12A18.5 18.5 0 0120.71 15.71M1 1L23 23"
-      stroke="#4A9E96" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      stroke="#7B5FEB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </Svg>
 );
 
 const BackArrow = () => (
   <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
     <Path d="M19 12H5M5 12L12 19M5 12L12 5"
-      stroke="#4A9E96" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      stroke="#7B5FEB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
   </Svg>
 );
 
-// ─── InputField — defined OUTSIDE RegisterForm to prevent remounting ──────────
+// ─── InputField ───────────────────────────────────────────────────────────────
 
 const InputField = ({
   label, placeholder, keyboardType, autoCapitalize,
@@ -56,7 +56,7 @@ const InputField = ({
       <TextInput
         style={styles.input}
         placeholder={placeholder}
-        placeholderTextColor="#A8CECA"
+        placeholderTextColor="#C4B0F8"
         value={value}
         onChangeText={onChangeText}
         keyboardType={keyboardType || 'default'}
@@ -89,8 +89,6 @@ const RegisterForm = ({ navigation }) => {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  // ✅ focusedField completely removed — this was causing focus jumping between fields
 
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePhone = (phone) => /^[0-9]{10}$/.test(phone.replace(/[^\d]/g, ''));
@@ -126,11 +124,11 @@ const RegisterForm = ({ navigation }) => {
 
   return (
     <LinearGradient
-      colors={["#4A9E96", "#A8CECA", "#D6E9E7"]}
-      locations={[0, 0.5, 1]}
+      colors={["#7B5FEB", "#9B7FF5", "#C4B0F8", "#EDE8FC", "#FFFFFF"]}
+      locations={[0, 0.25, 0.5, 0.68, 0.85]}
       style={styles.gradient}
     >
-      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
+      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.kav}
@@ -213,7 +211,7 @@ const RegisterForm = ({ navigation }) => {
                 activeOpacity={0.85}
               >
                 <LinearGradient
-                  colors={["#4A9E96", "#3D8880"]}
+                  colors={["#7B5FEB", "#6347D4"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.registerGradient}
@@ -256,11 +254,11 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: 'rgba(255,255,255,0.85)',
+    backgroundColor: 'rgba(255,255,255,0.9)',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 24,
-    shadowColor: '#1A6060',
+    shadowColor: '#3A1EA0',
     shadowOpacity: 0.12,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 2 },
@@ -275,21 +273,24 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     marginBottom: 6,
     letterSpacing: -0.5,
+    fontFamily: 'Poppins_800ExtraBold',
   },
   subtitle: {
     fontSize: 16,
     color: 'rgba(255,255,255,0.85)',
     fontWeight: '400',
+    fontFamily: 'Poppins_400Regular',
   },
   horaAccent: {
     color: '#FFFFFF',
     fontWeight: '700',
+    fontFamily: 'Poppins_700Bold',
   },
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 28,
     padding: 24,
-    shadowColor: '#1A6060',
+    shadowColor: '#3A1EA0',
     shadowOpacity: 0.15,
     shadowRadius: 24,
     shadowOffset: { width: 0, height: 8 },
@@ -301,18 +302,19 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#3D8880',
+    color: '#7B5FEB',
     marginBottom: 8,
     letterSpacing: 0.4,
     textTransform: 'uppercase',
+    fontFamily: 'Poppins_700Bold',
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F2F9F8',
+    backgroundColor: '#F5F3FF',
     borderRadius: 14,
     borderWidth: 1.5,
-    borderColor: '#D6E9E7',
+    borderColor: '#E0D9FB',
   },
   inputWrapperError: {
     borderColor: '#FF6B6B',
@@ -324,6 +326,8 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 15,
     color: '#1A1A1A',
+    fontFamily: 'Poppins_400Regular',
+    includeFontPadding: false,
   },
   eyeBtn: {
     paddingHorizontal: 14,
@@ -335,12 +339,13 @@ const styles = StyleSheet.create({
     marginTop: 6,
     marginLeft: 4,
     fontWeight: '500',
+    fontFamily: 'Poppins_500Medium',
   },
   registerButton: {
     borderRadius: 50,
     overflow: 'hidden',
     marginTop: 8,
-    shadowColor: '#4A9E96',
+    shadowColor: '#7B5FEB',
     shadowOpacity: 0.4,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 6 },
@@ -356,6 +361,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '700',
     letterSpacing: 0.3,
+    fontFamily: 'Poppins_700Bold',
   },
   loginContainer: {
     flexDirection: 'row',
@@ -366,11 +372,13 @@ const styles = StyleSheet.create({
   loginText: {
     fontSize: 14,
     color: '#888',
+    fontFamily: 'Poppins_400Regular',
   },
   loginLink: {
     fontSize: 14,
-    color: '#4A9E96',
+    color: '#7B5FEB',
     fontWeight: '700',
+    fontFamily: 'Poppins_700Bold',
   },
 });
 
