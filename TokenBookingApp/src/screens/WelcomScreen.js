@@ -9,34 +9,61 @@ import {
   Dimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import Svg, { Path } from "react-native-svg";
+import Svg, { Path, Circle, Defs, RadialGradient, Stop, Ellipse } from "react-native-svg";
 
 const { width, height } = Dimensions.get("window");
 
-// Clock: minute hand UP (12), hour hand RIGHT (3) = "L" shape
-const ClockFace = () => (
-  <Svg width="110" height="110" viewBox="0 0 110 110">
-    <Path
-      d="M55 55 L55 18"
-      stroke="#4A9E96"
-      strokeWidth="8"
-      strokeLinecap="round"
-    />
-    <Path
-      d="M55 55 L92 55"
-      stroke="#4A9E96"
-      strokeWidth="8"
-      strokeLinecap="round"
-    />
-  </Svg>
-);
+// 3D-style shield with checkmark using SVG
+const ShieldIcon = () => (
+  <Svg width="220" height="220" viewBox="0 0 220 220">
+    <Defs>
+      {/* Shield body gradient - light blue */}
+      <RadialGradient id="shieldGrad" cx="40%" cy="30%" r="70%">
+        <Stop offset="0%" stopColor="#7DDFF5" />
+        <Stop offset="60%" stopColor="#3BBFE8" />
+        <Stop offset="100%" stopColor="#1A9EC8" />
+      </RadialGradient>
+      {/* Shield rim/border gradient - deeper blue */}
+      <RadialGradient id="rimGrad" cx="40%" cy="30%" r="70%">
+        <Stop offset="0%" stopColor="#4ECDF0" />
+        <Stop offset="100%" stopColor="#0E85B0" />
+      </RadialGradient>
+      {/* Checkmark gradient - creamy white */}
+      <RadialGradient id="checkGrad" cx="40%" cy="20%" r="80%">
+        <Stop offset="0%" stopColor="#FFFFFF" />
+        <Stop offset="100%" stopColor="#D8EEF5" />
+      </RadialGradient>
+    </Defs>
 
-// 4-point star sparkle
-const StarSparkle = ({ size = 28 }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24">
+    {/* Shield shadow */}
+    <Ellipse cx="110" cy="205" rx="55" ry="10" fill="rgba(30,100,160,0.18)" />
+
+    {/* Shield rim (slightly larger, darker) */}
     <Path
-      d="M12 1 L13.8 10.2 L23 12 L13.8 13.8 L12 23 L10.2 13.8 L1 12 L10.2 10.2 Z"
-      fill="#FFFFFF"
+      d="M110 18 L178 46 L178 108 C178 150 148 182 110 198 C72 182 42 150 42 108 L42 46 Z"
+      fill="url(#rimGrad)"
+    />
+
+    {/* Shield body */}
+    <Path
+      d="M110 26 L172 52 L172 108 C172 146 144 176 110 191 C76 176 48 146 48 108 L48 52 Z"
+      fill="url(#shieldGrad)"
+    />
+
+    {/* Inner shield highlight (top-left shine) */}
+    <Path
+      d="M110 36 L162 58 L162 80 C140 72 120 68 110 68 L110 36 Z"
+      fill="rgba(255,255,255,0.25)"
+    />
+
+    {/* Checkmark */}
+    <Path
+      d="M76 108 L98 132 L148 82"
+      stroke="url(#checkGrad)"
+      strokeWidth="18"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
     />
   </Svg>
 );
@@ -44,29 +71,19 @@ const StarSparkle = ({ size = 28 }) => (
 const WelcomeScreen = ({ navigation }) => {
   return (
     <LinearGradient
-      colors={["#4A9E96", "#A8CECA", "#FFFFFF"]}
-      locations={[0, 0.4, 0.6]}
+      colors={["#7B5FEB", "#9B7FF5", "#C4B0F8", "#EDE8FC", "#FFFFFF"]}
+      locations={[0, 0.25, 0.5, 0.68, 0.85]}
       style={styles.container}
     >
-      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
+      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
       <SafeAreaView style={styles.safeArea}>
 
-        {/* Sparkles top right */}
-        <View style={styles.sparkleWrapper}>
-          <StarSparkle size={34} />
-          <View style={styles.sparkleSmall}>
-            <StarSparkle size={16} />
-          </View>
+        {/* Shield icon — upper center */}
+        <View style={styles.shieldWrapper}>
+          <ShieldIcon />
         </View>
 
-        {/* Clock circle — upper center */}
-        <View style={styles.circleWrapper}>
-          <View style={styles.iconCircle}>
-            <ClockFace />
-          </View>
-        </View>
-
-        {/* Text + buttons at the bottom — NO background, sits on gradient */}
+        {/* Text + buttons at the bottom */}
         <View style={styles.bottomContent}>
           <Text style={styles.titleRow1}>
             <Text style={styles.horaText}>Hora</Text>
@@ -105,60 +122,44 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     alignItems: "center",
-    paddingHorizontal: 22,
+    paddingHorizontal: 24,
   },
-  // Sparkles anchored top-right
-  sparkleWrapper: {
-    position: "absolute",
-    top: 52,
-    right: 22,
-    width: 52,
-    height: 52,
+
+  // Shield positioned in upper half
+  shieldWrapper: {
+    marginTop: height * 0.12,
+    shadowColor: "#3A1EA0",
+    shadowOpacity: 0.3,
+    shadowRadius: 32,
+    shadowOffset: { width: 0, height: 20 },
+    elevation: 16,
   },
-  sparkleSmall: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-  },
-  // Clock circle — positioned in upper half
-  circleWrapper: {
-    marginTop: height * 0.15,
-    shadowColor: "#1A6060",
-    shadowOpacity: 0.25,
-    shadowRadius: 28,
-    shadowOffset: { width: 0, height: 16 },
-    elevation: 14,
-  },
-  iconCircle: {
-    width: 230,
-    height: 230,
-    borderRadius: 115,
-    backgroundColor: "#FFFFFF",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  // Bottom content floats above bottom edge, no background
+
+  // Bottom content
   bottomContent: {
-    position: "absolute",
-    bottom: 40,
-    left: 22,
-    right: 22,
-    marginBottom:60,
-  },
+  position: "absolute",
+  bottom: 50,        // increase this — try 50 or 60
+  left: 24,
+  right: 24,
+  marginBottom: 0,   // remove the extra marginBottom, it fights with bottom
+},
   titleRow1: {
     fontSize: 30,
     textAlign: "center",
     lineHeight: 40,
+    fontFamily: "Poppins_700Bold",
   },
   horaText: {
-    color: "#4A9E96",
+    color: "#7B5FEB",
     fontWeight: "700",
     fontSize: 30,
+    fontFamily: "Poppins_700Bold",
   },
   titleDark: {
     color: "#111111",
     fontWeight: "700",
     fontSize: 30,
+    fontFamily: "Poppins_700Bold",
   },
   titleRow2: {
     fontSize: 30,
@@ -166,32 +167,44 @@ const styles = StyleSheet.create({
     color: "#111111",
     textAlign: "center",
     lineHeight: 40,
-    marginBottom: 30,
+    marginBottom: 28,
+    fontFamily: "Poppins_800ExtraBold",
   },
   primaryButton: {
-    backgroundColor: "#4A9E96",
+    backgroundColor: "#7B5FEB",
     paddingVertical: 18,
     borderRadius: 50,
     alignItems: "center",
     marginBottom: 14,
     width: "100%",
+    shadowColor: "#5B3FCC",
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 8,
   },
   primaryText: {
     color: "#FFFFFF",
     fontWeight: "700",
     fontSize: 17,
     letterSpacing: 0.3,
+    fontFamily: "Poppins_700Bold",
   },
-  secondaryButton: {
-    backgroundColor: "rgba(188, 188, 188, 0.55)",
-    paddingVertical: 18,
-    borderRadius: 50,
-    alignItems: "center",
-    width: "100%",
-  },
-  secondaryText: {
-    color: "#2A2A2A",
-    fontWeight: "500",
-    fontSize: 16,
-  },
+secondaryButton: {
+  backgroundColor: "#F0EEF8",
+  paddingVertical: 18,
+  borderRadius: 50,
+  alignItems: "center",
+  justifyContent: "center",  // add this
+  width: "100%",
+  overflow: "visible",        // add this
+},
+secondaryText: {
+  color: "#2A2A2A",
+  fontWeight: "500",
+  fontSize: 15,               // slightly reduce if wrapping is the issue
+  fontFamily: "Poppins_500Medium",
+  includeFontPadding: false,  // add this — fixes Android font clipping
+  textAlignVertical: "center",// add this for Android
+},
 });
