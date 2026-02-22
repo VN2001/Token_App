@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   Dimensions,
 } from 'react-native';
+import TokenSlotBooking from '../../components/user/TokenSlotBooking';
 
 const { width } = Dimensions.get('window');
 
@@ -98,9 +99,9 @@ const UserDashboard = () => {
           </TouchableOpacity>
         </View>
 
-        {/* No Available Slots */}
+        {/* Available Slots - Click to see amount */}
         <View style={styles.slotsCard}>
-          <Text style={styles.slotsText}>No Available Slots</Text>
+          <TokenSlotBooking />
         </View>
 
         {/* Create New Slot */}
