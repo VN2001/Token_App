@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path, Circle, Defs, RadialGradient, Stop, Ellipse } from 'react-native-svg';
-import { InteractionManager } from 'react-native';
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -46,7 +45,6 @@ const BackArrow = () => (
   </Svg>
 );
 
-// 3D Shield icon — same as WelcomeScreen & SplashScreen
 const ShieldIcon = ({ size = 70 }) => (
   <Svg width={size} height={size} viewBox="0 0 220 220">
     <Defs>
@@ -88,17 +86,23 @@ const ShieldIcon = ({ size = 70 }) => (
   </Svg>
 );
 
-// ─── Screen Content ───────────────────────────────────────────────────────────
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 const TEST_EMAIL = 'test@hora.com';
 const TEST_PASSWORD = 'password123';
+
+// ─── Screen Content ───────────────────────────────────────────────────────────
 
 const ScreenContent = ({ navigation }) => {
   const [email, setEmail] = useState(TEST_EMAIL);
   const [password, setPassword] = useState(TEST_PASSWORD);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [errors, setErrors] = useState({});
-  const [focusedField, setFocusedField] = useState(null);
+
+  // ✅ focusedField REMOVED — setFocusedField inside onFocus causes a re-render
+  // at the exact moment the keyboard opens, immediately blurring the input.
+  // This is a known Expo Go + New Architecture bug on Android.
+  // Re-add focusedField only after switching to npx expo run:android.
 
   const handleLogin = () => {
     const newErrors = {};
@@ -109,7 +113,6 @@ const ScreenContent = ({ navigation }) => {
 
     if (Object.keys(newErrors).length === 0) {
       if (email === TEST_EMAIL && password === TEST_PASSWORD) {
-        Alert.alert('Success', 'Welcome back! Logged in as test user.');
         navigation?.navigate('UserDashboard');
       } else {
         Alert.alert('Login Failed', 'Invalid email or password.');
@@ -133,7 +136,6 @@ const ScreenContent = ({ navigation }) => {
           <BackArrow />
         </TouchableOpacity>
 
-        {/* Shield badge */}
         <View style={styles.logoBadge}>
           <View style={styles.logoCircle}>
             <ShieldIcon size={70} />
@@ -152,9 +154,9 @@ const ScreenContent = ({ navigation }) => {
           {/* Email */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Email</Text>
+            {/* ✅ No focusedField style — no onFocus/onBlur */}
             <View style={[
               styles.inputWrapper,
-              focusedField === 'email' && styles.inputWrapperFocused,
               errors.email && styles.inputWrapperError,
             ]}>
               <TextInput
@@ -167,8 +169,6 @@ const ScreenContent = ({ navigation }) => {
                 autoCapitalize="none"
                 autoCorrect={false}
                 blurOnSubmit={false}
-                onFocus={() => InteractionManager.runAfterInteractions(() => setFocusedField('email'))}
-                onBlur={() => InteractionManager.runAfterInteractions(() => setFocusedField(null))}
               />
             </View>
             {errors.email ? <Text style={styles.errorText}>⚠ {errors.email}</Text> : null}
@@ -177,9 +177,9 @@ const ScreenContent = ({ navigation }) => {
           {/* Password */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Password</Text>
+            {/* ✅ No focusedField style — no onFocus/onBlur */}
             <View style={[
               styles.inputWrapper,
-              focusedField === 'password' && styles.inputWrapperFocused,
               errors.password && styles.inputWrapperError,
             ]}>
               <TextInput
@@ -191,8 +191,6 @@ const ScreenContent = ({ navigation }) => {
                 secureTextEntry={!isPasswordVisible}
                 autoCapitalize="none"
                 blurOnSubmit={false}
-                onFocus={() => InteractionManager.runAfterInteractions(() => setFocusedField('password'))}
-                onBlur={() => InteractionManager.runAfterInteractions(() => setFocusedField(null))}
               />
               <TouchableOpacity
                 onPress={() => setIsPasswordVisible(!isPasswordVisible)}
@@ -317,18 +315,15 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     marginBottom: 6,
     letterSpacing: -0.5,
-    fontFamily: 'Poppins_800ExtraBold',
   },
   subtitle: {
     fontSize: 16,
     color: 'rgba(255,255,255,0.85)',
     fontWeight: '400',
-    fontFamily: 'Poppins_400Regular',
   },
   horaAccent: {
     color: '#FFFFFF',
     fontWeight: '700',
-    fontFamily: 'Poppins_700Bold',
   },
   card: {
     backgroundColor: '#FFFFFF',
@@ -350,7 +345,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     letterSpacing: 0.4,
     textTransform: 'uppercase',
-    fontFamily: 'Poppins_700Bold',
   },
   inputWrapper: {
     flexDirection: 'row',
@@ -379,7 +373,6 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 15,
     color: '#1A1A1A',
-    fontFamily: 'Poppins_400Regular',
     includeFontPadding: false,
   },
   eyeBtn: {
@@ -392,7 +385,6 @@ const styles = StyleSheet.create({
     marginTop: 6,
     marginLeft: 4,
     fontWeight: '500',
-    fontFamily: 'Poppins_500Medium',
   },
   forgotPassword: {
     alignSelf: 'flex-end',
@@ -403,7 +395,6 @@ const styles = StyleSheet.create({
     color: '#7B5FEB',
     fontSize: 13,
     fontWeight: '700',
-    fontFamily: 'Poppins_700Bold',
   },
   loginButton: {
     borderRadius: 50,
@@ -424,7 +415,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '700',
     letterSpacing: 0.3,
-    fontFamily: 'Poppins_700Bold',
   },
   divider: {
     flexDirection: 'row',
@@ -441,7 +431,6 @@ const styles = StyleSheet.create({
     color: '#C4B0F8',
     fontSize: 13,
     fontWeight: '600',
-    fontFamily: 'Poppins_600SemiBold',
   },
   signupContainer: {
     flexDirection: 'row',
@@ -451,13 +440,11 @@ const styles = StyleSheet.create({
   signupText: {
     color: '#888',
     fontSize: 14,
-    fontFamily: 'Poppins_400Regular',
   },
   signupLink: {
     color: '#7B5FEB',
     fontSize: 14,
     fontWeight: '700',
-    fontFamily: 'Poppins_700Bold',
   },
 });
 

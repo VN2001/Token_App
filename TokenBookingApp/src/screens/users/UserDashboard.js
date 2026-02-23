@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -12,25 +13,63 @@ import {
 
 const { width } = Dimensions.get('window');
 
-const PURPLE       = '#7B5FEB';
-const PURPLE_LIGHT = '#EDE8FC';
-const PURPLE_MID   = '#C4B0F8';
-const PURPLE_DARK  = '#6347D4';
-const TEXT_DARK    = '#1A1035';
-const TEXT_MID     = '#7B6BA8';
+// ─── Single source-of-truth palette ──────────────────────────────────────────
+const C = {
+  purple:      '#7B5FEB',
+  purpleLight: '#EDE8FC',
+  purpleMid:   '#C4B0F8',
+  purpleDark:  '#6347D4',
+  purpleDeep:  '#4A2FB8',
+  textDark:    '#1A1035',
+  textMid:     '#7B6BA8',
+  bg:          '#F5F3FF',
+  white:       '#FFFFFF',
+  success:     '#00D4A0',
+};
 
+// ─── Slot data ────────────────────────────────────────────────────────────────
+const SLOTS = [
+  {
+    id: 1,
+    num: '05',
+    hospital: 'Apollo Hospitals',
+    address: 'Anna Nagar (East), Road 45, Chennai',
+    time: '10:30 AM',
+    status: 'active',
+    statusLabel: 'Active',
+  },
+  {
+    id: 2,
+    num: '12',
+    hospital: 'MIOT International',
+    address: 'Mount Poonamallee Rd, Manapakkam',
+    time: '02:15 PM',
+    status: 'waiting',
+    statusLabel: 'Waiting',
+  },
+  {
+    id: 3,
+    num: '03',
+    hospital: 'Fortis Malar Hospital',
+    address: 'Adyar, Chennai – 600 020',
+    time: '04:45 PM',
+    status: 'upcoming',
+    statusLabel: 'Upcoming',
+  },
+];
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 const UserDashboard = () => {
+  const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState('home');
   const [seconds, setSeconds] = useState(89);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setSeconds((s) => (s > 0 ? s - 1 : 0));
-    }, 1000);
+    const timer = setInterval(() => setSeconds(s => (s > 0 ? s - 1 : 0)), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const formatTime = (s) => {
+  const formatTime = s => {
     const m = Math.floor(s / 60).toString().padStart(2, '0');
     const sec = (s % 60).toString().padStart(2, '0');
     return `${m}:${sec}`;
@@ -46,7 +85,7 @@ const UserDashboard = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F5F3FF" />
+      <StatusBar barStyle="dark-content" backgroundColor={C.bg} />
 
       <ScrollView
         style={styles.container}
@@ -76,7 +115,6 @@ const UserDashboard = () => {
 
         {/* Token Card */}
         <View style={styles.tokenCard}>
-          {/* Token Box */}
           <View style={styles.tokenBox}>
             <Text style={styles.tokenLabel}>Token Number</Text>
             <Text style={styles.tokenNumber}>05</Text>
@@ -85,8 +123,6 @@ const UserDashboard = () => {
               <Text style={styles.timerText}>{formatTime(seconds)}</Text>
             </View>
           </View>
-
-          {/* Image Grid */}
           <View style={styles.imageGrid}>
             <View style={styles.imageTop}>
               <Text style={styles.imageEmoji}>🚗</Text>
@@ -109,15 +145,12 @@ const UserDashboard = () => {
           <View style={styles.dot} />
         </View>
 
-        {/* Bottom Card */}
+        {/* Bottom White Card */}
         <View style={styles.bottomCard}>
-          {/* Recently Added Row */}
           <View style={styles.recentlyAddedRow}>
             <Text style={styles.recentlyAddedText}>Recently Added</Text>
             <Text style={styles.filterIcon}>⇅</Text>
           </View>
-
-          {/* Hospital Row */}
           <View style={styles.hospitalRow}>
             <View style={styles.hospitalAvatar}>
               <Text style={styles.avatarEmoji}>👨‍👩‍👧</Text>
@@ -133,20 +166,62 @@ const UserDashboard = () => {
               </View>
             </View>
           </View>
-
-          {/* Book Button */}
-          <TouchableOpacity style={styles.bookButton} activeOpacity={0.85}>
+          <TouchableOpacity style={styles.bookButton} activeOpacity={0.85} onPress={()=>navigation.navigate("Payment")} >
             <View style={styles.bookIconCircle}>
               <Text style={styles.bookIconText}>+</Text>
             </View>
             <Text style={styles.bookText}>Book New Slot</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Available Slots — same purple card style as token card */}
+        <View style={styles.slotsSection}>
+          <Text style={styles.slotsSectionTitle}>Available Slots</Text>
+
+          {SLOTS.map(slot => (
+            <View key={slot.id} style={styles.slotCard}>
+              {/* Left white box */}
+              <View style={styles.slotInfoBox}>
+                <Text style={styles.slotNumLabel}>Token No.</Text>
+                <Text style={styles.slotNum}>{slot.num}</Text>
+                <View style={styles.slotTimeBadge}>
+                  <Text style={styles.slotTimeBadgeSmall}>Time</Text>
+                  <Text style={styles.slotTimeText}>{slot.time}</Text>
+                </View>
+              </View>
+
+              {/* Right details */}
+              <View style={styles.slotDetails}>
+                <Text style={styles.slotHospitalName}>{slot.hospital}</Text>
+                <Text style={styles.slotAddress}>{slot.address}</Text>
+                <View style={styles.slotStatusRow}>
+                  <View style={[
+                    styles.slotStatusBadge,
+                    slot.status === 'active' && styles.slotStatusBadgeActive,
+                  ]}>
+                    <Text style={styles.slotStatusText}>{slot.statusLabel}</Text>
+                  </View>
+                  <View style={styles.slotArrow}>
+                    <Text style={styles.slotArrowText}>→</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          ))}
+        </View>
+
+        {/* Create New Slot */}
+        <View style={styles.createSection}>
+          <TouchableOpacity style={styles.createButton} activeOpacity={0.85} onPress={() => navigation.navigate('BookingSlot')}>
+            <Text style={styles.createIcon}>+</Text>
+          </TouchableOpacity>
+          <Text style={styles.createLabel}>Create a New Slot</Text>
+        </View>
       </ScrollView>
 
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
-        {tabs.map((tab) => (
+        {tabs.map(tab => (
           <TouchableOpacity
             key={tab.id}
             style={styles.navItem}
@@ -166,12 +241,10 @@ const UserDashboard = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F5F3FF',
-    marginTop:40,
+    backgroundColor: C.bg,
+    marginTop: 40,
   },
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   scrollContent: {
     paddingHorizontal: 20,
     paddingTop: 16,
@@ -185,56 +258,39 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 22,
   },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   clockIcon: {
     width: 46,
     height: 46,
     borderRadius: 23,
-    backgroundColor: PURPLE,
+    backgroundColor: C.purple,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: C.purpleDark,
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
   },
-  clockText: {
-    fontSize: 22,
-  },
-  greeting: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: TEXT_DARK,
-    letterSpacing: 0.2,
-  },
-  greetingName: {
-    color: PURPLE,
-    fontWeight: '700',
-  },
-  subGreeting: {
-    fontSize: 11,
-    color: TEXT_MID,
-    marginTop: 2,
-  },
-  notifWrapper: {
-    position: 'relative',
-  },
+  clockText: { fontSize: 22 },
+  greeting: { fontSize: 18, fontWeight: '800', color: C.textDark, letterSpacing: 0.2 },
+  greetingName: { color: C.purple, fontWeight: '800' },
+  subGreeting: { fontSize: 11, color: C.textMid, marginTop: 2, fontWeight: '600' },
+  notifWrapper: { position: 'relative' },
   notifButton: {
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: '#fff',
+    backgroundColor: C.white,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: PURPLE,
+    shadowColor: C.purple,
     shadowOpacity: 0.18,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 3 },
     elevation: 4,
   },
-  notifIcon: {
-    fontSize: 20,
-  },
+  notifIcon: { fontSize: 20 },
   notifBadge: {
     position: 'absolute',
     top: 6,
@@ -244,94 +300,70 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: '#FF3B30',
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: C.white,
   },
 
   // Token Card
   tokenCard: {
-    backgroundColor: PURPLE,
+    backgroundColor: C.purple,
     borderRadius: 24,
     padding: 16,
     flexDirection: 'row',
     gap: 14,
     marginBottom: 16,
-    shadowColor: PURPLE_DARK,
+    shadowColor: C.purpleDark,
     shadowOpacity: 0.45,
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 6 },
     elevation: 8,
   },
   tokenBox: {
-    backgroundColor: '#fff',
+    backgroundColor: C.white,
     borderRadius: 18,
     padding: 14,
     alignItems: 'center',
     minWidth: 130,
     flexShrink: 0,
   },
-  tokenLabel: {
-    fontSize: 12,
-    color: TEXT_MID,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
+  tokenLabel: { fontSize: 12, color: C.textMid, fontWeight: '700', textAlign: 'center' },
   tokenNumber: {
     fontSize: 64,
-    fontWeight: '800',
-    color: TEXT_DARK,
+    fontWeight: '900',
+    color: C.textDark,
     lineHeight: 70,
     marginVertical: 4,
   },
   slotBadge: {
-    backgroundColor: PURPLE,
+    backgroundColor: C.purple,
     borderRadius: 20,
     paddingVertical: 5,
     paddingHorizontal: 14,
     alignItems: 'center',
     width: '100%',
   },
-  slotBadgeSmall: {
-    fontSize: 9,
-    color: 'rgba(255,255,255,0.85)',
-    fontWeight: '600',
-  },
-  timerText: {
-    fontSize: 16,
-    color: '#fff',
-    fontWeight: '700',
-    letterSpacing: 1,
-  },
-
-  // Image Grid
-  imageGrid: {
-    flex: 1,
-    gap: 8,
-  },
+  slotBadgeSmall: { fontSize: 9, color: 'rgba(255,255,255,0.85)', fontWeight: '700' },
+  timerText: { fontSize: 16, color: C.white, fontWeight: '800', letterSpacing: 1 },
+  imageGrid: { flex: 1, gap: 8 },
   imageTop: {
     flex: 1,
     borderRadius: 14,
-    backgroundColor: PURPLE_MID,
+    backgroundColor: C.purpleMid,
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: 90,
     opacity: 0.9,
   },
-  imageBottom: {
-    flexDirection: 'row',
-    gap: 8,
-  },
+  imageBottom: { flexDirection: 'row', gap: 8 },
   imageSmall: {
     flex: 1,
     height: 68,
     borderRadius: 14,
-    backgroundColor: '#b8a3f5',
+    backgroundColor: '#B8A3F5',
     justifyContent: 'center',
     alignItems: 'center',
     opacity: 0.9,
   },
-  imageEmoji: {
-    fontSize: 30,
-  },
+  imageEmoji: { fontSize: 30 },
 
   // Dots
   dotsContainer: {
@@ -340,29 +372,20 @@ const styles = StyleSheet.create({
     gap: 6,
     marginBottom: 20,
   },
-  dot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    backgroundColor: PURPLE_MID,
-    opacity: 0.4,
-  },
-  dotActive: {
-    width: 20,
-    backgroundColor: PURPLE_DARK,
-    opacity: 1,
-  },
+  dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: C.purpleMid, opacity: 0.4 },
+  dotActive: { width: 20, backgroundColor: C.purpleDark, opacity: 1 },
 
-  // Bottom Card
+  // Bottom White Card
   bottomCard: {
-    backgroundColor: '#fff',
+    backgroundColor: C.white,
     borderRadius: 24,
     padding: 18,
-    shadowColor: PURPLE,
+    shadowColor: C.purple,
     shadowOpacity: 0.1,
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 4 },
     elevation: 4,
+    marginBottom: 20,
   },
   recentlyAddedRow: {
     flexDirection: 'row',
@@ -371,80 +394,43 @@ const styles = StyleSheet.create({
     gap: 6,
     marginBottom: 16,
   },
-  recentlyAddedText: {
-    fontSize: 12,
-    color: TEXT_MID,
-    fontWeight: '600',
-  },
-  filterIcon: {
-    fontSize: 14,
-    color: TEXT_MID,
-  },
-  hospitalRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 18,
-  },
+  recentlyAddedText: { fontSize: 12, color: C.textMid, fontWeight: '700' },
+  filterIcon: { fontSize: 14, color: C.textMid },
+  hospitalRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 18 },
   hospitalAvatar: {
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: PURPLE_LIGHT,
+    backgroundColor: C.purpleLight,
     justifyContent: 'center',
     alignItems: 'center',
     flexShrink: 0,
   },
-  avatarEmoji: {
-    fontSize: 26,
-  },
-  hospitalInfo: {
-    flex: 1,
-  },
-  hospitalName: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: TEXT_DARK,
-  },
-  hospitalSub: {
-    fontSize: 11,
-    color: TEXT_MID,
-    marginTop: 2,
-  },
-  hospitalRight: {
-    alignItems: 'flex-end',
-    gap: 4,
-  },
-  hospitalCount: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: PURPLE,
-  },
+  avatarEmoji: { fontSize: 26 },
+  hospitalInfo: { flex: 1 },
+  hospitalName: { fontSize: 15, fontWeight: '800', color: C.textDark },
+  hospitalSub: { fontSize: 11, color: C.textMid, marginTop: 2 },
+  hospitalRight: { alignItems: 'flex-end', gap: 4 },
+  hospitalCount: { fontSize: 13, fontWeight: '800', color: C.purple },
   arrowCircle: {
     width: 30,
     height: 30,
     borderRadius: 15,
     borderWidth: 1.5,
-    borderColor: PURPLE_MID,
+    borderColor: C.purpleMid,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  arrowText: {
-    fontSize: 14,
-    color: TEXT_DARK,
-    fontWeight: '600',
-  },
-
-  // Book Button
+  arrowText: { fontSize: 14, color: C.textDark, fontWeight: '700' },
   bookButton: {
-    backgroundColor: PURPLE,
+    backgroundColor: C.purple,
     borderRadius: 50,
     paddingVertical: 14,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
-    shadowColor: PURPLE_DARK,
+    shadowColor: C.purpleDark,
     shadowOpacity: 0.45,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 5 },
@@ -458,23 +444,111 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  bookIconText: {
-    fontSize: 20,
-    color: '#fff',
-    fontWeight: '300',
-    lineHeight: 24,
+  bookIconText: { fontSize: 20, color: C.white, fontWeight: '300', lineHeight: 24 },
+  bookText: { fontSize: 15, fontWeight: '800', color: C.white, letterSpacing: 0.3 },
+
+  // Available Slots (same purple card style as tokenCard)
+  slotsSection: { marginBottom: 20 },
+  slotsSectionTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: C.textDark,
+    marginBottom: 14,
   },
-  bookText: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#fff',
-    letterSpacing: 0.3,
+  slotCard: {
+    backgroundColor: C.purple,
+    borderRadius: 22,
+    padding: 14,
+    flexDirection: 'row',
+    gap: 14,
+    marginBottom: 14,
+    shadowColor: C.purpleDark,
+    shadowOpacity: 0.4,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 7,
   },
+  slotInfoBox: {
+    backgroundColor: C.white,
+    borderRadius: 16,
+    padding: 12,
+    alignItems: 'center',
+    minWidth: 100,
+    flexShrink: 0,
+    justifyContent: 'center',
+  },
+  slotNumLabel: { fontSize: 10, color: C.textMid, fontWeight: '700' },
+  slotNum: {
+    fontSize: 48,
+    fontWeight: '900',
+    color: C.textDark,
+    lineHeight: 54,
+    marginVertical: 2,
+  },
+  slotTimeBadge: {
+    backgroundColor: C.purple,
+    borderRadius: 14,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    width: '100%',
+  },
+  slotTimeBadgeSmall: { fontSize: 8, color: 'rgba(255,255,255,0.8)', fontWeight: '700' },
+  slotTimeText: { fontSize: 12, color: C.white, fontWeight: '800', letterSpacing: 0.6 },
+  slotDetails: { flex: 1, justifyContent: 'space-between' },
+  slotHospitalName: { fontSize: 14, fontWeight: '800', color: C.white, marginBottom: 4 },
+  slotAddress: {
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.75)',
+    lineHeight: 16,
+    marginBottom: 12,
+  },
+  slotStatusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  slotStatusBadge: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 12,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+  },
+  slotStatusBadgeActive: { backgroundColor: '#00D4A0' },
+  slotStatusText: { fontSize: 10, color: C.white, fontWeight: '800' },
+  slotArrow: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  slotArrowText: { fontSize: 13, color: C.white, fontWeight: '700' },
+
+  // Create section
+  createSection: { alignItems: 'center', marginBottom: 20 },
+  createButton: {
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: C.purple,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: C.purpleDark,
+    shadowOpacity: 0.45,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 6,
+    marginBottom: 6,
+  },
+  createIcon: { fontSize: 26, color: C.white, fontWeight: '300', lineHeight: 30 },
+  createLabel: { fontSize: 12, color: C.textMid, fontWeight: '700' },
 
   // Bottom Nav
   bottomNav: {
     flexDirection: 'row',
-    backgroundColor: '#ffffff',
+    backgroundColor: C.white,
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderTopLeftRadius: 24,
@@ -485,23 +559,14 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: -3 },
     elevation: 10,
   },
-  navItem: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 4,
-  },
-  navIcon: {
-    fontSize: 22,
-    color: PURPLE_MID,
-  },
-  navIconActive: {
-    color: PURPLE,
-  },
+  navItem: { flex: 1, alignItems: 'center', paddingVertical: 4 },
+  navIcon: { fontSize: 22, color: C.purpleMid },
+  navIconActive: { color: C.purple },
   navDot: {
     width: 5,
     height: 5,
     borderRadius: 3,
-    backgroundColor: PURPLE,
+    backgroundColor: C.purple,
     marginTop: 3,
   },
 });
