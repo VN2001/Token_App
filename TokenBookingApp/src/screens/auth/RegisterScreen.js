@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_500Medium',
   },
   registerButton: {
-    borderRadius: 50,
+    borderRadius: 20,
     overflow: 'hidden',
     marginTop: 8,
     shadowColor: '#7B5FEB',
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
   registerGradient: {
     paddingVertical: 17,
     alignItems: 'center',
-    borderRadius: 50,
+    borderRadius: 20,
   },
   registerButtonText: {
     color: '#FFFFFF',

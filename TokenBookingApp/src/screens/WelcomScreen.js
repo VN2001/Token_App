@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   primaryButton: {
     backgroundColor: "#7B5FEB",
     paddingVertical: 18,
-    borderRadius: 50,
+    borderRadius: 20,
     alignItems: "center",
     marginBottom: 14,
     width: "100%",
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
 secondaryButton: {
   backgroundColor: "#F0EEF8",
   paddingVertical: 18,
-  borderRadius: 50,
+  borderRadius: 20,
   alignItems: "center",
   justifyContent: "center",  // add this
   width: "100%",

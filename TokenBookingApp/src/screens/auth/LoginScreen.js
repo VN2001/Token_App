@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   loginButton: {
-    borderRadius: 50,
+    borderRadius: 20,
     overflow: 'hidden',
     shadowColor: '#7B5FEB',
     shadowOpacity: 0.4,
@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
   loginGradient: {
     paddingVertical: 17,
     alignItems: 'center',
-    borderRadius: 50,
+    borderRadius: 20,
   },
   loginButtonText: {
     color: '#FFFFFF',
