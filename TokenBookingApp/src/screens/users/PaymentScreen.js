@@ -11,8 +11,7 @@ import {
 import { Image } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
-// Google Pay color icon (SVG-like using shapes)
-const GooglePayIcon = ({ size = 24 }) => (
+const GooglePayIcon = ({ size = 26 }) => (
   <Image
     source={require('../../../assets/icons/gpay.png')}
     style={{ width: size, height: size, resizeMode: 'contain' }}
@@ -23,7 +22,10 @@ const BackArrow = () => (
   <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
     <Path
       d="M19 12H5M5 12L12 19M5 12L12 5"
-      stroke="#7B5FEB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+      stroke="#1a1a1a"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </Svg>
 );
@@ -40,20 +42,28 @@ export default function PaymentScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="dark-content" backgroundColor="#f5f5f7" />
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation?.goBack()} style={styles.backBtn}>
           <BackArrow />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Payment</Text>
-        <Text style={styles.headerAmount}>₹199.00</Text>
+        <View style={styles.headerCenter}>
+          <Text style={styles.headerTitle}>Payment</Text>
+          <Text style={styles.headerAmount}>₹199.00</Text>
+        </View>
+        {/* Spacer to balance the back button */}
+        <View style={{ width: 32 }} />
       </View>
 
-      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
 
-        {/* Hospital Card */}
+        {/* Hospital Info */}
         <View style={styles.hospitalCard}>
           <Text style={styles.hospitalName}>Hospital Name</Text>
           <Text style={styles.hospitalAddress}>Anna nagar (East), Road 45 ....</Text>
@@ -74,26 +84,24 @@ export default function PaymentScreen({ navigation }) {
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>UPI</Text>
 
-          {/* Google Pay Option */}
           <TouchableOpacity
             style={styles.paymentOption}
             onPress={() => setUpiMethod('googlepay')}
             activeOpacity={0.7}
           >
-            <GooglePayIcon size={28} />
+            <GooglePayIcon size={26} />
             <Text style={styles.optionLabel}>Google Pay</Text>
             <RadioButton selected={upiMethod === 'googlepay'} />
           </TouchableOpacity>
 
           <View style={styles.divider} />
 
-          {/* Enter UPI ID Option */}
           <TouchableOpacity
             style={styles.paymentOption}
             onPress={() => setUpiMethod('upiid')}
             activeOpacity={0.7}
           >
-            <GooglePayIcon size={28} />
+            <GooglePayIcon size={26} />
             <Text style={styles.optionLabel}>Enter UPI Id</Text>
             <RadioButton selected={upiMethod === 'upiid'} />
           </TouchableOpacity>
@@ -101,25 +109,25 @@ export default function PaymentScreen({ navigation }) {
 
         {/* Preferred Options Section */}
         <View style={styles.preferredCard}>
-          <Text style={styles.sectionTitleBold}>Prefered Options</Text>
+          <Text style={styles.sectionTitle}>Prefered Options</Text>
 
           <TouchableOpacity
             style={styles.paymentOption}
             onPress={() => setPreferredMethod('googlepay')}
             activeOpacity={0.7}
           >
-            <GooglePayIcon size={28} />
+            <GooglePayIcon size={26} />
             <Text style={styles.optionLabel}>Google Pay</Text>
             <RadioButton selected={preferredMethod === 'googlepay'} />
           </TouchableOpacity>
         </View>
 
-        {/* Pay Now Button */}
+        {/* Pay Now Button — centered with horizontal margin like screenshot */}
         <TouchableOpacity style={styles.payButton} activeOpacity={0.85}>
           <Text style={styles.payButtonText}>Pay Now</Text>
         </TouchableOpacity>
 
-        <View style={{ height: 40 }} />
+        <View style={{ height: 36 }} />
       </ScrollView>
 
       {/* Bottom Bar */}
@@ -132,15 +140,17 @@ export default function PaymentScreen({ navigation }) {
 
 const PURPLE = '#7B5EA7';
 const LIGHT_PURPLE = '#EDE9F6';
+const BG = '#f4f4f7';
 
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#f5f5f7',
-    marginTop:50,
+    backgroundColor: BG,
   },
   scroll: {
     flex: 1,
+  },
+  scrollContent: {
     paddingHorizontal: 16,
   },
 
@@ -150,44 +160,46 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: '#f5f5f7',
+    backgroundColor: '#ffffff',
   },
   backBtn: {
     padding: 4,
-    marginRight: 8,
+    marginTop:70,
   },
-  backArrow: {
-    fontSize: 22,
-    color: '#1a1a1a',
-    fontWeight: '400',
+  headerCenter: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+        marginTop:70,
+
   },
   headerTitle: {
-    flex: 1,
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: '700',
     color: '#1a1a1a',
   },
   headerAmount: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
     color: PURPLE,
   },
 
-  // Hospital Card
+  // Hospital
   hospitalCard: {
-    backgroundColor: '#f5f5f7',
-    paddingVertical: 16,
-    marginBottom: 8,
+    paddingTop: 8,
+    paddingBottom: 24,
   },
   hospitalName: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: '700',
     color: '#1a1a1a',
     marginBottom: 4,
   },
   hospitalAddress: {
     fontSize: 13,
-    color: '#888',
+    color: '#aaa',
     marginBottom: 16,
   },
   dateTimeRow: {
@@ -196,15 +208,16 @@ const styles = StyleSheet.create({
   },
   dateTimeBox: {
     backgroundColor: LIGHT_PURPLE,
-    borderRadius: 10,
+    borderRadius: 12,
     paddingVertical: 10,
     paddingHorizontal: 18,
     minWidth: 120,
   },
   dateTimeLabel: {
     fontSize: 12,
-    color: '#888',
+    color: '#aaa',
     marginBottom: 2,
+    fontWeight: '500',
   },
   dateTimeValue: {
     fontSize: 15,
@@ -215,8 +228,8 @@ const styles = StyleSheet.create({
   // Cards
   card: {
     backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 16,
+    borderRadius: 18,
+    padding: 18,
     marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -226,9 +239,9 @@ const styles = StyleSheet.create({
   },
   preferredCard: {
     backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 24,
+    borderRadius: 18,
+    padding: 18,
+    marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
@@ -237,13 +250,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#1a1a1a',
-    marginBottom: 14,
-  },
-  sectionTitleBold: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '800',
     color: '#1a1a1a',
     marginBottom: 14,
   },
@@ -263,8 +270,8 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: '#f0f0f0',
-    marginVertical: 8,
+    backgroundColor: '#ebebeb',
+    marginVertical: 6,
   },
 
   // Radio
@@ -290,10 +297,10 @@ const styles = StyleSheet.create({
   // Pay Button
   payButton: {
     backgroundColor: PURPLE,
-    borderRadius: 30,
+    borderRadius: 20,
     paddingVertical: 16,
     alignItems: 'center',
-    marginHorizontal: 4,
+    marginHorizontal: 12,
     shadowColor: PURPLE,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -310,14 +317,14 @@ const styles = StyleSheet.create({
   // Bottom
   bottomBar: {
     alignItems: 'center',
-    paddingBottom: 8,
-    paddingTop: 4,
-    backgroundColor: '#f5f5f7',
+    paddingBottom: 10,
+    paddingTop: 6,
+    backgroundColor: BG,
   },
   bottomIndicator: {
-    width: 120,
+    width: 110,
     height: 4,
     borderRadius: 2,
-    backgroundColor: PURPLE,
+    backgroundColor: PURPLE, // purple like the target screenshot
   },
 });
