@@ -412,6 +412,7 @@ const styles = StyleSheet.create({
   hospitalSub: { fontSize: 11, color: C.textMid, marginTop: 2 },
   hospitalRight: { alignItems: 'flex-end', gap: 4 },
   hospitalCount: { fontSize: 13, fontWeight: '800', color: C.purple },
+  hospitalBooked: { fontSize: 11, fontWeight: '700', color: C.success },
   arrowCircle: {
     width: 30,
     height: 30,
@@ -446,6 +447,37 @@ const styles = StyleSheet.create({
   },
   bookIconText: { fontSize: 20, color: C.white, fontWeight: '300', lineHeight: 24 },
   bookText: { fontSize: 15, fontWeight: '800', color: C.white, letterSpacing: 0.3 },
+
+  // Confirmed state button
+  confirmedButton: {
+    marginTop: 6,
+    borderRadius: 40,
+    borderWidth: 1.5,
+    borderColor: C.success,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  confirmedIconCircle: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: C.success,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  confirmedIcon: {
+    fontSize: 16,
+    color: C.white,
+    fontWeight: '800',
+  },
+  confirmedText: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: C.textDark,
+  },
 
   // Available Slots (same purple card style as tokenCard)
   slotsSection: { marginBottom: 20 },
