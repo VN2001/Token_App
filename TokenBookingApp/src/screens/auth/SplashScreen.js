@@ -110,8 +110,7 @@ const SplashScreen = ({ navigation }) => {
 
     // Navigate after 2500ms
     const timer = setTimeout(() => {
-      navigation.navigate("Welcome");
-    }, 2500);
+navigation.replace("Welcome")    }, 2500);
 
     return () => clearTimeout(timer);
   }, []);
