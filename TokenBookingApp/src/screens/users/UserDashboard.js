@@ -8,6 +8,7 @@ import {
   ScrollView,
   StatusBar,
   SafeAreaView,
+  Image,
   Dimensions,
 } from 'react-native';
 
@@ -25,6 +26,7 @@ const C = {
   bg:          '#F5F3FF',
   white:       '#FFFFFF',
   success:     '#00D4A0',
+  green:       '#22C55E',
 };
 
 // ─── Slot data ────────────────────────────────────────────────────────────────
@@ -58,11 +60,160 @@ const SLOTS = [
   },
 ];
 
+// ─── Recently Added States ────────────────────────────────────────────────────
+// 'empty'   → No Recent Profiles
+// 'listed'  → Hospital shown + Book New Slot button
+// 'details' → Date/Time + Token amount pay button
+// 'booked'  → Booked badge + Token Confirmed button
+
+const RecentlyAddedSection = ({ bookingState, setBookingState, navigation }) => {
+  const renderContent = () => {
+    switch (bookingState) {
+      // ── State 1: Empty ──────────────────────────────────────────────────────
+      case 'empty':
+        return (
+          <View style={styles.emptyBox}>
+            <Text style={styles.emptyText}>No Recent Profiles</Text>
+          </View>
+        );
+
+      // ── State 2: Hospital Listed + Book New Slot ────────────────────────────
+      case 'listed':
+        return (
+          <>
+            <View style={styles.hospitalRow}>
+              <View style={styles.hospitalAvatar}>
+                <Text style={styles.avatarEmoji}>👨‍👩‍👧</Text>
+              </View>
+              <View style={styles.hospitalInfo}>
+                <Text style={styles.hospitalName}>Hospital Name</Text>
+                <Text style={styles.hospitalSub}>Anna nagar (East), Road 45 ...</Text>
+              </View>
+              <View style={styles.hospitalRight}>
+                <Text style={styles.hospitalCount}>02/50</Text>
+                <View style={styles.arrowCircle}>
+                  <Text style={styles.arrowText}>→</Text>
+                </View>
+              </View>
+            </View>
+            <TouchableOpacity
+              style={styles.bookButton}
+              activeOpacity={0.85}
+              onPress={() => setBookingState('details')}
+            >
+              <View style={styles.bookIconCircle}>
+                <Text style={styles.bookIconText}>+</Text>
+              </View>
+              <Text style={styles.bookText}>Book New Slot</Text>
+            </TouchableOpacity>
+          </>
+        );
+
+      // ── State 3: Booking Details + Token Amount ─────────────────────────────
+      case 'details':
+        return (
+          <>
+            <View style={styles.hospitalRow}>
+              <View style={styles.hospitalAvatar}>
+                <Text style={styles.avatarEmoji}>👨‍👩‍👧</Text>
+              </View>
+              <View style={styles.hospitalInfo}>
+                <Text style={styles.hospitalName}>Hospital Name</Text>
+                <Text style={styles.hospitalSub}>Anna nagar (East), Road 45 ...</Text>
+              </View>
+              <View style={styles.hospitalRight}>
+                <Text style={styles.hospitalCount}>02/50</Text>
+              </View>
+            </View>
+
+            {/* Date & Time pills */}
+            <View style={styles.dtRow}>
+              <View style={styles.dtPill}>
+                <Text style={styles.dtLabel}>Date</Text>
+                <Text style={styles.dtValue}>Feb 12,2026</Text>
+              </View>
+              <View style={styles.dtPill}>
+                <Text style={styles.dtLabel}>Time</Text>
+                <Text style={styles.dtValue}>11:45pm</Text>
+              </View>
+            </View>
+
+            {/* Pay row */}
+            <View style={styles.payRow}>
+              <TouchableOpacity
+                style={styles.backCircle}
+                onPress={() => setBookingState('listed')}
+              >
+                <Text style={styles.backArrow}>←</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.payButton}
+                activeOpacity={0.85}
+                onPress={() => {
+                  setBookingState('booked');
+                  navigation.navigate('Payment');
+                }}
+              >
+                <View style={styles.payTextCol}>
+                  <Text style={styles.payLabel}>Token amount</Text>
+                  <Text style={styles.payAmount}>₹199.00</Text>
+                </View>
+                <View style={styles.payArrowCircle}>
+                  <Text style={styles.payArrowText}>→</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </>
+        );
+
+      // ── State 4: Booked / Confirmed ─────────────────────────────────────────
+      case 'booked':
+        return (
+          <>
+            <View style={styles.hospitalRow}>
+              <View style={styles.hospitalAvatar}>
+                <Text style={styles.avatarEmoji}>👨‍👩‍👧</Text>
+              </View>
+              <View style={styles.hospitalInfo}>
+                <Text style={styles.hospitalName}>Hospital Name</Text>
+                <Text style={styles.hospitalSub}>Anna nagar (East), Road 45 ...</Text>
+              </View>
+              <Text style={styles.bookedBadge}>Booked</Text>
+            </View>
+            <View style={styles.confirmedButton}>
+              <View style={styles.confirmedIconCircle}>
+                <Text style={styles.confirmedIcon}>✓</Text>
+              </View>
+              <Text style={styles.confirmedText}>Token Confirmed</Text>
+            </View>
+          </>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <View style={styles.bottomCard}>
+      <View style={styles.recentlyAddedRow}>
+        <Text style={styles.recentlyAddedText}>Recently Added</Text>
+        <Text style={styles.filterIcon}>⇅</Text>
+      </View>
+      {renderContent()}
+    </View>
+  );
+};
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 const UserDashboard = () => {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState('home');
   const [seconds, setSeconds] = useState(89);
+
+  // Controls which state the "Recently Added" card shows
+  // Toggle between 'empty' | 'listed' | 'details' | 'booked'
+  const [bookingState, setBookingState] = useState('empty');
 
   useEffect(() => {
     const timer = setInterval(() => setSeconds(s => (s > 0 ? s - 1 : 0)), 1000);
@@ -145,42 +296,19 @@ const UserDashboard = () => {
           <View style={styles.dot} />
         </View>
 
-        {/* Bottom White Card */}
-        <View style={styles.bottomCard}>
-          <View style={styles.recentlyAddedRow}>
-            <Text style={styles.recentlyAddedText}>Recently Added</Text>
-            <Text style={styles.filterIcon}>⇅</Text>
-          </View>
-          <View style={styles.hospitalRow}>
-            <View style={styles.hospitalAvatar}>
-              <Text style={styles.avatarEmoji}>👨‍👩‍👧</Text>
-            </View>
-            <View style={styles.hospitalInfo}>
-              <Text style={styles.hospitalName}>Hospital Name</Text>
-              <Text style={styles.hospitalSub}>Anna nagar (East), Road 45 ...</Text>
-            </View>
-            <View style={styles.hospitalRight}>
-              <Text style={styles.hospitalCount}>02/50</Text>
-              <View style={styles.arrowCircle}>
-                <Text style={styles.arrowText}>→</Text>
-              </View>
-            </View>
-          </View>
-          <TouchableOpacity style={styles.bookButton} activeOpacity={0.85} onPress={()=>navigation.navigate("Payment")} >
-            <View style={styles.bookIconCircle}>
-              <Text style={styles.bookIconText}>+</Text>
-            </View>
-            <Text style={styles.bookText}>Book New Slot</Text>
-          </TouchableOpacity>
-        </View>
+        {/* Recently Added Card — 4 states */}
+        <RecentlyAddedSection
+          bookingState={bookingState}
+          setBookingState={setBookingState}
+          navigation={navigation}
+        />
 
-        {/* Available Slots — same purple card style as token card */}
+        {/* Available Slots */}
         <View style={styles.slotsSection}>
           <Text style={styles.slotsSectionTitle}>Available Slots</Text>
 
           {SLOTS.map(slot => (
             <View key={slot.id} style={styles.slotCard}>
-              {/* Left white box */}
               <View style={styles.slotInfoBox}>
                 <Text style={styles.slotNumLabel}>Token No.</Text>
                 <Text style={styles.slotNum}>{slot.num}</Text>
@@ -189,8 +317,6 @@ const UserDashboard = () => {
                   <Text style={styles.slotTimeText}>{slot.time}</Text>
                 </View>
               </View>
-
-              {/* Right details */}
               <View style={styles.slotDetails}>
                 <Text style={styles.slotHospitalName}>{slot.hospital}</Text>
                 <Text style={styles.slotAddress}>{slot.address}</Text>
@@ -212,7 +338,14 @@ const UserDashboard = () => {
 
         {/* Create New Slot */}
         <View style={styles.createSection}>
-          <TouchableOpacity style={styles.createButton} activeOpacity={0.85} onPress={() => navigation.navigate('BookingSlot')}>
+          <TouchableOpacity
+            style={styles.createButton}
+            activeOpacity={0.85}
+            onPress={() => {
+              setBookingState('listed');
+              navigation.navigate('BookingSlot');
+            }}
+          >
             <Text style={styles.createIcon}>+</Text>
           </TouchableOpacity>
           <Text style={styles.createLabel}>Create a New Slot</Text>
@@ -375,7 +508,7 @@ const styles = StyleSheet.create({
   dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: C.purpleMid, opacity: 0.4 },
   dotActive: { width: 20, backgroundColor: C.purpleDark, opacity: 1 },
 
-  // Bottom White Card
+  // ── Bottom White Card (Recently Added) ──────────────────────────────────────
   bottomCard: {
     backgroundColor: C.white,
     borderRadius: 24,
@@ -396,7 +529,29 @@ const styles = StyleSheet.create({
   },
   recentlyAddedText: { fontSize: 12, color: C.textMid, fontWeight: '700' },
   filterIcon: { fontSize: 14, color: C.textMid },
-  hospitalRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 18 },
+
+  // State 1 — Empty
+  emptyBox: {
+    backgroundColor: '#F2F2F2',
+    borderRadius: 16,
+    paddingVertical: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  emptyText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#E05252',
+  },
+
+  // State 2 & 3 & 4 — Hospital row
+  hospitalRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 16,
+  },
   hospitalAvatar: {
     width: 52,
     height: 52,
@@ -412,7 +567,6 @@ const styles = StyleSheet.create({
   hospitalSub: { fontSize: 11, color: C.textMid, marginTop: 2 },
   hospitalRight: { alignItems: 'flex-end', gap: 4 },
   hospitalCount: { fontSize: 13, fontWeight: '800', color: C.purple },
-  hospitalBooked: { fontSize: 11, fontWeight: '700', color: C.success },
   arrowCircle: {
     width: 30,
     height: 30,
@@ -423,6 +577,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   arrowText: { fontSize: 14, color: C.textDark, fontWeight: '700' },
+
+  // State 2 — Book New Slot button
   bookButton: {
     backgroundColor: C.purple,
     borderRadius: 50,
@@ -448,38 +604,98 @@ const styles = StyleSheet.create({
   bookIconText: { fontSize: 20, color: C.white, fontWeight: '300', lineHeight: 24 },
   bookText: { fontSize: 15, fontWeight: '800', color: C.white, letterSpacing: 0.3 },
 
-  // Confirmed state button
-  confirmedButton: {
-    marginTop: 6,
-    borderRadius: 40,
+  // State 3 — Date/Time pills
+  dtRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 16,
+  },
+  dtPill: {
+    flex: 1,
+    backgroundColor: C.purpleLight,
+    borderRadius: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+  },
+  dtLabel: { fontSize: 11, color: C.textMid, fontWeight: '600', marginBottom: 2 },
+  dtValue: { fontSize: 15, fontWeight: '800', color: C.textDark },
+
+  // State 3 — Pay row
+  payRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  backCircle: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     borderWidth: 1.5,
-    borderColor: C.success,
+    borderColor: C.purpleMid,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexShrink: 0,
+  },
+  backArrow: { fontSize: 18, color: C.textDark, fontWeight: '700' },
+  payButton: {
+    flex: 1,
+    backgroundColor: C.purple,
+    borderRadius: 50,
     paddingVertical: 12,
+    paddingHorizontal: 18,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    shadowColor: C.purpleDark,
+    shadowOpacity: 0.45,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 6,
+  },
+  payTextCol: { flexDirection: 'column' },
+  payLabel: { fontSize: 10, color: 'rgba(255,255,255,0.8)', fontWeight: '700' },
+  payAmount: { fontSize: 18, color: C.white, fontWeight: '900', letterSpacing: 0.3 },
+  payArrowCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  payArrowText: { fontSize: 18, color: C.white, fontWeight: '700' },
+
+  // State 4 — Booked badge
+  bookedBadge: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: C.green,
+  },
+
+  // State 4 — Token Confirmed button
+  confirmedButton: {
+    borderRadius: 50,
+    borderWidth: 1.5,
+    borderColor: '#E0E0E0',
+    paddingVertical: 14,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
+    gap: 12,
+    backgroundColor: C.white,
   },
   confirmedIconCircle: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: C.success,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: C.green,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  confirmedIcon: {
-    fontSize: 16,
-    color: C.white,
-    fontWeight: '800',
-  },
-  confirmedText: {
-    fontSize: 15,
-    fontWeight: '800',
-    color: C.textDark,
-  },
+  confirmedIcon: { fontSize: 18, color: C.white, fontWeight: '800' },
+  confirmedText: { fontSize: 16, fontWeight: '800', color: C.textDark },
 
-  // Available Slots (same purple card style as tokenCard)
+  // Available Slots
   slotsSection: { marginBottom: 20 },
   slotsSectionTitle: {
     fontSize: 16,
