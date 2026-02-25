@@ -11,7 +11,7 @@ import {
 } from "@expo-google-fonts/poppins";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useCallback } from "react";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -32,6 +32,17 @@ export default function App() {
 
   if (!fontsLoaded && !fontError) {
     return null;
+  }
+
+  // Set global default font for all Text components
+  if (fontsLoaded && !fontError) {
+    if (!Text.defaultProps) {
+      Text.defaultProps = {};
+    }
+    Text.defaultProps.style = [
+      Text.defaultProps.style,
+      { fontFamily: "Poppins_400Regular" },
+    ];
   }
 
   return (
