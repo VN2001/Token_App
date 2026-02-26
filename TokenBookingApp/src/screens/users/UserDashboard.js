@@ -11,6 +11,10 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+
+const dash1 = require('../../../assets/dash1.jpg');
+const dash2 = require('../../../assets/dash2.jpg');
 
 const { width } = Dimensions.get('window');
 
@@ -226,12 +230,29 @@ const UserDashboard = () => {
     return `${m}:${sec}`;
   };
 
+  const getTabIconName = (tabId, isActive) => {
+    switch (tabId) {
+      case 'home':
+        return isActive ? 'home' : 'home-outline';
+      case 'list':
+        return isActive ? 'list' : 'list-outline';
+      case 'search':
+        return isActive ? 'search' : 'search-outline';
+      case 'bell':
+        return isActive ? 'notifications' : 'notifications-outline';
+      case 'profile':
+        return isActive ? 'person' : 'person-outline';
+      default:
+        return isActive ? 'ellipse' : 'ellipse-outline';
+    }
+  };
+
   const tabs = [
-    { id: 'home',    icon: '🏠' },
-    { id: 'list',    icon: '☰'  },
-    { id: 'search',  icon: '🔍' },
-    { id: 'bell',    icon: '🔔' },
-    { id: 'profile', icon: '👤' },
+    { id: 'home' },
+    { id: 'list' },
+    { id: 'search' },
+    { id: 'bell' },
+    { id: 'profile' },
   ];
 
   return (
@@ -276,14 +297,11 @@ const UserDashboard = () => {
           </View>
           <View style={styles.imageGrid}>
             <View style={styles.imageTop}>
-              <Text style={styles.imageEmoji}>🚗</Text>
+              <Image source={dash1} style={styles.dashImageTop} />
             </View>
             <View style={styles.imageBottom}>
               <View style={styles.imageSmall}>
-                <Text style={styles.imageEmoji}>📱</Text>
-              </View>
-              <View style={styles.imageSmall}>
-                <Text style={styles.imageEmoji}>💼</Text>
+                <Image source={dash2} style={styles.dashImageSmall} />
               </View>
             </View>
           </View>
@@ -360,9 +378,11 @@ const UserDashboard = () => {
             style={styles.navItem}
             onPress={() => setActiveTab(tab.id)}
           >
-            <Text style={[styles.navIcon, activeTab === tab.id && styles.navIconActive]}>
-              {tab.icon}
-            </Text>
+            <Ionicons
+              name={getTabIconName(tab.id, activeTab === tab.id)}
+              size={24}
+              color={C.textDark}
+            />
             {activeTab === tab.id && <View style={styles.navDot} />}
           </TouchableOpacity>
         ))}
@@ -486,6 +506,12 @@ const styles = StyleSheet.create({
     minHeight: 90,
     opacity: 0.9,
   },
+  dashImageTop: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 14,
+    resizeMode: 'cover',
+  },
   imageBottom: { flexDirection: 'row', gap: 8 },
   imageSmall: {
     flex: 1,
@@ -496,7 +522,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     opacity: 0.9,
   },
-  imageEmoji: { fontSize: 30 },
+  dashImageSmall: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 14,
+    resizeMode: 'cover',
+  },
 
   // Dots
   dotsContainer: {
