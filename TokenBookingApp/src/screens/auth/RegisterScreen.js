@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,374 +12,550 @@ import {
   StatusBar,
   TouchableWithoutFeedback,
   Keyboard,
+  Modal,
+  ActivityIndicator,
+  Image,
+  Dimensions,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 
-// ─── Icons ────────────────────────────────────────────────────────────────────
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const TOP_GAP = 200;
 
-const EyeOpen = () => (
-  <Svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <Path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z"
-      stroke="#7B5FEB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    <Path d="M12 9C10.34 9 9 10.34 9 12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12C15 10.34 13.66 9 12 9Z"
-      stroke="#7B5FEB" strokeWidth="2" />
-  </Svg>
-);
-
-const EyeClosed = () => (
-  <Svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <Path d="M17.94 17.94A10.07 10.07 0 0112 20C5 20 1 12 1 12A18.45 18.45 0 015.06 5.06M9.9 4.24A9.12 9.12 0 0112 4C19 4 23 12 23 12A18.5 18.5 0 0120.71 15.71M1 1L23 23"
-      stroke="#7B5FEB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-  </Svg>
-);
+// ─── Icons ──────────────────────────────────────────────────────────────────────
 
 const BackArrow = () => (
-  <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <Svg width="20" height="20" viewBox="0 0 24 24" fill="none">
     <Path d="M19 12H5M5 12L12 19M5 12L12 5"
-      stroke="#7B5FEB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      stroke="#333" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
   </Svg>
 );
 
-// ─── InputField ───────────────────────────────────────────────────────────────
+const CheckMark = () => (
+  <Svg width="10" height="10" viewBox="0 0 24 24" fill="none">
+    <Path d="M20 6L9 17L4 12"
+      stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+  </Svg>
+);
 
-const InputField = ({
-  label, placeholder, keyboardType, autoCapitalize,
-  isPassword, showPw, togglePw, value, onChangeText, error
-}) => (
-  <View style={styles.inputContainer}>
-    <Text style={styles.label}>{label}</Text>
-    <View style={[
-      styles.inputWrapper,
-      error && styles.inputWrapperError,
-    ]}>
+// ─── Pill Input with side-only shadow ──────────────────────────────────────────
+
+const PillInput = ({ style, errorStyle, ...props }) => (
+  <View style={s.shadowRight}>
+    <View style={s.shadowLeft}>
       <TextInput
-        style={styles.input}
-        placeholder={placeholder}
-        placeholderTextColor="#C4B0F8"
-        value={value}
-        onChangeText={onChangeText}
-        keyboardType={keyboardType || 'default'}
-        autoCapitalize={autoCapitalize || 'none'}
-        autoCorrect={false}
-        secureTextEntry={isPassword && !showPw}
-        blurOnSubmit={false}
+        style={[s.input, errorStyle]}
+        placeholderTextColor="#B0B0B8"
+        {...props}
       />
-      {isPassword && (
-        <TouchableOpacity style={styles.eyeBtn} onPress={togglePw}>
-          {showPw ? <EyeOpen /> : <EyeClosed />}
-        </TouchableOpacity>
-      )}
     </View>
-    {error ? <Text style={styles.errorText}>⚠ {error}</Text> : null}
   </View>
 );
 
-// ─── RegisterForm ─────────────────────────────────────────────────────────────
+// ─── OTP Modal ───────────────────────────────────────────────────────────────────
 
-const RegisterForm = ({ navigation }) => {
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-  });
+const OtpModal = ({ visible, phone, onClose, onVerify }) => {
+  const [otp, setOtp] = useState(['', '', '', '']);
+  const [focusedIndex, setFocusedIndex] = useState(0);
+  const [timer, setTimer] = useState(143);
+  const [loading, setLoading] = useState(false);
+  const inputRefs = useRef([]);
 
-  const [errors, setErrors] = useState({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  useEffect(() => {
+    if (visible) {
+      setOtp(['', '', '', '']);
+      setTimer(143);
+      setFocusedIndex(0);
+      setTimeout(() => inputRefs.current[0]?.focus(), 400);
+    }
+  }, [visible]);
 
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const validatePhone = (phone) => /^[0-9]{10}$/.test(phone.replace(/[^\d]/g, ''));
+  useEffect(() => {
+    if (!visible || timer <= 0) return;
+    const id = setInterval(() => setTimer(t => t - 1), 1000);
+    return () => clearInterval(id);
+  }, [visible, timer]);
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.fullName.trim()) newErrors.fullName = 'Full name is required';
-    else if (formData.fullName.trim().length < 3) newErrors.fullName = 'Name must be at least 3 characters';
-    if (!formData.email.trim()) newErrors.email = 'Email is required';
-    else if (!validateEmail(formData.email)) newErrors.email = 'Please enter a valid email';
-    if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
-    else if (!validatePhone(formData.phone)) newErrors.phone = 'Please enter a valid 10-digit phone number';
-    if (!formData.password) newErrors.password = 'Password is required';
-    else if (formData.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
-    if (!formData.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
-    else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const fmt = (s) =>
+    `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+
+  const handleChange = (text, i) => {
+    const d = text.replace(/[^0-9]/g, '').slice(-1);
+    const next = [...otp]; next[i] = d; setOtp(next);
+    if (d && i < 3) { inputRefs.current[i + 1]?.focus(); setFocusedIndex(i + 1); }
   };
 
-  const handleRegister = () => {
-    if (validateForm()) {
-      Alert.alert('Success', 'Registration successful!', [
-        { text: 'OK', onPress: () => console.log('User registered:', formData) },
-      ]);
+  const handleKey = (e, i) => {
+    if (e.nativeEvent.key === 'Backspace' && !otp[i] && i > 0) {
+      inputRefs.current[i - 1]?.focus(); setFocusedIndex(i - 1);
     }
   };
 
-  const updateField = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
+  const handleSubmit = () => {
+    const code = otp.join('');
+    if (code.length < 4) { Alert.alert('Error', 'Please enter the complete 4-digit OTP'); return; }
+    setLoading(true);
+    // ✅ TODO: Replace → await verifyOtp(phone, code)
+    setTimeout(() => { setLoading(false); onVerify(code); }, 1500);
+  };
+
+  const handleResend = () => {
+    if (timer > 0) return;
+    setTimer(143); setOtp(['', '', '', '']);
+    setTimeout(() => inputRefs.current[0]?.focus(), 100);
+    // ✅ TODO: Replace → await sendOtp(phone)
+    Alert.alert('OTP Resent', 'A new code has been sent.');
   };
 
   return (
-    <LinearGradient
-      colors={["#7B5FEB", "#9B7FF5", "#C4B0F8", "#EDE8FC", "#FFFFFF"]}
-      locations={[0, 0.25, 0.5, 0.68, 0.85]}
-      style={styles.gradient}
-    >
-      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.kav}
-      >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="always"
-            keyboardDismissMode="none"
-          >
-            {/* Back button */}
-            <TouchableOpacity
-              style={styles.backBtn}
-              onPress={() => navigation?.goBack()}
-              activeOpacity={0.7}
-            >
+    <Modal visible={visible} transparent animationType="slide">
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={otp_s.overlay}>
+          <View style={otp_s.topBar} />
+          <View style={otp_s.card}>
+            <TouchableOpacity style={otp_s.backBtn} onPress={onClose}>
               <BackArrow />
             </TouchableOpacity>
+            <Text style={otp_s.title}>Check your phone</Text>
+            <Text style={otp_s.subtitle}>We've send a code to your number</Text>
 
-            {/* Header */}
-            <View style={styles.header}>
-              <Text style={styles.title}>Create Account</Text>
-              <Text style={styles.subtitle}>
-                Sign up to get started with <Text style={styles.horaAccent}>Hora</Text>
-              </Text>
+            <View style={otp_s.otpRow}>
+              {otp.map((v, i) => (
+                <TextInput
+                  key={i}
+                  ref={el => (inputRefs.current[i] = el)}
+                  style={[otp_s.box, focusedIndex === i && otp_s.boxFocused]}
+                  value={v}
+                  onChangeText={t => handleChange(t, i)}
+                  onKeyPress={e => handleKey(e, i)}
+                  onFocus={() => setFocusedIndex(i)}
+                  keyboardType="number-pad"
+                  maxLength={1}
+                  textAlign="center"
+                  selectTextOnFocus
+                  caretHidden
+                />
+              ))}
             </View>
 
-            {/* White card */}
-            <View style={styles.card}>
-              <InputField
-                label="Full Name"
-                placeholder="Enter your full name"
-                autoCapitalize="words"
-                value={formData.fullName}
-                onChangeText={(text) => updateField('fullName', text)}
-                error={errors.fullName}
-              />
-              <InputField
-                label="Email"
-                placeholder="Enter your email"
-                keyboardType="email-address"
-                value={formData.email}
-                onChangeText={(text) => updateField('email', text)}
-                error={errors.email}
-              />
-              <InputField
-                label="Phone Number"
-                placeholder="Enter your phone number"
-                keyboardType="phone-pad"
-                value={formData.phone}
-                onChangeText={(text) => updateField('phone', text)}
-                error={errors.phone}
-              />
-              <InputField
-                label="Password"
-                placeholder="Enter your password"
-                isPassword
-                showPw={showPassword}
-                togglePw={() => setShowPassword(prev => !prev)}
-                value={formData.password}
-                onChangeText={(text) => updateField('password', text)}
-                error={errors.password}
-              />
-              <InputField
-                label="Confirm Password"
-                placeholder="Confirm your password"
-                isPassword
-                showPw={showConfirmPassword}
-                togglePw={() => setShowConfirmPassword(prev => !prev)}
-                value={formData.confirmPassword}
-                onChangeText={(text) => updateField('confirmPassword', text)}
-                error={errors.confirmPassword}
-              />
+            <Text style={otp_s.timer}>
+              Code expires in : <Text style={otp_s.timerBold}>{fmt(timer)}</Text>
+            </Text>
 
-              {/* Register Button */}
-              <TouchableOpacity
-                style={styles.registerButton}
-                onPress={handleRegister}
-                activeOpacity={0.85}
-              >
-                <LinearGradient
-                  colors={["#7B5FEB", "#6347D4"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.registerGradient}
-                >
-                  <Text style={styles.registerButtonText}>Create Account</Text>
-                </LinearGradient>
-              </TouchableOpacity>
+            <TouchableOpacity style={otp_s.btn} onPress={handleSubmit} disabled={loading} activeOpacity={0.85}>
+              {loading ? <ActivityIndicator color="#fff" /> : <Text style={otp_s.btnText}>Submit</Text>}
+            </TouchableOpacity>
 
-              {/* Login link */}
-              <View style={styles.loginContainer}>
-                <Text style={styles.loginText}>Already have an account? </Text>
-                <TouchableOpacity onPress={() => navigation?.navigate('Login')}>
-                  <Text style={styles.loginLink}>Log In</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </ScrollView>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </LinearGradient>
+            <TouchableOpacity
+              style={[otp_s.btn, otp_s.resendBtn, timer > 0 && otp_s.resendDisabled]}
+              onPress={handleResend}
+              activeOpacity={0.85}
+            >
+              <Text style={otp_s.btnText}>Send again</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
   );
 };
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
+// ─── Main Register Screen ────────────────────────────────────────────────────────
 
-const styles = StyleSheet.create({
-  gradient: {
+export default function RegisterForm({ navigation }) {
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail]       = useState('');
+  const [contact, setContact]   = useState('');
+  const [agreed, setAgreed]     = useState(false);
+  const [errors, setErrors]     = useState({});
+  const [showOtp, setShowOtp]   = useState(false);
+
+  const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  const isValidPhone = (v) => /^\d{10}$/.test(v.replace(/[^\d]/g, ''));
+
+  const validate = () => {
+    const e = {};
+    if (!fullName.trim())            e.fullName = 'Full name is required';
+    if (!email.trim())               e.email    = 'Email is required';
+    else if (!isValidEmail(email))   e.email    = 'Enter a valid email';
+    if (!contact.trim())             e.contact  = 'Contact is required';
+    else if (!isValidPhone(contact)) e.contact  = 'Enter a valid 10-digit number';
+    if (!agreed)                     e.agreed   = 'Please accept the terms';
+    setErrors(e);
+    return !Object.keys(e).length;
+  };
+
+  const clear = (f) => errors[f] && setErrors(p => ({ ...p, [f]: '' }));
+
+  const handleSignIn = () => {
+    if (!validate()) return;
+    // ✅ TODO: Call your OTP send API → sendOtp(contact)
+    setShowOtp(true);
+  };
+
+  return (
+    <View style={s.root}>
+      <StatusBar barStyle="dark-content" backgroundColor="#E5E5EA" />
+      <View style={s.greyTop} />
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={s.kavWrapper}
+      >
+        <View style={s.whiteCard}>
+          <ScrollView
+            contentContainerStyle={s.scroll}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <Text style={s.title}>Create Account</Text>
+
+            {/* Full Name */}
+            <PillInput
+              placeholder="Full name"
+              value={fullName}
+              onChangeText={t => { setFullName(t); clear('fullName'); }}
+              autoCapitalize="words"
+              autoCorrect={false}
+              errorStyle={errors.fullName ? s.inputErr : null}
+            />
+            {errors.fullName
+              ? <Text style={s.err}>⚠ {errors.fullName}</Text>
+              : <View style={s.spacer} />
+            }
+
+            {/* Email */}
+            <PillInput
+              placeholder="Email"
+              value={email}
+              onChangeText={t => { setEmail(t); clear('email'); }}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              errorStyle={errors.email ? s.inputErr : null}
+            />
+            {errors.email
+              ? <Text style={s.err}>⚠ {errors.email}</Text>
+              : <View style={s.spacer} />
+            }
+
+            {/* Contact */}
+            <PillInput
+              placeholder="Contact"
+              value={contact}
+              onChangeText={t => { setContact(t); clear('contact'); }}
+              keyboardType="phone-pad"
+              maxLength={15}
+              errorStyle={errors.contact ? s.inputErr : null}
+            />
+            {errors.contact
+              ? <Text style={s.err}>⚠ {errors.contact}</Text>
+              : <View style={s.spacer} />
+            }
+
+            {/* Terms */}
+            <View style={s.termsRow}>
+              <TouchableOpacity
+                style={[s.checkbox, agreed && s.checked]}
+                onPress={() => { setAgreed(p => !p); clear('agreed'); }}
+                activeOpacity={0.75}
+              >
+                {agreed && <CheckMark />}
+              </TouchableOpacity>
+              <Text style={s.termsText}>Agree with </Text>
+              <TouchableOpacity activeOpacity={0.7}>
+                <Text style={s.termsLink}>Terms & conditions</Text>
+              </TouchableOpacity>
+            </View>
+            {errors.agreed
+              ? <Text style={[s.err, { marginTop: -12, marginBottom: 10 }]}>⚠ {errors.agreed}</Text>
+              : null
+            }
+
+            {/* Sign In Button */}
+            <View style={s.btnWrap}>
+              <TouchableOpacity style={s.signInBtn} onPress={handleSignIn} activeOpacity={0.85}>
+                <Text style={s.signInText}>Sign In</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* OR Divider */}
+            <View style={s.divRow}>
+              <View style={s.divLine} />
+              <Text style={s.divText}>or</Text>
+              <View style={s.divLine} />
+            </View>
+
+            {/* Social Icons — use your own images */}
+            <View style={s.socialRow}>
+              <TouchableOpacity style={s.socialBtn} activeOpacity={0.75}>
+                <Image
+                  source={require('../../../assets/icons/google.png')} // 👈 your path
+                  style={s.socialIcon}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity style={s.socialBtn} activeOpacity={0.75}>
+                <Image
+                  source={require('../../../assets/icons/apple.png')} // 👈 your path
+                  style={s.socialIcon}
+                />
+              </TouchableOpacity>
+            </View>
+
+            {/* Login Link */}
+            <View style={s.loginRow}>
+              <Text style={s.loginText}>Already have an account? </Text>
+              <TouchableOpacity onPress={() => navigation?.navigate('Login')}>
+                <Text style={s.loginLink}>Log in</Text>
+              </TouchableOpacity>
+            </View>
+
+          </ScrollView>
+        </View>
+      </KeyboardAvoidingView>
+
+      <OtpModal
+        visible={showOtp}
+        phone={contact}
+        onClose={() => setShowOtp(false)}
+        onVerify={(code) => {
+          setShowOtp(false);
+           navigation.navigate('UserDashboard') 
+          
+        }}
+      />
+    </View>
+  );
+}
+
+// ─── Styles ──────────────────────────────────────────────────────────────────────
+
+const s = StyleSheet.create({
+  root: {
     flex: 1,
+    backgroundColor: '#E5E5EA',
   },
-  kav: {
+  greyTop: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0,
+    height: TOP_GAP,
+    backgroundColor: '#E5E5EA',
+  },
+  kavWrapper: {
+    position: 'absolute',
+    top: TOP_GAP,
+    left: 0, right: 0, bottom: 0,
+  },
+  whiteCard: {
     flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: 22,
-    paddingTop: 60,
-    paddingBottom: 40,
-  },
-  backBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 24,
-    shadowColor: '#3A1EA0',
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
-  },
-  header: {
-    marginBottom: 28,
-  },
-  title: {
-    fontSize: 34,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    marginBottom: 6,
-    letterSpacing: -0.5,
-    fontFamily: 'Poppins_800ExtraBold',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: 'rgba(255,255,255,0.85)',
-    fontWeight: '400',
-    fontFamily: 'Poppins_400Regular',
-  },
-  horaAccent: {
-    color: '#FFFFFF',
-    fontWeight: '700',
-    fontFamily: 'Poppins_700Bold',
-  },
-  card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 28,
-    padding: 24,
-    shadowColor: '#3A1EA0',
-    shadowOpacity: 0.15,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 8 },
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: -3 },
     elevation: 10,
   },
-  inputContainer: {
-    marginBottom: 18,
+  scroll: {
+    paddingHorizontal: 26,
+    paddingTop: 36,
+    paddingBottom: 40,
   },
-  label: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#7B5FEB',
-    marginBottom: 8,
-    letterSpacing: 0.4,
-    textTransform: 'uppercase',
-    fontFamily: 'Poppins_700Bold',
+  title: {
+    fontSize: 27,
+    fontWeight: '900',
+    color: '#111',
+    textAlign: 'center',
+    marginBottom: 32,
+    letterSpacing: -0.4,
   },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F3FF',
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: '#E0D9FB',
+
+  // ── Pill input — two wrapper trick for left+right end shadow only ──
+  shadowRight: {
+    borderRadius: 50,
+    backgroundColor: '#F2F2F7',
+    shadowColor: '#000',
+    shadowOpacity: 0.13,
+    shadowRadius: 5,
+    shadowOffset: { width: 7, height: 0 },   // right end shadow
+    elevation: 3,
   },
-  inputWrapperError: {
-    borderColor: '#FF6B6B',
-    backgroundColor: '#FFF5F5',
+  shadowLeft: {
+    borderRadius: 50,
+    backgroundColor: '#F2F2F7',
+    shadowColor: '#000',
+    shadowOpacity: 0.13,
+    shadowRadius: 5,
+    shadowOffset: { width: -7, height: 0 },  // left end shadow
+    elevation: 3,
   },
   input: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    borderRadius: 50,
+    paddingHorizontal: 22,
+    paddingVertical: Platform.OS === 'ios' ? 16 : 14,
     fontSize: 15,
-    color: '#1A1A1A',
-    fontFamily: 'Poppins_400Regular',
-    includeFontPadding: false,
+    color: '#111',
+    backgroundColor: '#F2F2F7',
   },
-  eyeBtn: {
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+  inputErr: {
+    borderWidth: 1.5,
+    borderColor: '#FF5A5A',
+    backgroundColor: '#FFF4F4',
   },
-  errorText: {
-    color: '#FF6B6B',
+  spacer: { height: 14 },
+  err: {
+    color: '#FF5A5A',
     fontSize: 12,
-    marginTop: 6,
-    marginLeft: 4,
+    marginTop: 5,
+    marginBottom: 8,
+    marginLeft: 6,
     fontWeight: '500',
-    fontFamily: 'Poppins_500Medium',
   },
-  registerButton: {
-    borderRadius: 20,
-    overflow: 'hidden',
-    marginTop: 8,
-    shadowColor: '#7B5FEB',
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 6,
-  },
-  registerGradient: {
-    paddingVertical: 17,
+
+  // Terms
+  termsRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 20,
+    marginTop: 6,
+    marginBottom: 24,
   },
-  registerButtonText: {
-    color: '#FFFFFF',
+  checkbox: {
+    width: 20, height: 20,
+    borderRadius: 5,
+    borderWidth: 1.8,
+    borderColor: '#C0C0C0',
+    marginRight: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+  },
+  checked: { backgroundColor: '#7B5FEB', borderColor: '#7B5FEB' },
+  termsText: { fontSize: 14, color: '#444' },
+  termsLink: {
+    fontSize: 14,
+    color: '#7B5FEB',
+    fontWeight: '600',
+    textDecorationLine: 'underline',
+  },
+
+  // Sign In
+  btnWrap: { alignItems: 'center', marginBottom: 24 },
+  signInBtn: {
+    backgroundColor: '#7B5FEB',
+    borderRadius: 50,
+    paddingVertical: 16,
+    paddingHorizontal: 64,
+    minWidth: 200,
+    alignItems: 'center',
+    shadowColor: '#7B5FEB',
+    shadowOpacity: 0.45,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 7,
+  },
+  signInText: {
+    color: '#fff',
     fontSize: 17,
     fontWeight: '700',
-    letterSpacing: 0.3,
-    fontFamily: 'Poppins_700Bold',
+    letterSpacing: 0.2,
   },
-  loginContainer: {
+
+  // Divider
+  divRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 18 },
+  divLine: { flex: 1, height: 1, backgroundColor: '#E0E0E0' },
+  divText: { marginHorizontal: 14, fontSize: 14, color: '#AAAAAA' },
+
+  // Social
+  socialRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 18,
+    marginBottom: 28,
+  },
+  socialBtn: {
+    width: 52, height: 52,
+    borderRadius: 14,
+    backgroundColor: '#F5F5F5',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  socialIcon: {
+    width: 28,
+    height: 28,
+    resizeMode: 'contain',
+  },
+
+  // Login
+  loginRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
   },
-  loginText: {
-    fontSize: 14,
-    color: '#888',
-    fontFamily: 'Poppins_400Regular',
-  },
-  loginLink: {
-    fontSize: 14,
-    color: '#7B5FEB',
-    fontWeight: '700',
-    fontFamily: 'Poppins_700Bold',
-  },
+  loginText: { fontSize: 14, color: '#888' },
+  loginLink: { fontSize: 14, color: '#7B5FEB', fontWeight: '700' },
 });
 
-export default RegisterForm;
+// ─── OTP Modal Styles ─────────────────────────────────────────────────────────────
+
+const otp_s = StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.25)', justifyContent: 'flex-end' },
+  topBar: { height: TOP_GAP },
+  card: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingHorizontal: 26,
+    paddingTop: 26,
+    paddingBottom: 50,
+    elevation: 24,
+  },
+  backBtn: {
+    width: 36, height: 36, borderRadius: 18,
+    backgroundColor: '#F0F0F5',
+    alignItems: 'center', justifyContent: 'center',
+    marginBottom: 18,
+  },
+  title: {
+    fontSize: 22, fontWeight: '800', color: '#111',
+    textAlign: 'center', marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 14, color: '#999',
+    textAlign: 'center', marginBottom: 32,
+  },
+  otpRow: {
+    flexDirection: 'row', justifyContent: 'center',
+    gap: 14, marginBottom: 22,
+  },
+  box: {
+    width: 64, height: 64, borderRadius: 12,
+    backgroundColor: '#F2F2F7',
+    fontSize: 24, fontWeight: '700', color: '#111',
+    textAlign: 'center',
+  },
+  boxFocused: {
+    borderWidth: 2, borderColor: '#7B5FEB',
+    backgroundColor: '#F3F0FD',
+  },
+  timer: { textAlign: 'center', fontSize: 13, color: '#999', marginBottom: 24 },
+  timerBold: { color: '#7B5FEB', fontWeight: '700' },
+  btn: {
+    backgroundColor: '#7B5FEB',
+    borderRadius: 50,
+    paddingVertical: 16,
+    alignItems: 'center',
+    marginBottom: 13,
+    shadowColor: '#7B5FEB',
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 5,
+  },
+  resendBtn: { marginBottom: 0 },
+  resendDisabled: { backgroundColor: '#C4B5FD' },
+  btnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+});
