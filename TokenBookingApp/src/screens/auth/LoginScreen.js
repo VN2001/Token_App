@@ -1,451 +1,356 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
-  Platform,
-  Alert,
-  StatusBar,
+  View, Text, TextInput, TouchableOpacity, StyleSheet,
+  ScrollView, KeyboardAvoidingView, Platform, StatusBar,
+  TouchableWithoutFeedback, Keyboard, Image, Dimensions,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import Svg, { Path, Circle, Defs, RadialGradient, Stop, Ellipse } from 'react-native-svg';
+import OtpModal from '../../components/OtpModal';
+import Svg, { Path } from 'react-native-svg';
 
-// ─── Icons ────────────────────────────────────────────────────────────────────
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const TOP_GAP = 200;
 
-const EyeOpen = () => (
-  <Svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+const CheckMark = () => (
+  <Svg width="10" height="10" viewBox="0 0 24 24" fill="none">
     <Path
-      d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z"
-      stroke="#7B5FEB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-    />
-    <Circle cx="12" cy="12" r="3" stroke="#7B5FEB" strokeWidth="2" />
-  </Svg>
-);
-
-const EyeClosed = () => (
-  <Svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <Path
-      d="M17.94 17.94A10.07 10.07 0 0112 20C5 20 1 12 1 12A18.45 18.45 0 015.06 5.06M9.9 4.24A9.12 9.12 0 0112 4C19 4 23 12 23 12A18.5 18.5 0 0120.71 15.71M1 1L23 23"
-      stroke="#7B5FEB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+      d="M20 6L9 17L4 12"
+      stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"
     />
   </Svg>
 );
 
-const BackArrow = () => (
-  <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-    <Path
-      d="M19 12H5M5 12L12 19M5 12L12 5"
-      stroke="#7B5FEB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-    />
-  </Svg>
+const PillInput = ({ errorStyle, ...props }) => (
+  <View style={s.shadowRight}>
+    <View style={s.shadowLeft}>
+      <TextInput
+        style={[s.input, errorStyle]}
+        placeholderTextColor="#B0B0B8"
+        {...props}
+      />
+    </View>
+  </View>
 );
 
-const ShieldIcon = ({ size = 70 }) => (
-  <Svg width={size} height={size} viewBox="0 0 220 220">
-    <Defs>
-      <RadialGradient id="shieldGradL" cx="40%" cy="30%" r="70%">
-        <Stop offset="0%" stopColor="#7DDFF5" />
-        <Stop offset="60%" stopColor="#3BBFE8" />
-        <Stop offset="100%" stopColor="#1A9EC8" />
-      </RadialGradient>
-      <RadialGradient id="rimGradL" cx="40%" cy="30%" r="70%">
-        <Stop offset="0%" stopColor="#4ECDF0" />
-        <Stop offset="100%" stopColor="#0E85B0" />
-      </RadialGradient>
-      <RadialGradient id="checkGradL" cx="40%" cy="20%" r="80%">
-        <Stop offset="0%" stopColor="#FFFFFF" />
-        <Stop offset="100%" stopColor="#D8EEF5" />
-      </RadialGradient>
-    </Defs>
-    <Ellipse cx="110" cy="205" rx="55" ry="10" fill="rgba(30,100,160,0.15)" />
-    <Path
-      d="M110 18 L178 46 L178 108 C178 150 148 182 110 198 C72 182 42 150 42 108 L42 46 Z"
-      fill="url(#rimGradL)"
-    />
-    <Path
-      d="M110 26 L172 52 L172 108 C172 146 144 176 110 191 C76 176 48 146 48 108 L48 52 Z"
-      fill="url(#shieldGradL)"
-    />
-    <Path
-      d="M110 36 L162 58 L162 80 C140 72 120 68 110 68 L110 36 Z"
-      fill="rgba(255,255,255,0.25)"
-    />
-    <Path
-      d="M76 108 L98 132 L148 82"
-      stroke="url(#checkGradL)"
-      strokeWidth="18"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      fill="none"
-    />
-  </Svg>
-);
+export default function LoginScreen({ navigation }) {
+  const [mobile, setMobile]         = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [errors, setErrors]         = useState({});
+  const [showOtp, setShowOtp]       = useState(false);
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+  const isValidPhone = (v) => /^\d{10}$/.test(v.replace(/[^\d]/g, ''));
 
-const TEST_EMAIL = 'test@hora.com';
-const TEST_PASSWORD = 'password123';
-
-// ─── Screen Content ───────────────────────────────────────────────────────────
-
-const ScreenContent = ({ navigation }) => {
-  const [email, setEmail] = useState(TEST_EMAIL);
-  const [password, setPassword] = useState(TEST_PASSWORD);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [errors, setErrors] = useState({});
-
-  // ✅ focusedField REMOVED — setFocusedField inside onFocus causes a re-render
-  // at the exact moment the keyboard opens, immediately blurring the input.
-  // This is a known Expo Go + New Architecture bug on Android.
-  // Re-add focusedField only after switching to npx expo run:android.
-
-  const handleLogin = () => {
-    const newErrors = {};
-    if (!email) newErrors.email = 'Email is required';
-    else if (!email.includes('@')) newErrors.email = 'Please enter a valid email address';
-    if (!password) newErrors.password = 'Password is required';
-    setErrors(newErrors);
-
-    if (Object.keys(newErrors).length === 0) {
-      if (email === TEST_EMAIL && password === TEST_PASSWORD) {
-        navigation?.navigate('UserDashboard');
-      } else {
-        Alert.alert('Login Failed', 'Invalid email or password.');
-      }
-    }
+  const validate = () => {
+    const e = {};
+    if (!mobile.trim())             e.mobile = 'Mobile number is required';
+    else if (!isValidPhone(mobile)) e.mobile = 'Enter a valid 10-digit number';
+    setErrors(e);
+    return !Object.keys(e).length;
   };
 
-  const clearError = (field) => {
-    if (errors[field]) setErrors({ ...errors, [field]: '' });
+  const clear = (f) => errors[f] && setErrors(p => ({ ...p, [f]: '' }));
+
+  const handleLogin = () => {
+    if (!validate()) return;
+    setShowOtp(true);
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.content}>
+      <View style={s.root}>
+        <StatusBar barStyle="dark-content" backgroundColor="#E5E5EA" />
+        <View style={s.greyTop} />
 
-        <TouchableOpacity
-          style={styles.backBtn}
-          onPress={() => navigation?.goBack()}
-          activeOpacity={0.7}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={s.kavWrapper}
         >
-          <BackArrow />
-        </TouchableOpacity>
-
-        <View style={styles.logoBadge}>
-          <View style={styles.logoCircle}>
-            <ShieldIcon size={70} />
-          </View>
-        </View>
-
-        <View style={styles.header}>
-          <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>
-            Sign in to continue with <Text style={styles.horaAccent}>Hora</Text>
-          </Text>
-        </View>
-
-        <View style={styles.card}>
-
-          {/* Email */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
-            {/* ✅ No focusedField style — no onFocus/onBlur */}
-            <View style={[
-              styles.inputWrapper,
-              errors.email && styles.inputWrapperError,
-            ]}>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your email"
-                placeholderTextColor="#C4B0F8"
-                value={email}
-                onChangeText={(text) => { setEmail(text); clearError('email'); }}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                blurOnSubmit={false}
-              />
-            </View>
-            {errors.email ? <Text style={styles.errorText}>⚠ {errors.email}</Text> : null}
-          </View>
-
-          {/* Password */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Password</Text>
-            {/* ✅ No focusedField style — no onFocus/onBlur */}
-            <View style={[
-              styles.inputWrapper,
-              errors.password && styles.inputWrapperError,
-            ]}>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your password"
-                placeholderTextColor="#C4B0F8"
-                value={password}
-                onChangeText={(text) => { setPassword(text); clearError('password'); }}
-                secureTextEntry={!isPasswordVisible}
-                autoCapitalize="none"
-                blurOnSubmit={false}
-              />
-              <TouchableOpacity
-                onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-                style={styles.eyeBtn}
-              >
-                {isPasswordVisible ? <EyeOpen /> : <EyeClosed />}
-              </TouchableOpacity>
-            </View>
-            {errors.password ? <Text style={styles.errorText}>⚠ {errors.password}</Text> : null}
-          </View>
-
-          <TouchableOpacity style={styles.forgotPassword} activeOpacity={0.7}>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.loginButton}
-            onPress={handleLogin}
-            activeOpacity={0.85}
-          >
-            <LinearGradient
-              colors={["#7B5FEB", "#6347D4"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.loginGradient}
+          <View style={s.whiteCard}>
+            <ScrollView
+              contentContainerStyle={s.scroll}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+              keyboardDismissMode="interactive"
             >
-              <Text style={styles.loginButtonText}>Log In</Text>
-            </LinearGradient>
-          </TouchableOpacity>
+              <Text style={s.title}>Log in</Text>
+              <Text style={s.subtitle}>Hi Welcome back, you've been missed</Text>
 
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>or</Text>
-            <View style={styles.dividerLine} />
+              <View style={s.inputBlock}>
+                <PillInput
+                  placeholder="Enter your mobile number"
+                  value={mobile}
+                  onChangeText={t => { setMobile(t); clear('mobile'); }}
+                  keyboardType="phone-pad"
+                  maxLength={15}
+                  errorStyle={errors.mobile ? s.inputErr : null}
+                />
+                {errors.mobile
+                  ? <Text style={s.err}>⚠ {errors.mobile}</Text>
+                  : null
+                }
+              </View>
+
+              {/* Remember me */}
+              <TouchableOpacity
+                style={s.rememberRow}
+                onPress={() => setRememberMe(p => !p)}
+                activeOpacity={0.75}
+              >
+                <View style={[s.checkbox, rememberMe && s.checked]}>
+                  {rememberMe && <CheckMark />}
+                </View>
+                <Text style={s.rememberText}>Remember me</Text>
+              </TouchableOpacity>
+
+              <Text style={s.otpInfo}>
+                A 4 digit OTP will be sent to via SMS to verify your mobile number
+              </Text>
+
+              {/* Login Button */}
+              <View style={s.btnWrap}>
+                <TouchableOpacity style={s.loginBtn} onPress={handleLogin} activeOpacity={0.85}>
+                  <Text style={s.loginBtnText}>Log in</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Divider */}
+              <View style={s.divRow}>
+                <View style={s.divLine} />
+                <Text style={s.divText}>or</Text>
+                <View style={s.divLine} />
+              </View>
+
+              {/* Social Buttons */}
+              <View style={s.socialRow}>
+                <TouchableOpacity style={s.socialBtn} activeOpacity={0.75}>
+                  <Image
+                    source={require('../../../assets/icons/google.png')}
+                    style={s.socialIcon}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity style={s.socialBtn} activeOpacity={0.75}>
+                  <Image
+                    source={require('../../../assets/icons/apple.png')}
+                    style={s.socialIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {/* Sign up link */}
+              <View style={s.signupRow}>
+                <Text style={s.signupText}>Don't have an account? </Text>
+                <TouchableOpacity onPress={() => navigation?.navigate('Register')}>
+                  <Text style={s.signupLink}>Sign in</Text>
+                </TouchableOpacity>
+              </View>
+
+            </ScrollView>
           </View>
+        </KeyboardAvoidingView>
 
-          <View style={styles.signupContainer}>
-            <Text style={styles.signupText}>Don't have an account? </Text>
-            <TouchableOpacity onPress={() => navigation?.navigate('Register')}>
-              <Text style={styles.signupLink}>Sign Up</Text>
-            </TouchableOpacity>
-          </View>
-
-        </View>
+        <OtpModal
+          visible={showOtp}
+          phone={mobile}
+          onClose={() => setShowOtp(false)}
+          onVerify={(code) => {
+            setShowOtp(false);
+            navigation?.navigate('UserDashboard');
+          }}
+          topGap={TOP_GAP}
+        />
       </View>
     </TouchableWithoutFeedback>
   );
-};
+}
 
-// ─── Main Screen ──────────────────────────────────────────────────────────────
-
-const LoginScreen = ({ navigation }) => {
-  return (
-    <>
-      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
-      <LinearGradient
-        colors={["#7B5FEB", "#9B7FF5", "#C4B0F8", "#EDE8FC", "#FFFFFF"]}
-        locations={[0, 0.25, 0.5, 0.68, 0.85]}
-        style={styles.gradient}
-      >
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
-          <View style={{ flex: 1, justifyContent: 'center' }}>
-            <ScreenContent navigation={navigation} />
-          </View>
-        </KeyboardAvoidingView>
-      </LinearGradient>
-    </>
-  );
-};
-
-// ─── Styles ───────────────────────────────────────────────────────────────────
-
-const styles = StyleSheet.create({
-  gradient: {
+const s = StyleSheet.create({
+  root: {
     flex: 1,
+    backgroundColor: '#E5E5EA',
   },
-  content: {
-    paddingHorizontal: 22,
-    paddingTop: 80,
-    paddingBottom: 40,
+  greyTop: {
+    position: 'absolute', top: 0, left: 0, right: 0,
+    height: TOP_GAP,
+    backgroundColor: '#E5E5EA',
   },
-  backBtn: {
-    position: 'absolute',
-    top: 20,
-    left: 22,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#3A1EA0',
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
+  kavWrapper: {
+    position: 'absolute', top: TOP_GAP, left: 0, right: 0, bottom: 0,
+  },
+  whiteCard: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: -3 },
+    elevation: 10,
+  },
+  scroll: {
+    paddingHorizontal: 26,
+    paddingTop: 40,
+    paddingBottom: 48,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '900',
+    color: '#111',
+    textAlign: 'center',
+    marginBottom: 8,
+    letterSpacing: -0.4,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 32,
+    fontWeight: '400',
+  },
+  inputBlock: {
+    marginBottom: 8,
+  },
+  shadowRight: {
+    borderRadius: 50,
+    backgroundColor: '#F2F2F7',
+    shadowColor: '#000',
+    shadowOpacity: 0.13,
+    shadowRadius: 5,
+    shadowOffset: { width: 7, height: 0 },
     elevation: 3,
   },
-  logoBadge: {
+  shadowLeft: {
+    borderRadius: 50,
+    backgroundColor: '#F2F2F7',
+    shadowColor: '#000',
+    shadowOpacity: 0.13,
+    shadowRadius: 5,
+    shadowOffset: { width: -7, height: 0 },
+    elevation: 3,
+  },
+  input: {
+    borderRadius: 50,
+    paddingHorizontal: 22,
+    paddingVertical: Platform.OS === 'ios' ? 16 : 14,
+    fontSize: 15,
+    color: '#111',
+    backgroundColor: '#F2F2F7',
+  },
+  inputErr: {
+    borderWidth: 1.5,
+    borderColor: '#FF5A5A',
+    backgroundColor: '#FFF4F4',
+  },
+  err: {
+    color: '#FF5A5A',
+    fontSize: 12,
+    marginTop: 5,
+    marginLeft: 6,
+    fontWeight: '500',
+  },
+  rememberRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 14,
+    marginLeft: 4,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 5,
+    borderWidth: 1.8,
+    borderColor: '#C0C0C0',
+    marginRight: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+  },
+  checked: {
+    backgroundColor: '#7B5FEB',
+    borderColor: '#7B5FEB',
+  },
+  rememberText: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '500',
+  },
+  otpInfo: {
+    fontSize: 13,
+    color: '#555',
+    marginBottom: 32,
+    marginLeft: 4,
+    lineHeight: 19,
+  },
+  btnWrap: {
+    alignItems: 'center',
+    marginBottom: 28,
+  },
+  loginBtn: {
+    backgroundColor: '#7B5FEB',
+    borderRadius: 50,
+    paddingVertical: 17,
+    paddingHorizontal: 80,
+    minWidth: 220,
+    alignItems: 'center',
+    shadowColor: '#7B5FEB',
+    shadowOpacity: 0.45,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 7,
+  },
+  loginBtnText: {
+    color: '#fff',
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: 0.2,
+  },
+  divRow: {
+    flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
   },
-  logoCircle: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  header: {
-    marginBottom: 28,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 34,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    marginBottom: 6,
-    letterSpacing: -0.5,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: 'rgba(255,255,255,0.85)',
-    fontWeight: '400',
-  },
-  horaAccent: {
-    color: '#FFFFFF',
-    fontWeight: '700',
-  },
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 28,
-    padding: 24,
-    shadowColor: '#3A1EA0',
-    shadowOpacity: 0.15,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 10,
-  },
-  inputContainer: {
-    marginBottom: 18,
-  },
-  label: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#7B5FEB',
-    marginBottom: 8,
-    letterSpacing: 0.4,
-    textTransform: 'uppercase',
-  },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F3FF',
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: '#E0D9FB',
-  },
-  inputWrapperFocused: {
-    borderColor: '#7B5FEB',
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#7B5FEB',
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  inputWrapperError: {
-    borderColor: '#FF6B6B',
-    backgroundColor: '#FFF5F5',
-  },
-  input: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 15,
-    color: '#1A1A1A',
-    includeFontPadding: false,
-  },
-  eyeBtn: {
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-  },
-  errorText: {
-    color: '#FF6B6B',
-    fontSize: 12,
-    marginTop: 6,
-    marginLeft: 4,
-    fontWeight: '500',
-  },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginBottom: 24,
-    marginTop: -6,
-  },
-  forgotPasswordText: {
-    color: '#7B5FEB',
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  loginButton: {
-    borderRadius: 20,
-    overflow: 'hidden',
-    shadowColor: '#7B5FEB',
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 6,
-  },
-  loginGradient: {
-    paddingVertical: 17,
-    alignItems: 'center',
-    borderRadius: 20,
-  },
-  loginButtonText: {
-    color: '#FFFFFF',
-    fontSize: 17,
-    fontWeight: '700',
-    letterSpacing: 0.3,
-  },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 22,
-  },
-  dividerLine: {
+  divLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#EDE8FC',
+    backgroundColor: '#E0E0E0',
   },
-  dividerText: {
-    marginHorizontal: 12,
-    color: '#C4B0F8',
-    fontSize: 13,
-    fontWeight: '600',
+  divText: {
+    marginHorizontal: 14,
+    fontSize: 14,
+    color: '#AAAAAA',
   },
-  signupContainer: {
+  socialRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 18,
+    marginBottom: 32,
+  },
+  socialBtn: {
+    width: 52,
+    height: 52,
+    borderRadius: 14,
+    backgroundColor: '#F5F5F5',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  socialIcon: {
+    width: 28,
+    height: 28,
+    resizeMode: 'contain',
+  },
+  signupRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },
   signupText: {
-    color: '#888',
     fontSize: 14,
+    color: '#888',
   },
   signupLink: {
-    color: '#7B5FEB',
     fontSize: 14,
+    color: '#7B5FEB',
     fontWeight: '700',
   },
 });
-
-export default LoginScreen;
