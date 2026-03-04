@@ -57,7 +57,7 @@ const WelcomeScreen = ({ navigation }) => {
           >
             <Text style={styles.secondaryText}>I already have an account</Text>
           </TouchableOpacity>
-          <Text style={styles.thirdText}>Lorem ispum</Text>
+          <Text style={styles.thirdText}>Lorem ipsum dolor sit amet consectetur adipiscing elit sed do</Text>
         </View>
 
       </SafeAreaView>
