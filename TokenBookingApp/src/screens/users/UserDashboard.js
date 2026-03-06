@@ -20,7 +20,7 @@ import {
 const dash1 = require("../../../assets/dash1.jpg");
 const dash2 = require("../../../assets/dash2.jpg");
 const icon2 = require("../../../assets/2.png"); // Home
-const icon3 = require("../../../assets/3.png"); // List (after home)
+const icon3 = require("../../../assets/3.png"); // List
 const icon4 = require("../../../assets/4.png"); // Search
 const icon5 = require("../../../assets/5.png"); // Notification
 const icon6 = require("../../../assets/6.png"); // Profile
@@ -35,7 +35,7 @@ const C = {
   purpleDark: "#6347D4",
   textDark: "#1A1035",
   textMid: "#7B6BA8",
-  bg: "#F5F3FF",
+  bg: "#FFFFFF",
   white: "#FFFFFF",
   green: "#22C55E",
   red: "#E05252",
@@ -127,7 +127,7 @@ const SearchModal = ({ visible, onClose, onSelect }) => {
   const filtered = HOSPITALS.filter(
     (h) =>
       h.name.toLowerCase().includes(query.toLowerCase()) ||
-      h.address.toLowerCase().includes(query.toLowerCase()),
+      h.address.toLowerCase().includes(query.toLowerCase())
   );
 
   return (
@@ -368,15 +368,13 @@ const UserDashboard = () => {
   useEffect(() => {
     const timer = setInterval(
       () => setSeconds((sc) => (sc > 0 ? sc - 1 : 0)),
-      1000,
+      1000
     );
     return () => clearInterval(timer);
   }, []);
 
   const formatTime = (sc) => {
-    const m = Math.floor(sc / 60)
-      .toString()
-      .padStart(2, "0");
+    const m = Math.floor(sc / 60).toString().padStart(2, "0");
     const sec = (sc % 60).toString().padStart(2, "0");
     return `${m}:${sec}`;
   };
@@ -515,7 +513,7 @@ const UserDashboard = () => {
 const mS = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
+    backgroundColor: "rgba(0, 0, 0, 0.45)",
     justifyContent: "flex-end",
   },
   sheet: {
@@ -622,7 +620,7 @@ const s = StyleSheet.create({
     width: 46,
     height: 46,
     borderRadius: 23,
-    backgroundColor: C.purple,
+    backgroundColor: C.white,
     justifyContent: "center",
     alignItems: "center",
     elevation: 6,
@@ -644,7 +642,7 @@ const s = StyleSheet.create({
   notifButton: {
     width: 42,
     height: 42,
-    borderRadius: 21,
+    borderRadius:5,
     backgroundColor: C.white,
     justifyContent: "center",
     alignItems: "center",
