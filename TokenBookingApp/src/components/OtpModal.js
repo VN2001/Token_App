@@ -11,13 +11,14 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 
 const BackArrow = () => (
-  <Svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+  <Svg width="18" height="18" viewBox="0 0 24 24" fill="none">
     <Path
       d="M19 12H5M5 12L12 19M5 12L12 5"
-      stroke="#333"
+      stroke="#707070"
       strokeWidth="2.5"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -95,51 +96,93 @@ const OtpModal = ({ visible, phone, onClose, onVerify, topGap = 200 }) => {
         <View style={styles.overlay}>
           <View style={[styles.topBar, { height: topGap }]} />
           <View style={styles.card}>
+
+            {/* Back Button */}
             <TouchableOpacity style={styles.backBtn} onPress={onClose}>
               <BackArrow />
+              <Text style={styles.backText}>Go back</Text>
             </TouchableOpacity>
+
             <Text style={styles.title}>Check your phone</Text>
             <Text style={styles.subtitle}>We've send a code to your number</Text>
+
+            {/* OTP Boxes */}
             <View style={styles.otpRow}>
               {otp.map((v, i) => (
-                <TextInput
+                <LinearGradient
                   key={i}
-                  ref={(el) => (inputRefs.current[i] = el)}
-                  style={[styles.box, focusedIndex === i && styles.boxFocused]}
-                  value={v}
-                  onChangeText={(t) => handleChange(t, i)}
-                  onKeyPress={(e) => handleKey(e, i)}
-                  onFocus={() => setFocusedIndex(i)}
-                  keyboardType="number-pad"
-                  maxLength={1}
-                  textAlign="center"
-                  selectTextOnFocus
-                  caretHidden
-                />
+                  colors={['#f6f6f6', '#f6f6f6']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={[
+                    styles.boxGradient,
+                    focusedIndex === i && styles.boxFocused,
+                  ]}
+                >
+                  <TextInput
+                    ref={(el) => (inputRefs.current[i] = el)}
+                    style={styles.boxInput}
+                    value={v}
+                    onChangeText={(t) => handleChange(t, i)}
+                    onKeyPress={(e) => handleKey(e, i)}
+                    onFocus={() => setFocusedIndex(i)}
+                    keyboardType="number-pad"
+                    maxLength={1}
+                    textAlign="center"
+                    selectTextOnFocus
+                    caretHidden
+                  />
+                </LinearGradient>
               ))}
             </View>
+
+            {/* Timer */}
             <Text style={styles.timer}>
-              Code expires in : <Text style={styles.timerBold}>{fmt(timer)}</Text>
+              Code expires in :{' '}
+              <Text style={styles.timerBold}>{fmt(timer)}</Text>
             </Text>
+
+            {/* Verify Button */}
             <TouchableOpacity
-              style={styles.btn}
               onPress={handleSubmit}
               disabled={loading}
               activeOpacity={0.85}
+              style={styles.btnWrapper}
             >
-              {loading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.btnText}>Submit</Text>
-              )}
+              <LinearGradient
+                colors={['#763ef9', '#814afe', '#763ff7']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={styles.btn}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.btnText}>Verify Code</Text>
+                )}
+              </LinearGradient>
             </TouchableOpacity>
+
+            {/* Resend Button */}
             <TouchableOpacity
-              style={[styles.btn, styles.resendBtn, timer > 0 && styles.resendDisabled]}
               onPress={handleResend}
               activeOpacity={0.85}
+              style={styles.btnWrapper}
             >
-              <Text style={styles.btnText}>Send again</Text>
+              <LinearGradient
+                colors={
+                  timer > 0
+                    ? ['#b89ffc', '#c4b0fd', '#b89ffc']
+                    : ['#763ef9', '#814afe', '#763ff7']
+                }
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={styles.btn}
+              >
+                <Text style={styles.btnText}>Resend Code</Text>
+              </LinearGradient>
             </TouchableOpacity>
+
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -165,83 +208,96 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
     elevation: 24,
   },
+
+  // Back button
   backBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#F0F0F5',
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 18,
+    gap: 8,
+    marginBottom: 22,
   },
+  backText: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 16, // ~32sp scaled for typical usage; adjust if using sp units
+    color: '#707070',
+  },
+
+  // Titles
   title: {
-    fontSize: 22,
-    fontWeight: '800',
-    color: '#111',
+    fontFamily: 'Poppins-Regular',
+    fontSize: 19,
+    color: '#000000',
     textAlign: 'center',
     marginBottom: 8,
   },
   subtitle: {
+    fontFamily: 'Poppins-Regular',
     fontSize: 14,
-    color: '#999',
+    color: '#707070',
     textAlign: 'center',
     marginBottom: 32,
   },
+
+  // OTP Row
   otpRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 14,
     marginBottom: 22,
   },
-  box: {
-    width: 64,
-    height: 64,
-    borderRadius: 12,
-    backgroundColor: '#F2F2F7',
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#111',
-    textAlign: 'center',
+  boxGradient: {
+    width: 72,
+    height: 72,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   boxFocused: {
     borderWidth: 2,
-    borderColor: '#7B5FEB',
-    backgroundColor: '#F3F0FD',
+    borderColor: '#763ef9',
   },
-  timer: {
+  boxInput: {
+    width: '100%',
+    height: '100%',
+    fontFamily: 'Poppins-Regular',
+    fontSize: 25,
+    fontWeight: '400',
+    color: '#000000',
     textAlign: 'center',
-    fontSize: 13,
-    color: '#999',
+    borderRadius: 20,
+  },
+
+  // Timer
+  timer: {
+    fontFamily: 'Poppins-Regular',
+    textAlign: 'center',
+    fontSize: 14,
+    color: '#707070',
     marginBottom: 24,
   },
   timerBold: {
-    color: '#7B5FEB',
+    fontFamily: 'Poppins-Bold',
+    color: '#707070',
     fontWeight: '700',
+  },
+
+  // Buttons
+  btnWrapper: {
+    marginBottom: 13,
+    borderRadius: 100,
+    overflow: 'hidden',
   },
   btn: {
-    backgroundColor: '#7B5FEB',
-    borderRadius: 50,
+    borderRadius: 100,
     paddingVertical: 16,
     alignItems: 'center',
-    marginBottom: 13,
-    shadowColor: '#7B5FEB',
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 5,
-  },
-  resendBtn: {
-    marginBottom: 0,
-  },
-  resendDisabled: {
-    backgroundColor: '#C4B5FD',
   },
   btnText: {
-    color: '#fff',
+    fontFamily: 'Poppins-Regular',
+    color: '#ffffff',
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '400',
   },
 });
 
 export default OtpModal;
-

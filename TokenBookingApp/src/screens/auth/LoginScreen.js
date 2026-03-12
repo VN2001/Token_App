@@ -4,11 +4,11 @@ import {
   ScrollView, KeyboardAvoidingView, Platform, StatusBar,
   TouchableWithoutFeedback, Keyboard, Image, Dimensions,
 } from 'react-native';
-import OtpModal from '../../components/OtpModal';
+import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-const TOP_GAP = 200;
+const TOP_GAP = 160;
 
 const CheckMark = () => (
   <Svg width="10" height="10" viewBox="0 0 24 24" fill="none">
@@ -20,18 +20,22 @@ const CheckMark = () => (
 );
 
 const PillInput = ({ errorStyle, ...props }) => (
-  <View style={s.shadowRight}>
-    <View style={s.shadowLeft}>
-      <TextInput
-        style={[s.input, errorStyle]}
-        placeholderTextColor="#B0B0B8"
-        {...props}
-      />
-    </View>
-  </View>
+  <LinearGradient
+    colors={['#f6f6f6', '#f6f6f6']}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}
+    style={[s.gradientWrapper, errorStyle]}
+  >
+    <TextInput
+      style={[s.input, errorStyle]}
+      placeholderTextColor="#B0B0B8"
+      {...props}
+    />
+  </LinearGradient>
 );
 
 export default function LoginScreen({ navigation }) {
+  const [fullName, setFullName]     = useState('');
   const [mobile, setMobile]         = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors]         = useState({});
@@ -41,6 +45,7 @@ export default function LoginScreen({ navigation }) {
 
   const validate = () => {
     const e = {};
+    if (!fullName.trim())           e.fullName = 'Full name is required';
     if (!mobile.trim())             e.mobile = 'Mobile number is required';
     else if (!isValidPhone(mobile)) e.mobile = 'Enter a valid 10-digit number';
     setErrors(e);
@@ -57,7 +62,7 @@ export default function LoginScreen({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={s.root}>
-        <StatusBar barStyle="dark-content" backgroundColor="#E5E5EA" />
+        <StatusBar barStyle="dark-content" backgroundColor="#f6f6f6" />
         <View style={s.greyTop} />
 
         <KeyboardAvoidingView
@@ -74,15 +79,36 @@ export default function LoginScreen({ navigation }) {
               <Text style={s.title}>Log in</Text>
               <Text style={s.subtitle}>Hi Welcome back, you've been missed</Text>
 
+              {/* Full Name Field */}
               <View style={s.inputBlock}>
-                <PillInput
-                  placeholder="Enter your mobile number"
-                  value={mobile}
-                  onChangeText={t => { setMobile(t); clear('mobile'); }}
-                  keyboardType="phone-pad"
-                  maxLength={15}
-                  errorStyle={errors.mobile ? s.inputErr : null}
-                />
+                <View style={s.shadowWrap}>
+                  <PillInput
+                    placeholder="Full name"
+                    value={fullName}
+                    onChangeText={t => { setFullName(t); clear('fullName'); }}
+                    autoCapitalize="words"
+                    returnKeyType="next"
+                    errorStyle={errors.fullName ? s.inputErr : null}
+                  />
+                </View>
+                {errors.fullName
+                  ? <Text style={s.err}>⚠ {errors.fullName}</Text>
+                  : null
+                }
+              </View>
+
+              {/* Mobile Field */}
+              <View style={s.inputBlock}>
+                <View style={s.shadowWrap}>
+                  <PillInput
+                    placeholder="Enter your mobile number"
+                    value={mobile}
+                    onChangeText={t => { setMobile(t); clear('mobile'); }}
+                    keyboardType="phone-pad"
+                    maxLength={15}
+                    errorStyle={errors.mobile ? s.inputErr : null}
+                  />
+                </View>
                 {errors.mobile
                   ? <Text style={s.err}>⚠ {errors.mobile}</Text>
                   : null
@@ -101,9 +127,7 @@ export default function LoginScreen({ navigation }) {
                 <Text style={s.rememberText}>Remember me</Text>
               </TouchableOpacity>
 
-              <Text style={s.otpInfo}>
-                A 4 digit OTP will be sent to via SMS to verify your mobile number
-              </Text>
+              
 
               {/* Login Button */}
               <View style={s.btnWrap}>
@@ -146,17 +170,6 @@ export default function LoginScreen({ navigation }) {
             </ScrollView>
           </View>
         </KeyboardAvoidingView>
-
-        <OtpModal
-          visible={showOtp}
-          phone={mobile}
-          onClose={() => setShowOtp(false)}
-          onVerify={(code) => {
-            setShowOtp(false);
-            navigation?.navigate('UserDashboard');
-          }}
-          topGap={TOP_GAP}
-        />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -165,12 +178,12 @@ export default function LoginScreen({ navigation }) {
 const s = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#E5E5EA',
+    backgroundColor: '#f6f6f6',           // ← updated background
   },
   greyTop: {
     position: 'absolute', top: 0, left: 0, right: 0,
     height: TOP_GAP,
-    backgroundColor: '#E5E5EA',
+    backgroundColor: '#f6f6f6',           // ← matches root bg
   },
   kavWrapper: {
     position: 'absolute', top: TOP_GAP, left: 0, right: 0, bottom: 0,
@@ -192,54 +205,53 @@ const s = StyleSheet.create({
     paddingTop: 40,
     paddingBottom: 48,
   },
+
+  // ── Typography ──────────────────────────────────────────────
   title: {
-    fontSize: 28,
-    fontWeight: '900',
+    fontSize: 40,                         // ← updated
+    fontWeight: '600',
     color: '#111',
     textAlign: 'center',
     marginBottom: 8,
-    letterSpacing: -0.4,
+    letterSpacing: -1,
+    fontFamily:"Poppins_600SemiBold"
   },
   subtitle: {
-    fontSize: 15,
-    color: '#666',
+    fontSize: 18,                         // ← updated
+    color: '#707070',                     // ← updated
     textAlign: 'center',
     marginBottom: 32,
     fontWeight: '400',
   },
+
+  // ── Inputs ──────────────────────────────────────────────────
   inputBlock: {
-    marginBottom: 8,
+    marginBottom: 14,
   },
-  shadowRight: {
-    borderRadius: 50,
-    backgroundColor: '#F2F2F7',
+  shadowWrap: {
+    borderRadius: 20,
+    // Drop shadow — 20% transparency = rgba(0,0,0,0.20)
     shadowColor: '#000',
-    shadowOpacity: 0.13,
-    shadowRadius: 5,
-    shadowOffset: { width: 7, height: 0 },
-    elevation: 3,
+    shadowOpacity: 0.20,                  // ← 20% transparency
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 5,
   },
-  shadowLeft: {
-    borderRadius: 50,
-    backgroundColor: '#F2F2F7',
-    shadowColor: '#000',
-    shadowOpacity: 0.13,
-    shadowRadius: 5,
-    shadowOffset: { width: -7, height: 0 },
-    elevation: 3,
+  gradientWrapper: {
+    borderRadius: 47,                     // ← updated radius
+    overflow: 'hidden',
   },
   input: {
-    borderRadius: 50,
+    borderRadius: 20,                     // ← updated radius
     paddingHorizontal: 22,
     paddingVertical: Platform.OS === 'ios' ? 16 : 14,
-    fontSize: 15,
-    color: '#111',
-    backgroundColor: '#F2F2F7',
+    fontSize: 16,                         // ← updated (matching full name spec)
+    color: '#707070',                     // ← updated text color
+    backgroundColor: 'transparent',      // let LinearGradient show through
   },
   inputErr: {
     borderWidth: 1.5,
     borderColor: '#FF5A5A',
-    backgroundColor: '#FFF4F4',
   },
   err: {
     color: '#FF5A5A',
@@ -248,10 +260,12 @@ const s = StyleSheet.create({
     marginLeft: 6,
     fontWeight: '500',
   },
+
+  // ── Remember Me ─────────────────────────────────────────────
   rememberRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 16,
+    marginTop: 4,
     marginBottom: 14,
     marginLeft: 4,
   },
@@ -275,13 +289,9 @@ const s = StyleSheet.create({
     color: '#333',
     fontWeight: '500',
   },
-  otpInfo: {
-    fontSize: 13,
-    color: '#555',
-    marginBottom: 32,
-    marginLeft: 4,
-    lineHeight: 19,
-  },
+
+
+  // ── Button ──────────────────────────────────────────────────
   btnWrap: {
     alignItems: 'center',
     marginBottom: 28,
@@ -298,6 +308,7 @@ const s = StyleSheet.create({
     shadowRadius: 14,
     shadowOffset: { width: 0, height: 5 },
     elevation: 7,
+    marginTop:65,
   },
   loginBtnText: {
     color: '#fff',
@@ -305,6 +316,8 @@ const s = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.2,
   },
+
+  // ── Divider / Social / Signup ────────────────────────────────
   divRow: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -7,16 +7,15 @@ import {
   SafeAreaView,
   StatusBar,
   Dimensions,
-  Image, // ✅ Import Image from React Native
+  Image,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 const { width, height } = Dimensions.get("window");
 
-// ✅ Updated ShieldIcon using local image
 const ShieldIcon = () => (
   <Image
-    source={require("../../assets/icons/1.png")} // 👈 update this path
+    source={require("../../assets/icons/1.png")}
     style={styles.shieldImage}
   />
 );
@@ -24,7 +23,7 @@ const ShieldIcon = () => (
 const WelcomeScreen = ({ navigation }) => {
   return (
     <LinearGradient
-      colors={["#7f48fd","#C4B0F8","#EDE8FC", "#f6f6f6",  "#FFFFFF"]}
+      colors={["#7f48fd", "#C4B0F8", "#EDE8FC", "#f6f6f6", "#FFFFFF"]}
       locations={[0.3, 0.5, 0.6, 0.68, 0.85]}
       style={styles.container}
     >
@@ -37,27 +36,42 @@ const WelcomeScreen = ({ navigation }) => {
 
         <View style={styles.bottomContent}>
           <Text style={styles.titleRow1}>
-            <Text style={styles.horaText}>Hora,</Text>
-            <Text style={styles.titleDark}> Make</Text>
+            <Text style={styles.horaText}>Hora, </Text>
+            <Text style={styles.titleDark}>Make</Text>
           </Text>
           <Text style={styles.titleRow2}>Your Own Path</Text>
 
-          <TouchableOpacity
-            style={styles.primaryButton}
-            onPress={() => navigation?.navigate("Register")}
-            activeOpacity={0.85}
-          >
-            <Text style={styles.primaryText}>Get Started</Text>
-          </TouchableOpacity>
+          {/* Get Started Button */}
+          <View style={styles.primaryShadowWrapper}>
+            <TouchableOpacity
+              onPress={() => navigation?.navigate("Register")}
+              activeOpacity={0.85}
+            >
+              <LinearGradient
+                colors={["#763ef9", "#814afe", "#763ff7"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={styles.primaryButton}
+              >
+                <Text style={styles.primaryText}>Get Started</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
 
+          {/* I already have an account Button */}
           <TouchableOpacity
-            style={styles.secondaryButton}
             onPress={() => navigation?.navigate("Login")}
             activeOpacity={0.85}
+            style={styles.secondaryShadowWrapper}
           >
-            <Text style={styles.secondaryText}>I already have an account</Text>
+            <View style={styles.secondaryButton}>
+              <Text style={styles.secondaryText}>I already have an account</Text>
+            </View>
           </TouchableOpacity>
-          <Text style={styles.thirdText}>Lorem ipsum dolor sit amet consectetur adipiscing elit sed do</Text>
+
+          <Text style={styles.thirdText}>
+            Lorem ipsum dolor sit amet consectetur adipiscing elit sed do
+          </Text>
         </View>
 
       </SafeAreaView>
@@ -83,91 +97,100 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 20 },
     elevation: 16,
   },
-
-  // ✅ Control image size here
   shieldImage: {
     width: 350,
-    height: 300,
+    height: 320,
     resizeMode: "contain",
   },
 
   bottomContent: {
     position: "absolute",
-    bottom: 100,
+    bottom: 44,
     left: 24,
     right: 24,
   },
+
   titleRow1: {
-    fontSize: 30,
+    fontSize: 34,
     textAlign: "center",
     lineHeight: 40,
-    fontFamily: "Poppins_700Bold",
+    fontFamily: "Poppins_600SemiBold",
   },
   horaText: {
     color: "#7B5FEB",
-    fontWeight: "700",
-    fontSize: 50,
-    fontFamily: "Poppins_700Bold",
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 34,
   },
   titleDark: {
     color: "#111111",
-    fontWeight: "700",
-    fontSize: 50,
-    fontFamily: "Poppins_700Bold",
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 34,
   },
   titleRow2: {
-    fontSize: 40,
-    fontWeight: "800",
+    fontSize: 36,
+    fontFamily: "Poppins_600SemiBold",
     color: "#111111",
     textAlign: "center",
-    lineHeight: 60,
-    marginBottom: 28,
-    fontFamily: "Poppins_800ExtraBold",
+    lineHeight: 44,
+    marginBottom: 32,
+  },
+
+  // Get Started button
+  primaryShadowWrapper: {
+    borderRadius: 20,
+    marginBottom: 16,
+    backgroundColor: "#763ef9",
+    shadowColor: "#DDCFFD",
+    shadowOpacity: 0.5,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 10,
   },
   primaryButton: {
-    backgroundColor: "#7B5FEB",
     paddingVertical: 18,
     borderRadius: 20,
     alignItems: "center",
-    marginBottom: 14,
     width: "100%",
-    shadowColor: "#5B3FCC",
-    shadowOpacity: 0.35,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 8,
   },
   primaryText: {
     color: "#FFFFFF",
-    fontWeight: "800",
+    fontFamily: "Inter_400Regular",
     fontSize: 17,
     letterSpacing: 0.3,
-    fontFamily: "Poppins_700Bold",
+  },
+
+  // I already have an account button
+  secondaryShadowWrapper: {
+    borderRadius: 20,
+    marginBottom: 0,
+    backgroundColor: "#f6f6f6",
+    shadowColor: "#000000",
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
   },
   secondaryButton: {
-    backgroundColor: "#F0EEF8",
     paddingVertical: 18,
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
+    backgroundColor: "#EFEFEF",
   },
   secondaryText: {
-    color: "#707070",
-    fontWeight: "800",
-    fontSize: 15,
-    fontFamily: "Poppins_500Medium",
-    includeFontPadding: false,
-    textAlignVertical: "center",
+    color: "#000000",
+    fontFamily: "Inter_400Regular",
+    fontSize: 17,
   },
+
   thirdText: {
     color: "#707070",
-    fontWeight: "300",
-    fontSize: 10,
-    fontFamily: "Poppins_500Medium",
-    includeFontPadding: false,
-    textAlignVertical: "center",
-    top: 20,
+    fontFamily: "Inter_400Regular",
+    fontSize: 13,
     textAlign: "center",
+    marginHorizontal: 40,
+    marginTop: 24,
+    lineHeight: 20,
   },
 });
