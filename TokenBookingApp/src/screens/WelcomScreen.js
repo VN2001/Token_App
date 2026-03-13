@@ -23,7 +23,7 @@ const ShieldIcon = () => (
 const WelcomeScreen = ({ navigation }) => {
   return (
     <LinearGradient
-      colors={["#7f48fd", "#C4B0F8", "#EDE8FC", "#f6f6f6", "#FFFFFF"]}
+      colors={["#7f48fd", "#B297F8", "#D4C7FA", "#f6f6f6", "#FFFFFF"]}
       locations={[0.3, 0.5, 0.6, 0.68, 0.85]}
       style={styles.container}
     >
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
 
   bottomContent: {
     position: "absolute",
-    bottom: 44,
+    bottom: 60,
     left: 24,
     right: 24,
   },
