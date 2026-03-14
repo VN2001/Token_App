@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
 
   bottomContent: {
     position: "absolute",
-    bottom: 60,
+    bottom: 80,
     left: 24,
     right: 24,
   },
@@ -136,22 +136,26 @@ const styles = StyleSheet.create({
   },
 
   // Get Started button
-  primaryShadowWrapper: {
-    borderRadius: 20,
-    marginBottom: 16,
-    backgroundColor: "#763ef9",
-    shadowColor: "#DDCFFD",
-    shadowOpacity: 0.5,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 10,
-  },
-  primaryButton: {
-    paddingVertical: 18,
-    borderRadius: 20,
-    alignItems: "center",
-    width: "100%",
-  },
+ primaryShadowWrapper: {
+  borderRadius: 20,
+  marginBottom: 25,
+  backgroundColor: "#763ef9",
+
+  // iOS Shadow
+  shadowColor: "#000",
+  shadowOffset: { width: 10, height: 8 },
+  shadowOpacity: 0.25,
+  shadowRadius: 10,
+  // Android Shadow
+  elevation: 10,
+},
+
+primaryButton: {
+  paddingVertical: 18,
+  borderRadius: 20,
+  alignItems: "center",
+  width: "100%",
+},
   primaryText: {
     color: "#FFFFFF",
     fontFamily: "Inter_400Regular",
