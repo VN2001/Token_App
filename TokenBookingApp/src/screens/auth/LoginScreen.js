@@ -192,13 +192,14 @@ const s = StyleSheet.create({
 
   // ── Typography ──────────────────────────────────────────────
   title: {
-    fontSize: 40,
-    fontWeight: '700',
-    color: '#111',
-    textAlign: 'center',
-    marginBottom: 10,
-    letterSpacing: -1,
-  },
+  fontSize: 30,
+  fontFamily: 'Poppins-Bold 800',
+  fontWeight: '900', // ← change this
+  color: '#111',
+  textAlign: 'center',
+  marginBottom: 10,
+  letterSpacing: -1,
+},
   subtitle: {
     fontSize: 16,
     color: '#888',
@@ -295,14 +296,15 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
+    marginLeft: 84,
   },
   divLine: {
-    flex: 1,
+    flex: 0.3,
     height: 1,
-    backgroundColor: '#E5E5E5',
+    backgroundColor: '#c5c4c4',
   },
   divText: {
-    marginHorizontal: 14,
+    marginHorizontal: 9,
     fontSize: 14,
     color: '#AAAAAA',
   },
@@ -313,17 +315,11 @@ const s = StyleSheet.create({
     marginBottom: 36,
   },
   socialBtn: {
-    width: 54,
-    height: 54,
-    borderRadius: 14,
-    backgroundColor: '#F5F5F5',
+    width: 56,
+    height: 56,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+
   },
   signupRow: {
     flexDirection: 'row',
