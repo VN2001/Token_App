@@ -818,50 +818,46 @@ const s = StyleSheet.create({
   arrowText: { fontSize: 14, color: C.textDark, fontWeight: "700" },
 
   // ── Two-toned pill button ────────────────────────────────────────
-  bookButton: {
-    backgroundColor: C.purple,
-    borderRadius: 50,
-    paddingVertical: 6,
-    paddingRight: 24,
-    paddingLeft: 6,
-    marginLeft:20,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 0,
-    width:"80%",
-    elevation: 4,
-    shadowColor: C.purple,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-  },
+bookButton: {
+  backgroundColor: C.purple,
+  borderRadius: 50,
+  paddingVertical: 6,
+  paddingRight: 6,
+  paddingLeft: 6,
+  flexDirection: "row",
+  alignItems: "center",
+  alignSelf: "center",   // ← centers the button
+  width: "65%",          // ← reduces width
+  elevation: 4,
+  shadowColor: C.purple,
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.35,
+  shadowRadius: 10,
+},
 
   // Dark navy circle sits flush on left inside pill
-  bookIconCircle: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    backgroundColor: C.btnIconBg,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 16,
-  },
-  bookIconText: {
-    fontSize: 40,
-    color: C.white,
-    fontWeight: "300",
-    lineHeight: 32,
-    marginTop: -2,
-  },
-  bookText: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: "800",
-    color: C.white,
-    letterSpacing: 0.3,
-    textAlign: "center",
-    marginRight: 46, // optical balance against left circle
-  },
+bookIconCircle: {
+  width: 46,
+  height: 46,
+  borderRadius: 23,
+  backgroundColor: C.btnIconBg,
+  justifyContent: "center",
+  alignItems: "center",
+},
+bookIconText: {
+  fontSize: 45,
+  color: C.white,
+  fontWeight: "300",
+  lineHeight: 32,
+},
+bookText: {
+  flex: 1,
+  fontSize: 16,
+  fontWeight: "800",
+  color: C.white,
+  letterSpacing: 0.3,
+  textAlign: "center",
+},
 
   dtRow: { flexDirection: "row", gap: 12, marginBottom: 16 },
   dtPill: {
