@@ -19,12 +19,12 @@ import {
 
 const dash1 = require("../../../assets/dash1.jpg");
 const dash2 = require("../../../assets/dash2.jpg");
-const icon2 = require("../../../assets/2.png"); // Home
-const icon3 = require("../../../assets/3.png"); // List
-const icon4 = require("../../../assets/4.png"); // Search
-const icon5 = require("../../../assets/5.png"); // Notification
-const icon6 = require("../../../assets/6.png"); // Profile
-const icon7 = require("../../../assets/7.png"); // Profile avatar icon
+const icon2 = require("../../../assets/2.png");
+const icon3 = require("../../../assets/3.png");
+const icon4 = require("../../../assets/4.png");
+const icon5 = require("../../../assets/5.png");
+const icon6 = require("../../../assets/6.png");
+const icon7 = require("../../../assets/7.png");
 
 const { width, height } = Dimensions.get("window");
 
@@ -33,13 +33,16 @@ const C = {
   purpleLight: "#EDE8FC",
   purpleMid: "#C4B0F8",
   purpleDark: "#6347D4",
+  slotBadgeBg: "#32225A",
+  btnIconBg: "#2D1B6B",
   textDark: "#1A1035",
   textMid: "#7B6BA8",
   bg: "#FFFFFF",
+  cardBg: "#F0EEF5",
   white: "#FFFFFF",
   green: "#22C55E",
   red: "#E05252",
-  grey: "#F2F2F2",
+  grey: "#F1EFEF",
 };
 
 const HOSPITALS = [
@@ -223,14 +226,27 @@ const RecentlyAddedSection = ({
   setBookingState,
   hospital,
   navigation,
+  onAddNew,
 }) => {
   const renderContent = () => {
     switch (bookingState) {
       case "empty":
         return (
-          <View style={s.emptyBox}>
-            <Text style={s.emptyText}>No Recent Profiles</Text>
-          </View>
+          <>
+            <View style={s.emptyBox}>
+              <Text style={s.emptyText}>No Recent Profiles</Text>
+            </View>
+            <TouchableOpacity
+              style={s.bookButton}
+              activeOpacity={0.85}
+              onPress={onAddNew}
+            >
+              <View style={s.bookIconCircle}>
+                <Text style={s.bookIconText}>+</Text>
+              </View>
+              <Text style={s.bookText}>Add New Slot</Text>
+            </TouchableOpacity>
+          </>
         );
 
       case "listed":
@@ -348,8 +364,7 @@ const RecentlyAddedSection = ({
   return (
     <View style={s.bottomCard}>
       <View style={s.recentlyAddedRow}>
-        <Text style={s.recentlyAddedText}>Recently Added</Text>
-        <Text style={s.filterIcon}>⇅</Text>
+       
       </View>
       {renderContent()}
     </View>
@@ -417,7 +432,7 @@ const UserDashboard = () => {
         <View style={s.header}>
           <View style={s.headerLeft}>
             <View style={s.clockIcon}>
-              <Image source={icon7} style={{ width: 26, height: 26 }} />
+              <Image source={icon7} style={{ width: 46, height: 46 }} />
             </View>
             <View>
               <Text style={s.greeting}>
@@ -428,7 +443,7 @@ const UserDashboard = () => {
           </View>
           <View style={s.notifWrapper}>
             <TouchableOpacity style={s.notifButton}>
-              <Image source={icon5} style={{ width: 22, height: 22 }} />
+              <Image source={icon5} style={{ width: 32, height: 32 }} />
             </TouchableOpacity>
             <View style={s.notifBadge} />
           </View>
@@ -463,24 +478,14 @@ const UserDashboard = () => {
           <View style={s.dot} />
         </View>
 
+        {/* Recently Added */}
         <RecentlyAddedSection
           bookingState={bookingState}
           setBookingState={setBookingState}
           hospital={selectedHospital}
           navigation={navigation}
+          onAddNew={() => setSearchVisible(true)}
         />
-
-        {/* Create New Slot */}
-        <View style={s.createSection}>
-          <TouchableOpacity
-            style={s.createButton}
-            activeOpacity={0.85}
-            onPress={() => setSearchVisible(true)}
-          >
-            <Text style={s.createIcon}>+</Text>
-          </TouchableOpacity>
-          <Text style={s.createLabel}>Create a New Slot</Text>
-        </View>
       </ScrollView>
 
       {/* Bottom Navigation */}
@@ -513,7 +518,7 @@ const UserDashboard = () => {
 const mS = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.45)",
+    backgroundColor: "rgba(0,0,0,0.45)",
     justifyContent: "flex-end",
   },
   sheet: {
@@ -583,7 +588,7 @@ const mS = StyleSheet.create({
   addr: { fontSize: 11, color: C.textMid, marginTop: 2 },
   count: { fontSize: 13, fontWeight: "800", color: C.purple },
   emptyResult: {
-    backgroundColor: C.grey,
+    backgroundColor: "#f1f1f1",
     borderRadius: 16,
     paddingVertical: 36,
     alignItems: "center",
@@ -609,6 +614,7 @@ const s = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: C.bg, marginTop: 40 },
   container: { flex: 1 },
   scrollContent: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 24 },
+
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -623,7 +629,7 @@ const s = StyleSheet.create({
     backgroundColor: C.white,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 6,
+    elevation: 0,
   },
   greeting: {
     fontSize: 18,
@@ -642,8 +648,8 @@ const s = StyleSheet.create({
   notifButton: {
     width: 42,
     height: 42,
-    borderRadius:5,
-    backgroundColor: C.white,
+    borderRadius: 5,
+    backgroundColor: C.grey,
     justifyContent: "center",
     alignItems: "center",
     elevation: 4,
@@ -659,6 +665,7 @@ const s = StyleSheet.create({
     borderWidth: 2,
     borderColor: C.white,
   },
+
   tokenCard: {
     backgroundColor: C.purple,
     borderRadius: 24,
@@ -670,7 +677,7 @@ const s = StyleSheet.create({
   },
   tokenBox: {
     backgroundColor: C.white,
-    borderRadius: 18,
+    borderRadius: 25,
     padding: 14,
     alignItems: "center",
     minWidth: 130,
@@ -689,8 +696,8 @@ const s = StyleSheet.create({
     marginVertical: 4,
   },
   slotBadge: {
-    backgroundColor: C.purple,
-    borderRadius: 20,
+    backgroundColor: C.slotBadgeBg,
+    borderRadius: 30,
     paddingVertical: 5,
     paddingHorizontal: 14,
     alignItems: "center",
@@ -735,6 +742,7 @@ const s = StyleSheet.create({
     borderRadius: 14,
     resizeMode: "cover",
   },
+
   dotsContainer: {
     flexDirection: "row",
     justifyContent: "center",
@@ -749,31 +757,36 @@ const s = StyleSheet.create({
     opacity: 0.4,
   },
   dotActive: { width: 20, backgroundColor: C.purpleDark, opacity: 1 },
+
+  // ── Bottom card — light grey, no hard border ─────────────────────
   bottomCard: {
-    backgroundColor: C.white,
-    borderRadius: 24,
-    padding: 18,
-    elevation: 4,
+    backgroundColor: C.cardBg,
+    borderRadius: 28,
+    padding: 20,
+    paddingTop: 14,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
     marginBottom: 20,
   },
-  recentlyAddedRow: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    gap: 6,
-    marginBottom: 16,
-  },
-  recentlyAddedText: { fontSize: 12, color: C.textMid, fontWeight: "700" },
-  filterIcon: { fontSize: 14, color: C.textMid },
+
+
+
+  // Empty area — no background box, just centered text with space
   emptyBox: {
-    backgroundColor: C.white,
-    borderRadius: 16,
-    paddingVertical: 120,
+    paddingVertical: 60,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 8,
+    marginBottom: 20,
   },
-  emptyText: { fontSize: 15, fontWeight: "700", color: C.red },
+  emptyText: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: C.red,
+  },
+
   hospitalRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -803,36 +816,53 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
   arrowText: { fontSize: 14, color: C.textDark, fontWeight: "700" },
+
+  // ── Two-toned pill button ────────────────────────────────────────
   bookButton: {
     backgroundColor: C.purple,
     borderRadius: 50,
-    paddingVertical: 14,
+    paddingVertical: 6,
+    paddingRight: 24,
+    paddingLeft: 6,
+    marginLeft:20,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-    elevation: 6,
+    gap: 0,
+    width:"80%",
+    elevation: 4,
+    shadowColor: C.purple,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
   },
+
+  // Dark navy circle sits flush on left inside pill
   bookIconCircle: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: "rgba(255,255,255,0.25)",
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: C.btnIconBg,
     justifyContent: "center",
     alignItems: "center",
+    marginRight: 16,
   },
   bookIconText: {
-    fontSize: 20,
+    fontSize: 40,
     color: C.white,
     fontWeight: "300",
-    lineHeight: 24,
+    lineHeight: 32,
+    marginTop: -2,
   },
   bookText: {
-    fontSize: 15,
+    flex: 1,
+    fontSize: 16,
     fontWeight: "800",
     color: C.white,
     letterSpacing: 0.3,
+    textAlign: "center",
+    marginRight: 46, // optical balance against left circle
   },
+
   dtRow: { flexDirection: "row", gap: 12, marginBottom: 16 },
   dtPill: {
     flex: 1,
@@ -850,9 +880,9 @@ const s = StyleSheet.create({
   dtValue: { fontSize: 15, fontWeight: "800", color: C.textDark },
   payRow: { flexDirection: "row", alignItems: "center", gap: 12 },
   backCircle: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     borderWidth: 1.5,
     borderColor: C.purpleMid,
     justifyContent: "center",
@@ -871,7 +901,11 @@ const s = StyleSheet.create({
     elevation: 6,
   },
   payTextCol: { flexDirection: "column" },
-  payLabel: { fontSize: 10, color: "rgba(255,255,255,0.8)", fontWeight: "700" },
+  payLabel: {
+    fontSize: 10,
+    color: "rgba(255,255,255,0.8)",
+    fontWeight: "700",
+  },
   payAmount: {
     fontSize: 18,
     color: C.white,
@@ -909,24 +943,7 @@ const s = StyleSheet.create({
   },
   confirmedIcon: { fontSize: 18, color: C.white, fontWeight: "800" },
   confirmedText: { fontSize: 16, fontWeight: "800", color: C.textDark },
-  createSection: { alignItems: "center", marginBottom: 20 },
-  createButton: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: C.purple,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 6,
-    marginBottom: 6,
-  },
-  createIcon: {
-    fontSize: 26,
-    color: C.white,
-    fontWeight: "300",
-    lineHeight: 30,
-  },
-  createLabel: { fontSize: 12, color: C.textMid, fontWeight: "700" },
+
   bottomNav: {
     flexDirection: "row",
     backgroundColor: C.white,
@@ -935,6 +952,10 @@ const s = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     elevation: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
   },
   navItem: { flex: 1, alignItems: "center", paddingVertical: 4 },
   navIcon: { width: 24, height: 24, resizeMode: "contain" },
