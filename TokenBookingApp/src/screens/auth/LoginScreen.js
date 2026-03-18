@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
   ScrollView, KeyboardAvoidingView, Platform, StatusBar,
-  TouchableWithoutFeedback, Keyboard, Image, Dimensions,
+  TouchableWithoutFeedback, Keyboard, Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path, Rect } from 'react-native-svg';
+import OtpModal from '../../components/OtpModal'; // ← same import as RegisterForm
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const TOP_GAP = 160;
@@ -19,7 +20,6 @@ const CheckMark = () => (
   </Svg>
 );
 
-// Inline Google "G" icon (no asset required)
 const GoogleIcon = () => (
   <Svg width="24" height="24" viewBox="0 0 48 48">
     <Path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.8 0 6.9 5.4 3 13.3l7.8 6C12.7 13.1 17.9 9.5 24 9.5z"/>
@@ -30,7 +30,6 @@ const GoogleIcon = () => (
   </Svg>
 );
 
-// Inline Apple icon
 const AppleIcon = () => (
   <Svg width="22" height="22" viewBox="0 0 24 24" fill="#000">
     <Path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.37 2.73M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
@@ -51,6 +50,7 @@ export default function LoginScreen({ navigation }) {
   const [contact, setContact]       = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors]         = useState({});
+  const [showOtp, setShowOtp]       = useState(false);
 
   const validate = () => {
     const e = {};
@@ -61,15 +61,13 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = () => {
     if (!validate()) return;
-    // proceed with login / OTP flow
+    setShowOtp(true);
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={s.root}>
         <StatusBar barStyle="dark-content" backgroundColor="#f2f2f2" />
-
-        {/* Grey top area */}
         <View style={s.greyTop} />
 
         <KeyboardAvoidingView
@@ -83,11 +81,9 @@ export default function LoginScreen({ navigation }) {
               showsVerticalScrollIndicator={false}
               keyboardDismissMode="interactive"
             >
-              {/* Header */}
               <Text style={s.title}>Log in</Text>
               <Text style={s.subtitle}>Hi Welcome back, you've been missed</Text>
 
-              {/* Single combined input */}
               <View style={s.inputBlock}>
                 <PillInput
                   placeholder="Mail or Mobile number"
@@ -105,7 +101,6 @@ export default function LoginScreen({ navigation }) {
                 }
               </View>
 
-              {/* Remember me */}
               <TouchableOpacity
                 style={s.rememberRow}
                 onPress={() => setRememberMe(p => !p)}
@@ -117,22 +112,18 @@ export default function LoginScreen({ navigation }) {
                 <Text style={s.rememberText}>Remember me</Text>
               </TouchableOpacity>
 
-              {/* Spacer to push button down like in the design */}
               <View style={{ flex: 1, minHeight: 80 }} />
 
-              {/* Log In Button — full width */}
               <TouchableOpacity style={s.loginBtn} onPress={handleLogin} activeOpacity={0.85}>
                 <Text style={s.loginBtnText}>Log In</Text>
               </TouchableOpacity>
 
-              {/* Divider */}
               <View style={s.divRow}>
                 <View style={s.divLine} />
                 <Text style={s.divText}>or</Text>
                 <View style={s.divLine} />
               </View>
 
-              {/* Social Buttons */}
               <View style={s.socialRow}>
                 <TouchableOpacity style={s.socialBtn} activeOpacity={0.75}>
                   <GoogleIcon />
@@ -142,7 +133,6 @@ export default function LoginScreen({ navigation }) {
                 </TouchableOpacity>
               </View>
 
-              {/* Sign up link */}
               <View style={s.signupRow}>
                 <Text style={s.signupText}>Create an account? </Text>
                 <TouchableOpacity onPress={() => navigation?.navigate('Register')}>
@@ -153,6 +143,19 @@ export default function LoginScreen({ navigation }) {
             </ScrollView>
           </View>
         </KeyboardAvoidingView>
+
+        {/* ── OtpModal — identical usage to RegisterForm ── */}
+        <OtpModal
+          visible={showOtp}
+          phone={contact}
+          onClose={() => setShowOtp(false)}
+          onVerify={(code) => {
+            setShowOtp(false);
+            navigation.navigate('UserDashboard');
+          }}
+          topGap={TOP_GAP}
+        />
+
       </View>
     </TouchableWithoutFeedback>
   );
@@ -189,17 +192,15 @@ const s = StyleSheet.create({
     paddingBottom: 48,
     flexGrow: 1,
   },
-
-  // ── Typography ──────────────────────────────────────────────
   title: {
-  fontSize: 30,
-  fontFamily: 'Poppins-Bold 800',
-  fontWeight: '900', // ← change this
-  color: '#111',
-  textAlign: 'center',
-  marginBottom: 10,
-  letterSpacing: -1,
-},
+    fontSize: 30,
+    fontFamily: 'Poppins-Bold 800',
+    fontWeight: '900',
+    color: '#111',
+    textAlign: 'center',
+    marginBottom: 10,
+    letterSpacing: -1,
+  },
   subtitle: {
     fontSize: 16,
     color: '#888',
@@ -207,8 +208,6 @@ const s = StyleSheet.create({
     marginBottom: 40,
     fontWeight: '400',
   },
-
-  // ── Input ───────────────────────────────────────────────────
   inputBlock: {
     marginBottom: 18,
   },
@@ -240,8 +239,6 @@ const s = StyleSheet.create({
     marginLeft: 6,
     fontWeight: '500',
   },
-
-  // ── Remember Me ─────────────────────────────────────────────
   rememberRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -268,8 +265,6 @@ const s = StyleSheet.create({
     color: '#333',
     fontWeight: '500',
   },
-
-  // ── Button — full width ─────────────────────────────────────
   loginBtn: {
     backgroundColor: '#7B5FEB',
     borderRadius: 50,
@@ -290,8 +285,6 @@ const s = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.3,
   },
-
-  // ── Divider / Social / Signup ────────────────────────────────
   divRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -319,7 +312,6 @@ const s = StyleSheet.create({
     height: 56,
     alignItems: 'center',
     justifyContent: 'center',
-
   },
   signupRow: {
     flexDirection: 'row',
