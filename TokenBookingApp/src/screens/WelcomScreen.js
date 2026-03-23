@@ -10,6 +10,7 @@ import {
   Image,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 
 const { width, height } = Dimensions.get("window");
 
@@ -23,25 +24,39 @@ const ShieldIcon = () => (
 const WelcomeScreen = ({ navigation }) => {
   return (
     <LinearGradient
-      colors={["#7f48fd", "#B297F8", "#D4C7FA", "#f6f6f6", "#FFFFFF"]}
-      locations={[0.3, 0.5, 0.6, 0.68, 0.85]}
+      colors={[
+        "#7B3FFF",
+        "#7B3FFF",
+        "#A880F8",
+        "#D8CAFC",
+        "#EDE8FD",
+        "#F8F6FF",
+        "#FFFFFF",
+        "#FFFFFF",
+      ]}
+      locations={[0, 0.20, 0.38, 0.50, 0.56, 0.61, 0.66, 1.0]}
       style={styles.container}
     >
       <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
       <SafeAreaView style={styles.safeArea}>
 
+        {/* Shield — bigger, slightly lower */}
         <View style={styles.shieldWrapper}>
           <ShieldIcon />
         </View>
 
-        <View style={styles.bottomContent}>
+        {/* Title — sits just under shield */}
+        <View style={styles.titleWrapper}>
           <Text style={styles.titleRow1}>
             <Text style={styles.horaText}>Hora, </Text>
             <Text style={styles.titleDark}>Make</Text>
           </Text>
           <Text style={styles.titleRow2}>Your Own Path</Text>
+        </View>
 
-          {/* Get Started Button */}
+        {/* Buttons — with horizontal padding, not full width */}
+        <View style={styles.bottomContent}>
+
           <View style={styles.primaryShadowWrapper}>
             <TouchableOpacity
               onPress={() => navigation?.navigate("Register")}
@@ -58,7 +73,6 @@ const WelcomeScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          {/* I already have an account Button */}
           <TouchableOpacity
             onPress={() => navigation?.navigate("Login")}
             activeOpacity={0.85}
@@ -72,6 +86,7 @@ const WelcomeScreen = ({ navigation }) => {
           <Text style={styles.thirdText}>
             Lorem ipsum dolor sit amet consectetur adipiscing elit sed do
           </Text>
+
         </View>
 
       </SafeAreaView>
@@ -82,119 +97,132 @@ const WelcomeScreen = ({ navigation }) => {
 export default WelcomeScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: {
+    flex: 1,
+  },
+
   safeArea: {
     flex: 1,
     alignItems: "center",
-    paddingHorizontal: 24,
+    paddingHorizontal: scale(24),
   },
 
+  // Shield: bigger + shifted slightly lower
   shieldWrapper: {
-    marginTop: height * 0.12,
+    marginTop: verticalScale(72),       // lower than before
+    alignItems: "center",
     shadowColor: "#3A1EA0",
-    shadowOpacity: 0.3,
-    shadowRadius: 32,
-    shadowOffset: { width: 0, height: 20 },
-    elevation: 16,
+    shadowOpacity: 0.22,
+    shadowRadius: moderateScale(24),
+    shadowOffset: { width: 0, height: verticalScale(14) },
+    elevation: 14,
   },
+
   shieldImage: {
-    width: 350,
-    height: 320,
+    width: scale(280),                  // bigger than before (was 250)
+    height: verticalScale(258),         // bigger than before (was 230)
     resizeMode: "contain",
   },
 
-  bottomContent: {
-    position: "absolute",
-    bottom: 80,
-    left: 24,
-    right: 24,
+  // Title: close under shield
+  titleWrapper: {
+    marginTop: verticalScale(18),
+    alignItems: "center",
+    width: "100%",
   },
 
   titleRow1: {
-    fontSize: 34,
+    fontSize: moderateScale(28),
+    lineHeight: moderateScale(36),
     textAlign: "center",
-    lineHeight: 40,
     fontFamily: "Poppins_600SemiBold",
   },
+
   horaText: {
     color: "#7B5FEB",
     fontFamily: "Poppins_600SemiBold",
-    fontSize: 34,
+    fontSize: moderateScale(28),
   },
+
   titleDark: {
     color: "#111111",
     fontFamily: "Poppins_600SemiBold",
-    fontSize: 34,
+    fontSize: moderateScale(28),
   },
+
   titleRow2: {
-    fontSize: 36,
+    fontSize: moderateScale(28),
+    lineHeight: moderateScale(36),
     fontFamily: "Poppins_600SemiBold",
     color: "#111111",
     textAlign: "center",
-    lineHeight: 44,
-    marginBottom: 32,
   },
 
-  // Get Started button
- primaryShadowWrapper: {
-  borderRadius: 20,
-  marginBottom: 25,
-  backgroundColor: "#763ef9",
+  // Buttons: horizontal padding so NOT edge-to-edge
+  bottomContent: {
+    position: "absolute",
+    bottom: verticalScale(60),
+    left: scale(24),                    // padding from edges
+    right: scale(24),                   // padding from edges
+  },
 
-  // iOS Shadow
-  shadowColor: "#000",
-  shadowOffset: { width: 10, height: 8 },
-  shadowOpacity: 0.25,
-  shadowRadius: 10,
-  // Android Shadow
-  elevation: 10,
-},
+  primaryShadowWrapper: {
+    borderRadius: moderateScale(16),
+    marginBottom: verticalScale(14),
+    backgroundColor: "#763ef9",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: verticalScale(6) },
+    shadowOpacity: 0.22,
+    shadowRadius: moderateScale(10),
+    elevation: 10,
+  },
 
-primaryButton: {
-  paddingVertical: 18,
-  borderRadius: 20,
-  alignItems: "center",
-  width: "100%",
-},
+  primaryButton: {
+    paddingVertical: verticalScale(17),
+    borderRadius: moderateScale(16),
+    alignItems: "center",
+    width: "100%",
+  },
+
   primaryText: {
     color: "#FFFFFF",
     fontFamily: "Inter_400Regular",
-    fontSize: 17,
+    fontSize: moderateScale(16),
     letterSpacing: 0.3,
   },
 
-  // I already have an account button
   secondaryShadowWrapper: {
-    borderRadius: 20,
-    marginBottom: 0,
+    borderRadius: moderateScale(16),
     backgroundColor: "#f6f6f6",
     shadowColor: "#000000",
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 4,
+    shadowOpacity: 0.08,
+    shadowRadius: moderateScale(8),
+    shadowOffset: { width: 0, height: verticalScale(3) },
+    elevation: 3,
   },
+
   secondaryButton: {
-    paddingVertical: 18,
-    borderRadius: 20,
+    paddingVertical: verticalScale(17),
+    borderRadius: moderateScale(16),
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
-    backgroundColor: "#EFEFEF",
+    backgroundColor: "#F2F2F2",
   },
+
   secondaryText: {
-    color: "#000000",
+    color: "#111111",
     fontFamily: "Inter_400Regular",
-    fontSize: 17,
+    fontSize: moderateScale(16),
   },
 
   thirdText: {
-    color: "#707070",
+    color: "#AAAAAA",
     fontFamily: "Inter_400Regular",
-    fontSize: 13,
+    fontSize: moderateScale(12),
     textAlign: "center",
-    marginHorizontal: 40,
-    marginTop: 24,
-    lineHeight: 20,
+    marginHorizontal: scale(20),
+    marginTop: verticalScale(16),
+    lineHeight: moderateScale(18),
   },
 });
