@@ -4,12 +4,12 @@ import {
   KeyboardAvoidingView, Platform, StatusBar,
   TouchableWithoutFeedback, Keyboard, Image, Dimensions,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import OtpModal from '../../components/OtpModal';
-import Svg, { Path, Line } from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
+import { rs, vs, rf } from "../../utils/responsive";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-const TOP_GAP = 160;
+const TOP_GAP = vs(160);
 
 const CheckMark = () => (
   <Svg width="12" height="12" viewBox="0 0 24 24" fill="none">
@@ -18,21 +18,15 @@ const CheckMark = () => (
   </Svg>
 );
 
-const PillInput = ({ errorStyle, label, ...props }) => (
+const PillInput = ({ errorStyle, ...props }) => (
+  // shadowClip trims left/right shadow bleed on iOS so only bottom shadow shows
   <View style={s.shadowClip}>
-    <View style={s.inputWrapper}>
-      <LinearGradient
-        colors={['#f6f6f6', '#f6f6f6']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={[s.gradientInput, errorStyle]}
-      >
-        <TextInput
-          style={s.input}
-          placeholderTextColor="#B0B0B8"
-          {...props}
-        />
-      </LinearGradient>
+    <View style={[s.inputWrapper, errorStyle]}>
+      <TextInput
+        style={s.input}
+        placeholderTextColor="#B0B0B8"
+        {...props}
+      />
     </View>
   </View>
 );
@@ -70,13 +64,13 @@ export default function RegisterForm({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={s.root}>
-        <StatusBar barStyle="dark-content" backgroundColor="#f6f6f6" />
-        <View style={s.greyTop} />
+        <StatusBar barStyle="dark-content" backgroundColor="#EBEBEB" />
 
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={s.kavWrapper}
         >
+          {/* White card sitting on grey background */}
           <View style={s.whiteCard}>
             <ScrollView
               contentContainerStyle={s.scroll}
@@ -96,7 +90,10 @@ export default function RegisterForm({ navigation }) {
                 autoCorrect={false}
                 errorStyle={errors.fullName ? s.inputErr : null}
               />
-              {errors.fullName ? <Text style={s.err}>⚠ {errors.fullName}</Text> : <View style={s.spacer} />}
+              {errors.fullName
+                ? <Text style={s.err}>⚠ {errors.fullName}</Text>
+                : <View style={s.spacer} />
+              }
 
               {/* Email */}
               <PillInput
@@ -108,7 +105,10 @@ export default function RegisterForm({ navigation }) {
                 autoCorrect={false}
                 errorStyle={errors.email ? s.inputErr : null}
               />
-              {errors.email ? <Text style={s.err}>⚠ {errors.email}</Text> : <View style={s.spacer} />}
+              {errors.email
+                ? <Text style={s.err}>⚠ {errors.email}</Text>
+                : <View style={s.spacer} />
+              }
 
               {/* Contact */}
               <PillInput
@@ -119,7 +119,10 @@ export default function RegisterForm({ navigation }) {
                 maxLength={15}
                 errorStyle={errors.contact ? s.inputErr : null}
               />
-              {errors.contact ? <Text style={s.err}>⚠ {errors.contact}</Text> : <View style={s.spacer} />}
+              {errors.contact
+                ? <Text style={s.err}>⚠ {errors.contact}</Text>
+                : <View style={s.spacer} />
+              }
 
               {/* Terms */}
               <View style={s.termsRow}>
@@ -136,7 +139,7 @@ export default function RegisterForm({ navigation }) {
                 </TouchableOpacity>
               </View>
               {errors.agreed
-                ? <Text style={[s.err, { marginTop: -12, marginBottom: 10 }]}>⚠ {errors.agreed}</Text>
+                ? <Text style={[s.err, { marginTop: -8, marginBottom: 10 }]}>⚠ {errors.agreed}</Text>
                 : null
               }
 
@@ -150,19 +153,23 @@ export default function RegisterForm({ navigation }) {
               {/* Divider */}
               <View style={s.divRow}>
                 <View style={s.divLine} />
-                <View style={s.orBubble}>
-                  <Text style={s.divText}>or</Text>
-                </View>
+                <Text style={s.divText}>  or  </Text>
                 <View style={s.divLine} />
               </View>
 
-              {/* Social */}
+              {/* Social — bare icons, no background box */}
               <View style={s.socialRow}>
                 <TouchableOpacity style={s.socialBtn} activeOpacity={0.75}>
-                  <Image source={require('../../../assets/icons/google.png')} style={s.socialIcon} />
+                  <Image
+                    source={require('../../../assets/icons/google.png')}
+                    style={s.socialIcon}
+                  />
                 </TouchableOpacity>
                 <TouchableOpacity style={s.socialBtn} activeOpacity={0.75}>
-                  <Image source={require('../../../assets/icons/apple.png')} style={s.socialIcon} />
+                  <Image
+                    source={require('../../../assets/icons/apple.png')}
+                    style={s.socialIcon}
+                  />
                 </TouchableOpacity>
               </View>
 
@@ -173,6 +180,7 @@ export default function RegisterForm({ navigation }) {
                   <Text style={s.loginLink}>Log in</Text>
                 </TouchableOpacity>
               </View>
+
             </ScrollView>
           </View>
         </KeyboardAvoidingView>
@@ -193,119 +201,217 @@ export default function RegisterForm({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#f6f6f6' },
-  greyTop: {
-    position: 'absolute', top: 0, left: 0, right: 0,
-    height: TOP_GAP, backgroundColor: '#f6f6f6',
+
+  // Grey background visible behind card
+  root: {
+    flex: 1,
+    backgroundColor: '#EBEBEB',
   },
-  kavWrapper: { position: 'absolute', top: TOP_GAP, left: 0, right: 0, bottom: 0 },
+
+  kavWrapper: {
+    flex: 1,
+    justifyContent: 'flex-end',   // card sits at bottom, grey shows at top
+  },
+
+  // White card with visible rounded top corners on grey bg
   whiteCard: {
-    flex: 1, backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 40, borderTopRightRadius: 40,
-    overflow: 'hidden',
-    shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 12,
-    shadowOffset: { width: 0, height: -3 }, elevation: 10,
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: rs(36),
+    borderTopRightRadius: rs(36),
+    flex: 1,
+    maxHeight: SCREEN_HEIGHT * 0.85,  // grey peeks at top
+    shadowColor: '#000',
+    shadowOpacity: 0.07,
+    shadowRadius: rs(10),
+    shadowOffset: { width: 0, height: -vs(3) },
+    elevation: 8,
   },
-  scroll: { paddingHorizontal: 26, paddingTop: 36, paddingBottom: 40 },
 
-  // Title: size 60, color #707070
+  scroll: {
+    paddingHorizontal: rs(26),
+    paddingTop: vs(36),
+    paddingBottom: vs(36),
+  },
+
+  // Title
   title: {
-    fontSize: 35,
-    fontWeight: '600',
-    color: '#000000',
+    fontSize: rf(26),
+    fontWeight: '700',
+    color: '#111111',
     textAlign: 'center',
-    marginBottom: 32,
-    letterSpacing: -1,
-    lineHeight: 68,
+    marginBottom: vs(28),
+    letterSpacing: -0.3,
   },
 
-  // Input wrapper with drop shadow (transparency 20 = ~0.20 opacity)
-shadowClip: {
-  overflow: 'hidden',
-  paddingBottom: 8,      // gives room for bottom shadow to show
-  paddingHorizontal: 0,
-  marginBottom: 0,
-},
-inputWrapper: {
-  borderRadius: 100,
-  shadowColor: '#000',
-  shadowOpacity: 0.15,
-  shadowRadius: 3,           // smaller radius = tighter shadow
-  shadowOffset: { width: 0, height: 6 },  // push shadow purely downward
-  elevation: 4,
-},
-
-  // Gradient input container with radius 47
-  gradientInput: {
-    borderRadius: 20,
-    overflow: 'hidden',
+  // Input — pill shaped with more radius
+  inputWrapper: {
+    borderRadius: rs(18),
+    backgroundColor: '#F2F2F2',
+    // Bottom-only shadow
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: vs(4) },  // only downward
+    shadowOpacity: 0.10,
+    shadowRadius: rs(4),
+    elevation: 3,
   },
 
-  // Text input: color #707070, size 32
   input: {
-    borderRadius: 18,
-    paddingHorizontal: 26,
-    paddingVertical: Platform.OS === 'ios' ? 18 : 16,
-    fontSize: 16,
-    color: '#707070',
+    borderRadius: rs(18),
+    paddingHorizontal: rs(22),
+    paddingVertical: Platform.OS === 'ios' ? vs(17) : vs(15),
+    fontSize: rf(15),
+    color: '#333333',
     backgroundColor: 'transparent',
   },
 
   inputErr: {
-    borderWidth: 1.5,
+    borderWidth: rs(1.5),
     borderColor: '#FF5A5A',
   },
 
-  spacer: { height: 14 },
+  // Clips left/right shadow — only bottom shadow shows
+  shadowClip: {
+    overflow: "hidden",
+    paddingBottom: 6,
+    marginBottom: 0,
+  },
+
+  // More vertical space between fields
+  spacer: {
+    height: vs(16),
+  },
+
   err: {
-    color: '#FF5A5A', fontSize: 13, marginTop: 5,
-    marginBottom: 8, marginLeft: 8, fontWeight: '500',
+    color: '#FF5A5A',
+    fontSize: rf(12),
+    marginTop: vs(4),
+    marginBottom: vs(8),
+    marginLeft: rs(4),
+    fontWeight: '500',
   },
 
-  // Terms row: text size 25
-  termsRow: { flexDirection: 'row', alignItems: 'center', marginTop: 6, marginBottom: 24,marginLeft:10 },
-  checkbox: {
-    width: 18, height: 18, borderRadius: 2, borderWidth: 1.8,
-    borderColor: '#C0C0C0', marginRight: 10, alignItems: 'center',
-    justifyContent: 'center', backgroundColor: '#fff',
-  },
-  checked: { backgroundColor: '#7B5FEB', borderColor: '#7B5FEB' },
-  termsText: { fontSize: 16, color: '#444' },
-  termsLink: { fontSize: 16, color: '#7B5FEB', fontWeight: '600', textDecorationLine: 'underline' },
-
-  // Sign In button: text size 32
-  btnWrap: { alignItems: 'center', marginBottom: 24 },
-  signInBtn: {
-    backgroundColor: '#7B5FEB', borderRadius: 50,
-    paddingVertical: 18, paddingHorizontal: 64, minWidth: 220,
+  // Terms row
+  termsRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#7B5FEB', shadowOpacity: 0.45,
-    shadowRadius: 14, shadowOffset: { width: 0, height: 5 }, elevation: 7,
+    marginTop: vs(4),
+    marginBottom: vs(22),
+    marginLeft: rs(2),
   },
-  signInText: { color: '#fff', fontSize: 20, fontWeight: '700', letterSpacing: 0.2 },
 
-  // Divider: "or" with cropped lines — white bubble masks the line behind text
+  checkbox: {
+    width: rs(17),
+    height: rs(17),
+    borderRadius: rs(3),
+    borderWidth: rs(1.5),
+    borderColor: '#C0C0C0',
+    marginRight: rs(8),
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+  },
+
+  checked: {
+    backgroundColor: '#7B5FEB',
+    borderColor: '#7B5FEB',
+  },
+
+  termsText: {
+    fontSize: rf(14),
+    color: '#555',
+  },
+
+  termsLink: {
+    fontSize: rf(14),
+    color: '#7B5FEB',
+    fontWeight: '600',
+    textDecorationLine: 'underline',
+  },
+
+  // Sign In button — wider pill
+  btnWrap: {
+    alignItems: 'center',
+    marginBottom: vs(22),
+  },
+
+  signInBtn: {
+    backgroundColor: '#7B5FEB',
+    borderRadius: rs(50),
+    paddingVertical: vs(16),
+    paddingHorizontal: rs(80),     // wider than before
+    alignItems: 'center',
+    shadowColor: '#7B5FEB',
+    shadowOpacity: 0.38,
+    shadowRadius: rs(12),
+    shadowOffset: { width: 0, height: vs(4) },
+    elevation: 7,
+  },
+
+  signInText: {
+    color: '#fff',
+    fontSize: rf(17),
+    fontWeight: '700',
+    letterSpacing: 0.2,
+  },
+
+  // Divider
   divRow: {
-    flexDirection: 'row', alignItems: 'center',
-    marginBottom: 18, position: 'relative',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: vs(18),
+    paddingHorizontal: rs(10),
   },
-  divLine: { flex: 1, height: 1, backgroundColor: '#E0E0E0' },
-  orBubble: {
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 12,
-    zIndex: 1,
-  },
-  divText: { fontSize: 18, color: '#AAAAAA', fontWeight: '500' },
 
-  // Social
-  socialRow: { flexDirection: 'row', justifyContent: 'center', gap: 18, marginBottom: 28 },
+  divLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#E0E0E0',
+  },
+
+  divText: {
+    fontSize: rf(13),
+    color: '#AAAAAA',
+    fontWeight: '500',
+  },
+
+  // Social — NO background box, just icons
+  socialRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: rs(24),
+    marginBottom: vs(26),
+  },
+
   socialBtn: {
-    width: 56, height: 56, borderRadius: 14, alignItems: 'center', justifyContent: 'center',
+    width: rs(48),
+    height: rs(48),
+    alignItems: 'center',
+    justifyContent: 'center',
+    // no backgroundColor — bare icons
   },
-  socialIcon: { width: 30, height: 30, resizeMode: 'contain' },
 
-  // Login
-  loginRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
-  loginText: { fontSize: 14, color: '#888' },
-  loginLink: { fontSize: 14, color: '#7B5FEB', fontWeight: '700' },
+  socialIcon: {
+    width: rs(36),
+    height: rs(36),
+    resizeMode: 'contain',
+  },
+
+  // Login link
+  loginRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  loginText: {
+    fontSize: rf(14),
+    color: '#888',
+  },
+
+  loginLink: {
+    fontSize: rf(14),
+    color: '#7B5FEB',
+    fontWeight: '700',
+    textDecorationLine: 'underline',
+  },
 });
