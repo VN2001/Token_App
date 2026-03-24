@@ -19,12 +19,15 @@ const CheckMark = () => (
 );
 
 const PillInput = ({ errorStyle, ...props }) => (
-  <View style={[s.inputWrapper, errorStyle]}>
-    <TextInput
-      style={s.input}
-      placeholderTextColor="#868686"
-      {...props}
-    />
+  // shadowClip trims left/right shadow bleed on iOS so only bottom shadow shows
+  <View style={s.shadowClip}>
+    <View style={[s.inputWrapper, errorStyle]}>
+      <TextInput
+        style={s.input}
+        placeholderTextColor="#B0B0B8"
+        {...props}
+      />
+    </View>
   </View>
 );
 
@@ -244,6 +247,12 @@ const s = StyleSheet.create({
   inputWrapper: {
     borderRadius: rs(18),
     backgroundColor: '#F2F2F2',
+    // Bottom-only shadow
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: vs(4) },  // only downward
+    shadowOpacity: 0.10,
+    shadowRadius: rs(4),
+    elevation: 3,
   },
 
   input: {
@@ -258,6 +267,13 @@ const s = StyleSheet.create({
   inputErr: {
     borderWidth: rs(1.5),
     borderColor: '#FF5A5A',
+  },
+
+  // Clips left/right shadow — only bottom shadow shows
+  shadowClip: {
+    overflow: "hidden",
+    paddingBottom: 6,
+    marginBottom: 0,
   },
 
   // More vertical space between fields
