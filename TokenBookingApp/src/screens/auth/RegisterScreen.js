@@ -378,21 +378,21 @@ const s = StyleSheet.create({
   socialRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: rs(24),
+    gap: rs(35),
     marginBottom: vs(26),
   },
 
   socialBtn: {
-    width: rs(48),
-    height: rs(48),
+    width: rs(30),
+    height: rs(30),
     alignItems: 'center',
     justifyContent: 'center',
     // no backgroundColor — bare icons
   },
 
   socialIcon: {
-    width: rs(36),
-    height: rs(36),
+    width: rs(30),
+    height: rs(30),
     resizeMode: 'contain',
   },
 

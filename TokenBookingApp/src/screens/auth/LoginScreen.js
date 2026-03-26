@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
   ScrollView, KeyboardAvoidingView, Platform, StatusBar,
-  TouchableWithoutFeedback, Keyboard, Image, Dimensions,
+  TouchableWithoutFeedback, Keyboard, Dimensions,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import Svg, { Path, Rect } from 'react-native-svg';
+import { rs, vs, rf } from "../../utils/responsive";
+import Svg, { Path } from 'react-native-svg';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-const TOP_GAP = 160;
 
 const CheckMark = () => (
   <Svg width="10" height="10" viewBox="0 0 24 24" fill="none">
@@ -19,9 +18,8 @@ const CheckMark = () => (
   </Svg>
 );
 
-// Inline Google "G" icon (no asset required)
 const GoogleIcon = () => (
-  <Svg width="24" height="24" viewBox="0 0 48 48">
+  <Svg width="28" height="28" viewBox="0 0 48 48">
     <Path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.8 0 6.9 5.4 3 13.3l7.8 6C12.7 13.1 17.9 9.5 24 9.5z"/>
     <Path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9C43.7 37.5 46.5 31.4 46.5 24.5z"/>
     <Path fill="#FBBC05" d="M10.8 28.7A14.6 14.6 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.8-6A24 24 0 0 0 0 24c0 3.9.9 7.5 2.5 10.8l8.3-6.1z"/>
@@ -30,9 +28,8 @@ const GoogleIcon = () => (
   </Svg>
 );
 
-// Inline Apple icon
 const AppleIcon = () => (
-  <Svg width="22" height="22" viewBox="0 0 24 24" fill="#000">
+  <Svg width="35" height="35" viewBox="0 0 24 24" fill="#000">
     <Path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.37 2.73M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
   </Svg>
 );
@@ -67,10 +64,7 @@ export default function LoginScreen({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={s.root}>
-        <StatusBar barStyle="dark-content" backgroundColor="#f2f2f2" />
-
-        {/* Grey top area */}
-        <View style={s.greyTop} />
+        <StatusBar barStyle="dark-content" backgroundColor="#EBEBEB" />
 
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -87,7 +81,7 @@ export default function LoginScreen({ navigation }) {
               <Text style={s.title}>Log in</Text>
               <Text style={s.subtitle}>Hi Welcome back, you've been missed</Text>
 
-              {/* Single combined input */}
+              {/* Input */}
               <View style={s.inputBlock}>
                 <PillInput
                   placeholder="Mail or Mobile number"
@@ -117,18 +111,18 @@ export default function LoginScreen({ navigation }) {
                 <Text style={s.rememberText}>Remember me</Text>
               </TouchableOpacity>
 
-              {/* Spacer to push button down like in the design */}
-              <View style={{ flex: 1, minHeight: 80 }} />
+              {/* Natural spacer — not flex:1 which causes oversized gap */}
+              <View style={s.gap} />
 
-              {/* Log In Button — full width */}
+              {/* Log In Button */}
               <TouchableOpacity style={s.loginBtn} onPress={handleLogin} activeOpacity={0.85}>
                 <Text style={s.loginBtnText}>Log In</Text>
               </TouchableOpacity>
 
-              {/* Divider */}
+              {/* Divider — fully centered */}
               <View style={s.divRow}>
                 <View style={s.divLine} />
-                <Text style={s.divText}>or</Text>
+                <Text style={s.divText}>  or  </Text>
                 <View style={s.divLine} />
               </View>
 
@@ -159,180 +153,206 @@ export default function LoginScreen({ navigation }) {
 }
 
 const s = StyleSheet.create({
+  // Grey background — only a small peek visible at top
   root: {
     flex: 1,
-    backgroundColor: '#f2f2f2',
-  },
-  greyTop: {
-    position: 'absolute', top: 0, left: 0, right: 0,
-    height: TOP_GAP,
-    backgroundColor: '#f2f2f2',
-  },
-  kavWrapper: {
-    position: 'absolute', top: TOP_GAP, left: 0, right: 0, bottom: 0,
-  },
-  whiteCard: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: -3 },
-    elevation: 10,
-  },
-  scroll: {
-    paddingHorizontal: 26,
-    paddingTop: 44,
-    paddingBottom: 48,
-    flexGrow: 1,
+    backgroundColor: '#EBEBEB',
   },
 
-  // ── Typography ──────────────────────────────────────────────
+  // KAV fills full screen, card pushed to bottom so grey shows at top
+  kavWrapper: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+
+  // White card — takes 88% of screen height, grey peeks at top
+  whiteCard: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: rs(32),
+    borderTopRightRadius: rs(32),
+    height: SCREEN_HEIGHT * 0.88,
+    shadowColor: '#000',
+    shadowOpacity: 0.07,
+    shadowRadius: rs(10),
+    shadowOffset: { width: 0, height: -vs(3) },
+    elevation: 8,
+    overflow: 'hidden',
+  },
+
+  scroll: {
+    paddingHorizontal: rs(26),
+    paddingTop: vs(40),
+    paddingBottom: vs(40),
+  },
+
+  // Title
   title: {
-  fontSize: 30,
-  fontFamily: 'Poppins-Bold 800',
-  fontWeight: '900', // ← change this
-  color: '#111',
-  textAlign: 'center',
-  marginBottom: 10,
-  letterSpacing: -1,
-},
-  subtitle: {
-    fontSize: 16,
-    color: '#888',
+    fontSize: rf(28),
+    fontWeight: '800',
+    color: '#111',
     textAlign: 'center',
-    marginBottom: 40,
+    marginBottom: vs(8),
+    letterSpacing: -0.5,
+  },
+
+  // Subtitle
+  subtitle: {
+    fontSize: rf(15),
+    color: '#999',
+    textAlign: 'center',
+    marginBottom: vs(32),
     fontWeight: '400',
   },
 
-  // ── Input ───────────────────────────────────────────────────
+  // Input block
   inputBlock: {
-    marginBottom: 18,
+    marginBottom: vs(16),
   },
+
   shadowWrap: {
-    borderRadius: 16,
+    borderRadius: rs(16),
     backgroundColor: '#f5f5f5',
+    // Bottom-only shadow
     shadowColor: '#000',
     shadowOpacity: 0.08,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: { width: 0, height: vs(4) },
+    shadowRadius: rs(4),
     elevation: 3,
   },
+
   input: {
-    borderRadius: 16,
-    paddingHorizontal: 20,
-    paddingVertical: Platform.OS === 'ios' ? 18 : 15,
-    fontSize: 16,
+    borderRadius: rs(16),
+    paddingHorizontal: rs(20),
+    paddingVertical: Platform.OS === 'ios' ? vs(18) : vs(15),
+    fontSize: rf(15),
     color: '#555',
     backgroundColor: '#f5f5f5',
   },
+
   inputErr: {
-    borderWidth: 1.5,
+    borderWidth: rs(1.5),
     borderColor: '#FF5A5A',
   },
+
   err: {
     color: '#FF5A5A',
-    fontSize: 12,
-    marginTop: 5,
-    marginLeft: 6,
+    fontSize: rf(12),
+    marginTop: vs(5),
+    marginLeft: rs(6),
     fontWeight: '500',
   },
 
-  // ── Remember Me ─────────────────────────────────────────────
+  // Remember me
   rememberRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
-    marginLeft: 2,
+    marginTop: vs(4),
+    marginLeft: rs(2),
   },
+
   checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 5,
-    borderWidth: 1.8,
+    width: rs(18),
+    height: rs(18),
+    borderRadius: rs(4),
+    borderWidth: rs(1.5),
     borderColor: '#C0C0C0',
-    marginRight: 9,
+    marginRight: rs(8),
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#fff',
   },
+
   checked: {
     backgroundColor: '#7B5FEB',
     borderColor: '#7B5FEB',
   },
+
   rememberText: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#333',
     fontWeight: '500',
   },
 
-  // ── Button — full width ─────────────────────────────────────
+  // Fixed gap between remember me and button — not flex:1
+  gap: {
+    height: vs(80),
+  },
+
+  // Log In button — wider centered pill
   loginBtn: {
     backgroundColor: '#7B5FEB',
-    borderRadius: 50,
-    paddingVertical: 18,
+    borderRadius: rs(50),
+    paddingVertical: vs(17),
     alignItems: 'center',
-    width: '50%',
+    width: '100%',              // full width like Register screen
+    alignSelf: 'center',
+    marginBottom: vs(26),
     shadowColor: '#7B5FEB',
-    shadowOpacity: 0.4,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.38,
+    shadowRadius: rs(12),
+    shadowOffset: { width: 0, height: vs(4) },
     elevation: 7,
-    marginLeft: '25%',
-    marginBottom: 28,
   },
+
   loginBtnText: {
     color: '#fff',
-    fontSize: 17,
+    fontSize: rf(17),
     fontWeight: '700',
     letterSpacing: 0.3,
   },
 
-  // ── Divider / Social / Signup ────────────────────────────────
+  // Divider — fully centered with equal flex lines
   divRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
-    marginLeft: 84,
+    marginBottom: vs(20),
+    paddingHorizontal: rs(40),   // equal padding both sides = centered
   },
+
   divLine: {
-    flex: 0.3,
+    flex: 1,                     // both lines equal flex = perfectly centered "or"
     height: 1,
-    backgroundColor: '#c5c4c4',
+    backgroundColor: '#DEDEDE',
   },
+
   divText: {
-    marginHorizontal: 9,
-    fontSize: 14,
+    fontSize: rf(13),
     color: '#AAAAAA',
+    fontWeight: '400',
   },
+
+  // Social
   socialRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 20,
-    marginBottom: 36,
+    gap: rs(10),
+    marginBottom: vs(32),
   },
+
   socialBtn: {
-    width: 56,
-    height: 56,
+    width: rs(56),
+    height: rs(56),
     alignItems: 'center',
     justifyContent: 'center',
-
   },
+
+  // Signup link
   signupRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   signupText: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#888',
   },
+
+  // "Sign in" underlined to match target
   signupLink: {
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#7B5FEB',
     fontWeight: '700',
+    textDecorationLine: 'underline',
   },
 });
