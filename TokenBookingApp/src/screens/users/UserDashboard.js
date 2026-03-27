@@ -16,6 +16,12 @@ import {
   Platform,
   Animated,
 } from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
+
+// ─── Responsive helpers ───────────────────────────────────────────────────────
+const rs = (size) => scale(size);
+const vs = (size) => verticalScale(size);
+const rf = (size) => moderateScale(size);
 
 const dash1 = require("../../../assets/dash1.jpg");
 const dash2 = require("../../../assets/dash2.jpg");
@@ -155,7 +161,7 @@ const SearchModal = ({ visible, onClose, onSelect }) => {
             <View style={mS.handle} />
             <Text style={mS.title}>Find a Hospital</Text>
             <View style={mS.inputWrapper}>
-              <Image source={icon4} style={{ width: 18, height: 18 }} />
+              <Image source={icon4} style={{ width: rs(18), height: rs(18) }} />
               <TextInput
                 style={mS.input}
                 placeholder="Search hospital name or area..."
@@ -166,7 +172,7 @@ const SearchModal = ({ visible, onClose, onSelect }) => {
               />
               {query.length > 0 && (
                 <TouchableOpacity onPress={() => setQuery("")}>
-                  <Text style={{ color: C.textMid, fontSize: 18 }}>✕</Text>
+                  <Text style={{ color: C.textMid, fontSize: rf(18) }}>✕</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -188,7 +194,7 @@ const SearchModal = ({ visible, onClose, onSelect }) => {
                     onPress={() => setSelected(h)}
                   >
                     <View style={mS.avatar}>
-                      <Text style={{ fontSize: 22 }}>{h.avatar}</Text>
+                      <Text style={{ fontSize: rf(22) }}>{h.avatar}</Text>
                     </View>
                     <View style={mS.info}>
                       <Text style={mS.name}>{h.name}</Text>
@@ -244,7 +250,7 @@ const RecentlyAddedSection = ({
               <View style={s.bookIconCircle}>
                 <Text style={s.bookIconText}>+</Text>
               </View>
-              <Text style={s.bookText}>Add New Slot</Text>
+              <Text style={s.bookText}>Create New Slot</Text>
             </TouchableOpacity>
           </>
         );
@@ -254,7 +260,7 @@ const RecentlyAddedSection = ({
           <>
             <View style={s.hospitalRow}>
               <View style={s.hospitalAvatar}>
-                <Text style={{ fontSize: 24 }}>{hospital?.avatar}</Text>
+                <Text style={{ fontSize: rf(24) }}>{hospital?.avatar}</Text>
               </View>
               <View style={s.hospitalInfo}>
                 <Text style={s.hospitalName}>{hospital?.name}</Text>
@@ -287,7 +293,7 @@ const RecentlyAddedSection = ({
           <>
             <View style={s.hospitalRow}>
               <View style={s.hospitalAvatar}>
-                <Text style={{ fontSize: 24 }}>{hospital?.avatar}</Text>
+                <Text style={{ fontSize: rf(24) }}>{hospital?.avatar}</Text>
               </View>
               <View style={s.hospitalInfo}>
                 <Text style={s.hospitalName}>{hospital?.name}</Text>
@@ -339,7 +345,7 @@ const RecentlyAddedSection = ({
           <>
             <View style={s.hospitalRow}>
               <View style={s.hospitalAvatar}>
-                <Text style={{ fontSize: 24 }}>{hospital?.avatar}</Text>
+                <Text style={{ fontSize: rf(24) }}>{hospital?.avatar}</Text>
               </View>
               <View style={s.hospitalInfo}>
                 <Text style={s.hospitalName}>{hospital?.name}</Text>
@@ -363,9 +369,7 @@ const RecentlyAddedSection = ({
 
   return (
     <View style={s.bottomCard}>
-      <View style={s.recentlyAddedRow}>
-       
-      </View>
+    
       {renderContent()}
     </View>
   );
@@ -432,7 +436,7 @@ const UserDashboard = () => {
         <View style={s.header}>
           <View style={s.headerLeft}>
             <View style={s.clockIcon}>
-              <Image source={icon7} style={{ width: 46, height: 46 }} />
+              <Image source={icon7} style={{ width: rs(46), height: rs(46) }} />
             </View>
             <View>
               <Text style={s.greeting}>
@@ -443,7 +447,7 @@ const UserDashboard = () => {
           </View>
           <View style={s.notifWrapper}>
             <TouchableOpacity style={s.notifButton}>
-              <Image source={icon5} style={{ width: 32, height: 32 }} />
+              <Image source={icon5} style={{ width: rs(32), height: rs(32) }} />
             </TouchableOpacity>
             <View style={s.notifBadge} />
           </View>
@@ -523,41 +527,41 @@ const mS = StyleSheet.create({
   },
   sheet: {
     backgroundColor: C.white,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    padding: 20,
-    paddingBottom: Platform.OS === "ios" ? 40 : 24,
+    borderTopLeftRadius: rs(28),
+    borderTopRightRadius: rs(28),
+    padding: rs(20),
+    paddingBottom: Platform.OS === "ios" ? vs(40) : vs(24),
     maxHeight: height * 0.82,
   },
   handle: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
+    width: rs(40),
+    height: vs(4),
+    borderRadius: rs(2),
     backgroundColor: "#E0E0E0",
     alignSelf: "center",
-    marginBottom: 20,
+    marginBottom: vs(20),
   },
   title: {
-    fontSize: 20,
+    fontSize: rf(20),
     fontWeight: "800",
     color: C.textDark,
-    marginBottom: 16,
+    marginBottom: vs(16),
   },
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: C.purpleLight,
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    marginBottom: 16,
-    borderWidth: 1.5,
+    borderRadius: rs(14),
+    paddingHorizontal: rs(14),
+    paddingVertical: vs(10),
+    marginBottom: vs(16),
+    borderWidth: rs(1.5),
     borderColor: C.purpleMid,
-    gap: 8,
+    gap: rs(8),
   },
   input: {
     flex: 1,
-    fontSize: 14,
+    fontSize: rf(14),
     color: C.textDark,
     fontWeight: "600",
     padding: 0,
@@ -566,44 +570,44 @@ const mS = StyleSheet.create({
   item: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: rs(12),
     backgroundColor: "#F8F6FF",
-    borderRadius: 16,
-    padding: 12,
-    marginBottom: 8,
-    borderWidth: 1.5,
+    borderRadius: rs(16),
+    padding: rs(12),
+    marginBottom: vs(8),
+    borderWidth: rs(1.5),
     borderColor: "transparent",
   },
   itemSelected: { borderColor: C.purple, backgroundColor: C.purpleLight },
   avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: rs(44),
+    height: rs(44),
+    borderRadius: rs(22),
     backgroundColor: C.purpleLight,
     justifyContent: "center",
     alignItems: "center",
   },
   info: { flex: 1 },
-  name: { fontSize: 14, fontWeight: "800", color: C.textDark },
-  addr: { fontSize: 11, color: C.textMid, marginTop: 2 },
-  count: { fontSize: 13, fontWeight: "800", color: C.purple },
+  name: { fontSize: rf(14), fontWeight: "800", color: C.textDark },
+  addr: { fontSize: rf(11), color: C.textMid, marginTop: vs(2) },
+  count: { fontSize: rf(13), fontWeight: "800", color: C.purple },
   emptyResult: {
     backgroundColor: "#f1f1f1",
-    borderRadius: 16,
-    paddingVertical: 36,
+    borderRadius: rs(16),
+    paddingVertical: vs(36),
     alignItems: "center",
   },
-  emptyText: { fontSize: 16, fontWeight: "700", color: C.red },
+  emptyText: { fontSize: rf(16), fontWeight: "700", color: C.red },
   confirmBtn: {
     backgroundColor: C.purple,
-    borderRadius: 50,
-    paddingVertical: 15,
+    borderRadius: rs(50),
+    paddingVertical: vs(15),
     alignItems: "center",
-    marginTop: 10,
+    marginTop: vs(10),
     elevation: 6,
   },
   confirmText: {
-    fontSize: 15,
+    fontSize: rf(15),
     fontWeight: "800",
     color: C.white,
     letterSpacing: 0.3,
@@ -611,44 +615,48 @@ const mS = StyleSheet.create({
 });
 
 const s = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: C.bg, marginTop: 40 },
+  safeArea: { flex: 1, backgroundColor: C.bg, marginTop: vs(40) },
   container: { flex: 1 },
-  scrollContent: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 24 },
+  scrollContent: {
+    paddingHorizontal: rs(18),
+    paddingTop: vs(12),
+    paddingBottom: vs(24),
+  },
 
+  // Header
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 22,
+    marginBottom: vs(18),
   },
-  headerLeft: { flexDirection: "row", alignItems: "center", gap: 12 },
+  headerLeft: { flexDirection: "row", alignItems: "center", gap: rs(12) },
   clockIcon: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+    width: rs(46),
+    height: rs(46),
+    borderRadius: rs(23),
     backgroundColor: C.white,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 0,
   },
   greeting: {
-    fontSize: 18,
+    fontSize: rf(18),
     fontWeight: "800",
     color: C.textDark,
     letterSpacing: 0.2,
   },
   greetingName: { color: C.purple, fontWeight: "800" },
   subGreeting: {
-    fontSize: 11,
+    fontSize: rf(11),
     color: C.textMid,
-    marginTop: 2,
+    marginTop: vs(2),
     fontWeight: "600",
   },
   notifWrapper: { position: "relative" },
   notifButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 5,
+    width: rs(42),
+    height: rs(42),
+    borderRadius: rs(5),
     backgroundColor: C.grey,
     justifyContent: "center",
     alignItems: "center",
@@ -656,241 +664,254 @@ const s = StyleSheet.create({
   },
   notifBadge: {
     position: "absolute",
-    top: 6,
-    right: 6,
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    top: vs(6),
+    right: rs(6),
+    width: rs(10),
+    height: rs(10),
+    borderRadius: rs(5),
     backgroundColor: "#FF3B30",
-    borderWidth: 2,
+    borderWidth: rs(2),
     borderColor: C.white,
   },
 
+  // Token Card
   tokenCard: {
     backgroundColor: C.purple,
-    borderRadius: 24,
-    padding: 16,
+    borderRadius: rs(24),
+    padding: rs(14),
     flexDirection: "row",
-    gap: 14,
-    marginBottom: 16,
+    gap: rs(12),
+    marginBottom: vs(16),
     elevation: 8,
+    minHeight: vs(190),
   },
   tokenBox: {
-    backgroundColor: C.white,
-    borderRadius: 25,
-    padding: 14,
+    backgroundColor: C.purpleLight,
+    borderRadius: rs(20),
+    padding: rs(12),
     alignItems: "center",
-    minWidth: 130,
+    width: rs(148),
+    justifyContent: "center",
   },
   tokenLabel: {
-    fontSize: 12,
-    color: C.textMid,
+    fontSize: rf(13),
+    color: C.textDark,
     fontWeight: "700",
     textAlign: "center",
+    marginBottom: vs(2),
   },
   tokenNumber: {
-    fontSize: 64,
+    fontSize: rf(72),
     fontWeight: "900",
     color: C.textDark,
-    lineHeight: 70,
-    marginVertical: 4,
+    lineHeight: vs(78),
+    marginVertical: vs(2),
+    includeFontPadding: false,
   },
   slotBadge: {
     backgroundColor: C.slotBadgeBg,
-    borderRadius: 30,
-    paddingVertical: 5,
-    paddingHorizontal: 14,
+    borderRadius: rs(30),
+    paddingVertical: vs(6),
+    paddingHorizontal: rs(10),
     alignItems: "center",
     width: "100%",
+    marginTop: vs(4),
   },
   slotBadgeSmall: {
-    fontSize: 9,
+    fontSize: rf(8),
     color: "rgba(255,255,255,0.85)",
     fontWeight: "700",
+    letterSpacing: 0.3,
   },
   timerText: {
-    fontSize: 16,
+    fontSize: rf(17),
     color: C.white,
     fontWeight: "800",
-    letterSpacing: 1,
+    letterSpacing: 1.5,
   },
-  imageGrid: { flex: 1, gap: 8 },
+  imageGrid: { flex: 1, gap: vs(8) },
   imageTop: {
     flex: 1,
-    borderRadius: 14,
+    borderRadius: rs(14),
     backgroundColor: C.purpleMid,
-    minHeight: 90,
     overflow: "hidden",
   },
   dashImageTop: {
     width: "100%",
     height: "100%",
-    borderRadius: 14,
+    borderRadius: rs(14),
     resizeMode: "cover",
   },
-  imageBottom: { flexDirection: "row", gap: 8 },
+  imageBottom: { flexDirection: "row", gap: rs(8) },
   imageSmall: {
     flex: 1,
-    height: 68,
-    borderRadius: 14,
+    height: vs(80),
+    borderRadius: rs(14),
     backgroundColor: "#B8A3F5",
     overflow: "hidden",
   },
   dashImageSmall: {
     width: "100%",
     height: "100%",
-    borderRadius: 14,
+    borderRadius: rs(14),
     resizeMode: "cover",
   },
 
+  // Dots
   dotsContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: 6,
-    marginBottom: 20,
+    gap: rs(6),
+    marginBottom: vs(20),
   },
   dot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
+    width: rs(7),
+    height: rs(7),
+    borderRadius: rs(4),
     backgroundColor: C.purpleMid,
     opacity: 0.4,
   },
-  dotActive: { width: 20, backgroundColor: C.purpleDark, opacity: 1 },
+  dotActive: { width: rs(20), backgroundColor: C.purpleDark, opacity: 1 },
 
-  // ── Bottom card — light grey, no hard border ─────────────────────
+  // Bottom card
   bottomCard: {
-    backgroundColor: C.cardBg,
-    borderRadius: 28,
-    padding: 20,
-    paddingTop: 14,
+    backgroundColor: "#f1f1f1",
+    borderRadius: rs(28),
+    padding: rs(20),
+    paddingTop: vs(14),
     elevation: 2,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: vs(2) },
     shadowOpacity: 0.06,
-    shadowRadius: 8,
-    marginBottom: 20,
+    shadowRadius: rs(8),
+    marginBottom: vs(20),
   },
 
 
 
-  // Empty area — no background box, just centered text with space
+  // Empty state
   emptyBox: {
-    paddingVertical: 60,
+    
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 20,
+    paddingVertical: vs(20),  // reduced from 40 → 20
+  marginBottom: vs(8),
   },
   emptyText: {
-    fontSize: 15,
+    fontSize: rf(15),
     fontWeight: "700",
     color: C.red,
+    letterSpacing: 0.2,
   },
 
+  // Hospital row
   hospitalRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    marginBottom: 16,
+    gap: rs(12),
+    marginBottom: vs(16),
   },
   hospitalAvatar: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: rs(52),
+    height: rs(52),
+    borderRadius: rs(26),
     backgroundColor: C.purpleLight,
     justifyContent: "center",
     alignItems: "center",
   },
   hospitalInfo: { flex: 1 },
-  hospitalName: { fontSize: 15, fontWeight: "800", color: C.textDark },
-  hospitalSub: { fontSize: 11, color: C.textMid, marginTop: 2 },
-  hospitalRight: { alignItems: "flex-end", gap: 4 },
-  hospitalCount: { fontSize: 13, fontWeight: "800", color: C.purple },
+  hospitalName: { fontSize: rf(15), fontWeight: "800", color: C.textDark },
+  hospitalSub: { fontSize: rf(11), color: C.textMid, marginTop: vs(2) },
+  hospitalRight: { alignItems: "flex-end", gap: vs(4) },
+  hospitalCount: { fontSize: rf(13), fontWeight: "800", color: C.purple },
   arrowCircle: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    borderWidth: 1.5,
+    width: rs(30),
+    height: rs(30),
+    borderRadius: rs(15),
+    borderWidth: rs(1.5),
     borderColor: C.purpleMid,
     justifyContent: "center",
     alignItems: "center",
   },
-  arrowText: { fontSize: 14, color: C.textDark, fontWeight: "700" },
+  arrowText: { fontSize: rf(14), color: C.textDark, fontWeight: "700" },
 
-  // ── Two-toned pill button ────────────────────────────────────────
-bookButton: {
-  backgroundColor: C.purple,
-  borderRadius: 50,
-  paddingVertical: 6,
-  paddingRight: 6,
-  paddingLeft: 6,
-  flexDirection: "row",
-  alignItems: "center",
-  alignSelf: "center",   // ← centers the button
-  width: "65%",          // ← reduces width
-  elevation: 4,
-  shadowColor: C.purple,
-  shadowOffset: { width: 0, height: 4 },
-  shadowOpacity: 0.35,
-  shadowRadius: 10,
-},
+  // Book button
+  bookButton: {
+    backgroundColor: C.purple,
+    borderRadius: rs(50),
+    paddingVertical: vs(5),
+    paddingRight: rs(16),
+    paddingLeft: rs(5),
+    marginBottom:rs(15),
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "center",
+    width: "72%",
+    elevation: 4,
+    shadowColor: C.purple,
+    shadowOffset: { width: 0, height: vs(4) },
+    shadowOpacity: 0.35,
+    shadowRadius: rs(10),
+  },
+  bookIconCircle: {
+    width: rs(50),
+    height: rs(50),
+    borderRadius: rs(25),
+    backgroundColor: C.btnIconBg,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  bookIconText: {
+    fontSize: rf(42),
+    color: C.white,
+    fontWeight: "300",
+    lineHeight: vs(34),
+    includeFontPadding: false,
+  },
+  bookText: {
+    flex: 1,
+    fontSize: rf(15),
+    fontWeight: "800",
+    color: C.white,
+    letterSpacing: 0.2,
+    textAlign: "center",
+  },
 
-  // Dark navy circle sits flush on left inside pill
-bookIconCircle: {
-  width: 46,
-  height: 46,
-  borderRadius: 23,
-  backgroundColor: C.btnIconBg,
-  justifyContent: "center",
-  alignItems: "center",
-},
-bookIconText: {
-  fontSize: 45,
-  color: C.white,
-  fontWeight: "300",
-  lineHeight: 32,
-},
-bookText: {
-  flex: 1,
-  fontSize: 16,
-  fontWeight: "800",
-  color: C.white,
-  letterSpacing: 0.3,
-  textAlign: "center",
-},
-
-  dtRow: { flexDirection: "row", gap: 12, marginBottom: 16 },
+  // Date / Time pills
+  dtRow: { flexDirection: "row", gap: rs(12), marginBottom: vs(16) },
   dtPill: {
     flex: 1,
     backgroundColor: C.purpleLight,
-    borderRadius: 14,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
+    borderRadius: rs(14),
+    paddingVertical: vs(10),
+    paddingHorizontal: rs(14),
   },
   dtLabel: {
-    fontSize: 11,
+    fontSize: rf(11),
     color: C.textMid,
     fontWeight: "600",
-    marginBottom: 2,
+    marginBottom: vs(2),
   },
-  dtValue: { fontSize: 15, fontWeight: "800", color: C.textDark },
-  payRow: { flexDirection: "row", alignItems: "center", gap: 12 },
+  dtValue: { fontSize: rf(15), fontWeight: "800", color: C.textDark },
+
+  // Pay row
+  payRow: { flexDirection: "row", alignItems: "center", gap: rs(12) },
   backCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    borderWidth: 1.5,
+    width: rs(44),
+    height: rs(44),
+    borderRadius: rs(22),
+    borderWidth: rs(1.5),
     borderColor: C.purpleMid,
     justifyContent: "center",
     alignItems: "center",
   },
-  backArrow: { fontSize: 18, color: C.textDark, fontWeight: "700" },
+  backArrow: { fontSize: rf(18), color: C.textDark, fontWeight: "700" },
   payButton: {
     flex: 1,
     backgroundColor: C.purple,
-    borderRadius: 50,
-    paddingVertical: 12,
-    paddingHorizontal: 18,
+    borderRadius: rs(50),
+    paddingVertical: vs(12),
+    paddingHorizontal: rs(18),
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -898,69 +919,72 @@ bookText: {
   },
   payTextCol: { flexDirection: "column" },
   payLabel: {
-    fontSize: 10,
+    fontSize: rf(10),
     color: "rgba(255,255,255,0.8)",
     fontWeight: "700",
   },
   payAmount: {
-    fontSize: 18,
+    fontSize: rf(18),
     color: C.white,
     fontWeight: "900",
     letterSpacing: 0.3,
   },
   payArrowCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: rs(36),
+    height: rs(36),
+    borderRadius: rs(18),
     backgroundColor: "rgba(255,255,255,0.25)",
     justifyContent: "center",
     alignItems: "center",
   },
-  payArrowText: { fontSize: 18, color: C.white, fontWeight: "700" },
-  bookedBadge: { fontSize: 13, fontWeight: "800", color: C.green },
+  payArrowText: { fontSize: rf(18), color: C.white, fontWeight: "700" },
+
+  // Booked / Confirmed
+  bookedBadge: { fontSize: rf(13), fontWeight: "800", color: C.green },
   confirmedButton: {
-    borderRadius: 50,
-    borderWidth: 1.5,
+    borderRadius: rs(50),
+    borderWidth: rs(1.5),
     borderColor: "#E0E0E0",
-    paddingVertical: 14,
+    paddingVertical: vs(14),
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
+    gap: rs(12),
     backgroundColor: C.white,
   },
   confirmedIconCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: rs(32),
+    height: rs(32),
+    borderRadius: rs(16),
     backgroundColor: C.green,
     justifyContent: "center",
     alignItems: "center",
   },
-  confirmedIcon: { fontSize: 18, color: C.white, fontWeight: "800" },
-  confirmedText: { fontSize: 16, fontWeight: "800", color: C.textDark },
+  confirmedIcon: { fontSize: rf(18), color: C.white, fontWeight: "800" },
+  confirmedText: { fontSize: rf(16), fontWeight: "800", color: C.textDark },
 
+  // Bottom Navigation
   bottomNav: {
     flexDirection: "row",
     backgroundColor: C.white,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    paddingVertical: vs(10),
+    paddingHorizontal: rs(16),
+    borderTopLeftRadius: rs(24),
+    borderTopRightRadius: rs(24),
     elevation: 10,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: -3 },
+    shadowOffset: { width: 0, height: -vs(3) },
     shadowOpacity: 0.08,
-    shadowRadius: 10,
+    shadowRadius: rs(10),
   },
-  navItem: { flex: 1, alignItems: "center", paddingVertical: 4 },
-  navIcon: { width: 24, height: 24, resizeMode: "contain" },
+  navItem: { flex: 1, alignItems: "center", paddingVertical: vs(4) },
+  navIcon: { width: rs(24), height: rs(24), resizeMode: "contain" },
   navDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
+    width: rs(6),
+    height: rs(6),
+    borderRadius: rs(3),
     backgroundColor: C.purple,
-    marginTop: 3,
+    marginTop: vs(4),
   },
 });
 
