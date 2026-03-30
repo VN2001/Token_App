@@ -6,6 +6,7 @@ import WelcomeScreen from "../screens/WelcomScreen";
 import UserDashboard from "../screens/users/UserDashboard";
 import TokenSlotBooking from "../screens/users/TokenSlotBooking";
 import PaymentScreen from "../screens/users/PaymentScreen";
+import DoctorBookingScreen from "../screens/users/DoctorBookingScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ const AuthNavigator = () => {
       <Stack.Screen name="UserDashboard" component={UserDashboard} />
       <Stack.Screen name="BookingSlot" component={TokenSlotBooking} />
       <Stack.Screen name="Payment" component={PaymentScreen} />
+      <Stack.Screen name="DoctorBooking" component={DoctorBookingScreen} />
     </Stack.Navigator>
   );
 };

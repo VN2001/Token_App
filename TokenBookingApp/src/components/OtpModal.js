@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
+import { rs, vs, rf } from "../utils/responsive";
 
 const BackArrow = () => (
   <Svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -196,106 +197,116 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.25)',
     justifyContent: 'flex-end',
   },
+
   topBar: {
     width: '100%',
   },
+
   card: {
     backgroundColor: '#fff',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    paddingHorizontal: 26,
-    paddingTop: 26,
-    paddingBottom: 50,
+    borderTopLeftRadius: rs(30),
+    borderTopRightRadius: rs(30),
+    paddingHorizontal: rs(26),
+    paddingTop: vs(26),
+    paddingBottom: vs(50),
     elevation: 24,
   },
 
-  // Back button
+  // ── Back Button ─────────────────────
   backBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 22,
+    gap: rs(8),
+    marginBottom: vs(22),
   },
+
   backText: {
     fontFamily: 'Poppins-Regular',
-    fontSize: 16, // ~32sp scaled for typical usage; adjust if using sp units
+    fontSize: rf(16),
     color: '#707070',
   },
 
-  // Titles
+  // ── Titles ─────────────────────────
   title: {
     fontFamily: 'Poppins-Regular',
-    fontSize: 19,
+    fontSize: rf(19),
     color: '#000000',
     textAlign: 'center',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontFamily: 'Poppins-Regular',
-    fontSize: 14,
-    color: '#707070',
-    textAlign: 'center',
-    marginBottom: 32,
+    marginBottom: vs(8),
   },
 
-  // OTP Row
+  subtitle: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: rf(14),
+    color: '#707070',
+    textAlign: 'center',
+    marginBottom: vs(32),
+  },
+
+  // ── OTP Boxes ──────────────────────
   otpRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 14,
-    marginBottom: 22,
+    gap: rs(14),
+    marginBottom: vs(22),
   },
+
   boxGradient: {
-    width: 72,
-    height: 72,
-    borderRadius: 20,
+    width: rs(72),
+    height: rs(72),
+    borderRadius: rs(20),
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   boxFocused: {
-    borderWidth: 2,
+    borderWidth: rs(2),
     borderColor: '#763ef9',
   },
+
   boxInput: {
     width: '100%',
     height: '100%',
     fontFamily: 'Poppins-Regular',
-    fontSize: 25,
+    fontSize: rf(25),
     fontWeight: '400',
     color: '#000000',
     textAlign: 'center',
-    borderRadius: 20,
+    borderRadius: rs(20),
   },
 
-  // Timer
+  // ── Timer ──────────────────────────
   timer: {
     fontFamily: 'Poppins-Regular',
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: rf(14),
     color: '#707070',
-    marginBottom: 24,
+    marginBottom: vs(24),
   },
+
   timerBold: {
     fontFamily: 'Poppins-Bold',
     color: '#707070',
     fontWeight: '700',
   },
 
-  // Buttons
+  // ── Buttons ────────────────────────
   btnWrapper: {
-    marginBottom: 13,
-    borderRadius: 100,
+    marginBottom: vs(13),
+    borderRadius: rs(100),
     overflow: 'hidden',
   },
+
   btn: {
-    borderRadius: 100,
-    paddingVertical: 16,
+    borderRadius: rs(100),
+    paddingVertical: vs(16),
     alignItems: 'center',
   },
+
   btnText: {
     fontFamily: 'Poppins-Regular',
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '400',
   },
 });

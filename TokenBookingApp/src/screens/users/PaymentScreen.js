@@ -4,12 +4,15 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  SafeAreaView,
   StatusBar,
   ScrollView,
 } from 'react-native';
 import { Image } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { rs, vs, rf } from "../../utils/responsive";
+import { SafeAreaView } from 'react-native-safe-area-context'; // ✅ correct
+
+
 
 const GooglePayIcon = ({ size = 26 }) => (
   <Image
@@ -147,184 +150,190 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: BG,
   },
+
   scroll: {
     flex: 1,
   },
+
   scrollContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: rs(16),
   },
 
-  // Header
+  // ─── Header ─────────────────────────
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: rs(16),
+    paddingVertical: vs(14),
     backgroundColor: '#ffffff',
   },
+
   backBtn: {
-    padding: 4,
-    marginTop:70,
+    padding: rs(4),
   },
+
   headerCenter: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
-        marginTop:70,
-
+    gap: rs(8),
   },
+
   headerTitle: {
-    fontSize: 20,
+    fontSize: rf(20),
     fontWeight: '700',
     color: '#1a1a1a',
   },
+
   headerAmount: {
-    fontSize: 20,
+    fontSize: rf(20),
     fontWeight: '700',
     color: PURPLE,
   },
 
-  // Hospital
+  // ─── Hospital ───────────────────────
   hospitalCard: {
-    paddingTop: 8,
-    paddingBottom: 24,
+    paddingTop: vs(8),
+    paddingBottom: vs(24),
   },
+
   hospitalName: {
-    fontSize: 24,
+    fontSize: rf(22),
     fontWeight: '700',
     color: '#1a1a1a',
-    marginBottom: 4,
+    marginBottom: vs(4),
   },
+
   hospitalAddress: {
-    fontSize: 13,
+    fontSize: rf(13),
     color: '#aaa',
-    marginBottom: 16,
+    marginBottom: vs(16),
   },
+
   dateTimeRow: {
     flexDirection: 'row',
-    gap: 12,
+    gap: rs(12),
   },
+
   dateTimeBox: {
     backgroundColor: LIGHT_PURPLE,
-    borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    minWidth: 120,
+    borderRadius: rs(12),
+    paddingVertical: vs(10),
+    paddingHorizontal: rs(12),
+    flex: 1, // ✅ responsive width
   },
+
   dateTimeLabel: {
-    fontSize: 12,
+    fontSize: rf(12),
     color: '#aaa',
-    marginBottom: 2,
+    marginBottom: vs(2),
     fontWeight: '500',
   },
+
   dateTimeValue: {
-    fontSize: 15,
+    fontSize: rf(15),
     fontWeight: '700',
     color: '#1a1a1a',
   },
 
-  // Cards
+  // ─── Cards ─────────────────────────
   card: {
     backgroundColor: '#fff',
-    borderRadius: 18,
-    padding: 18,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
+    borderRadius: rs(18),
+    padding: rs(18),
+    marginBottom: vs(16),
     elevation: 2,
-  },
-  preferredCard: {
-    backgroundColor: '#fff',
-    borderRadius: 18,
-    padding: 18,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#1a1a1a',
-    marginBottom: 14,
   },
 
-  // Payment Option Row
+  preferredCard: {
+    backgroundColor: '#fff',
+    borderRadius: rs(18),
+    padding: rs(18),
+    marginBottom: vs(20),
+    elevation: 2,
+  },
+
+  sectionTitle: {
+    fontSize: rf(16),
+    fontWeight: '800',
+    color: '#1a1a1a',
+    marginBottom: vs(14),
+  },
+
+  // ─── Payment Option ────────────────
   paymentOption: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
-    gap: 12,
+    paddingVertical: vs(10),
+    gap: rs(12),
   },
+
   optionLabel: {
     flex: 1,
-    fontSize: 15,
+    fontSize: rf(15),
     color: '#1a1a1a',
     fontWeight: '500',
   },
+
   divider: {
     height: 1,
     backgroundColor: '#ebebeb',
-    marginVertical: 6,
+    marginVertical: vs(6),
   },
 
-  // Radio
+  // ─── Radio ─────────────────────────
   radioOuter: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 2,
+    width: rs(22),
+    height: rs(22),
+    borderRadius: rs(11),
+    borderWidth: rs(2),
     borderColor: '#ccc',
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   radioOuterSelected: {
     borderColor: PURPLE,
   },
+
   radioInner: {
-    width: 11,
-    height: 11,
-    borderRadius: 5.5,
+    width: rs(11),
+    height: rs(11),
+    borderRadius: rs(5.5),
     backgroundColor: PURPLE,
   },
 
-  // Pay Button
+  // ─── Pay Button ────────────────────
   payButton: {
     backgroundColor: PURPLE,
-    borderRadius: 20,
-    paddingVertical: 16,
+    borderRadius: rs(20),
+    paddingVertical: vs(16),
     alignItems: 'center',
-    marginHorizontal: 12,
-    shadowColor: PURPLE,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    marginHorizontal: rs(12),
+    marginTop: vs(10),
     elevation: 4,
   },
+
   payButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '700',
     letterSpacing: 0.5,
   },
 
-  // Bottom
+  // ─── Bottom ────────────────────────
   bottomBar: {
     alignItems: 'center',
-    paddingBottom: 10,
-    paddingTop: 6,
+    paddingBottom: vs(10),
+    paddingTop: vs(6),
     backgroundColor: BG,
   },
+
   bottomIndicator: {
-    width: 110,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: PURPLE, // purple like the target screenshot
+    width: rs(110),
+    height: vs(4),
+    borderRadius: rs(2),
+    backgroundColor: PURPLE,
   },
 });

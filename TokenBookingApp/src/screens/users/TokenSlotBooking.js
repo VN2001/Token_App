@@ -8,6 +8,8 @@ import {
   Pressable,
 } from 'react-native';
 
+import { rs, vs, rf } from "../../utils/responsive";
+
 // ─── Same palette as UserDashboard ───────────────────────────────────────────
 const C = {
   purple:      '#7B5FEB',
@@ -134,255 +136,241 @@ const TokenSlotBooking = () => {
   );
 };
 
+
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    marginBottom: 18,
+    marginBottom: vs(18),
   },
+
   title: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: '800',
     color: C.textDark,
-    marginBottom: 14,
-    letterSpacing: 0.2,
+    marginBottom: vs(14),
   },
-  slotListContent: { gap: 12, paddingBottom: 4 },
 
-  // ── Slot Card (purple, mirrors tokenCard) ──────────────────────────────────
+  slotListContent: {
+    gap: vs(12),
+    paddingBottom: vs(4),
+  },
+
+  // ── Slot Card ─────────────────────────
   slotCard: {
     backgroundColor: C.purple,
-    borderRadius: 22,
-    padding: 14,
+    borderRadius: rs(22),
+    padding: rs(14),
     flexDirection: 'row',
-    gap: 14,
-    shadowColor: C.purpleDark,
-    shadowOpacity: 0.35,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
+    gap: rs(14),
     elevation: 6,
     borderWidth: 2,
     borderColor: 'transparent',
   },
+
   slotCardSelected: {
     borderColor: C.white,
-    shadowOpacity: 0.6,
   },
 
-  // Left white box
+  // Left box
   slotInfoBox: {
     backgroundColor: C.white,
-    borderRadius: 16,
-    padding: 12,
+    borderRadius: rs(16),
+    padding: rs(12),
     alignItems: 'center',
-    minWidth: 100,
-    flexShrink: 0,
+    minWidth: rs(100),
     justifyContent: 'center',
   },
+
   slotInfoLabel: {
-    fontSize: 10,
+    fontSize: rf(10),
     color: C.textMid,
     fontWeight: '700',
-    marginBottom: 2,
   },
+
   slotTime: {
-    fontSize: 15,
+    fontSize: rf(15),
     fontWeight: '900',
     color: C.textDark,
-    letterSpacing: 0.3,
-    marginBottom: 6,
-    textAlign: 'center',
+    marginBottom: vs(6),
   },
+
   dateBadge: {
     backgroundColor: C.purple,
-    borderRadius: 12,
-    paddingVertical: 3,
-    paddingHorizontal: 10,
-    alignItems: 'center',
+    borderRadius: rs(12),
+    paddingVertical: vs(3),
+    paddingHorizontal: rs(10),
     width: '100%',
+    alignItems: 'center',
   },
+
   dateBadgeText: {
-    fontSize: 10,
+    fontSize: rf(10),
     color: C.white,
     fontWeight: '800',
   },
 
-  // Right content
+  // Right
   slotRight: {
     flex: 1,
     justifyContent: 'center',
-    gap: 6,
+    gap: vs(6),
   },
+
   slotRightLabel: {
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '800',
     color: C.white,
   },
+
   slotRightSub: {
-    fontSize: 11,
+    fontSize: rf(11),
     color: 'rgba(255,255,255,0.7)',
-    fontWeight: '500',
   },
+
   rupeeCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: rs(36),
+    height: rs(36),
+    borderRadius: rs(18),
     backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'flex-start',
-    marginTop: 4,
+    marginTop: vs(4),
   },
+
   rupeeText: {
-    fontSize: 16,
+    fontSize: rf(16),
     color: C.white,
     fontWeight: '800',
   },
 
-  // ── Modal ──────────────────────────────────────────────────────────────────
+  // ── Modal ────────────────────────────
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(26,16,53,0.65)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    padding: rs(24),
   },
+
   modalContent: {
     width: '100%',
-    maxWidth: 340,
+    maxWidth: rs(340),
     backgroundColor: C.bg,
-    borderRadius: 28,
-    padding: 20,
-    shadowColor: C.purpleDeep,
-    shadowOpacity: 0.3,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 10 },
+    borderRadius: rs(28),
+    padding: rs(20),
     elevation: 14,
   },
 
-  // Modal header card (mirrors tokenCard layout)
   modalHeader: {
     backgroundColor: C.purple,
-    borderRadius: 22,
-    padding: 14,
+    borderRadius: rs(22),
+    padding: rs(14),
     flexDirection: 'row',
-    gap: 14,
-    marginBottom: 16,
-    shadowColor: C.purpleDark,
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 6,
+    gap: rs(14),
+    marginBottom: vs(16),
   },
+
   modalTokenBox: {
     backgroundColor: C.white,
-    borderRadius: 16,
-    padding: 12,
+    borderRadius: rs(16),
+    padding: rs(12),
     alignItems: 'center',
-    minWidth: 90,
-    flexShrink: 0,
-    justifyContent: 'center',
+    minWidth: rs(90),
   },
+
   modalTokenLabel: {
-    fontSize: 10,
+    fontSize: rf(10),
     color: C.textMid,
-    fontWeight: '700',
-    marginBottom: 2,
   },
+
   modalTokenNum: {
-    fontSize: 36,
+    fontSize: rf(36),
     fontWeight: '900',
     color: C.textDark,
-    lineHeight: 40,
-    marginVertical: 2,
   },
+
   modalTimeBadge: {
     backgroundColor: C.purple,
-    borderRadius: 12,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    alignItems: 'center',
+    borderRadius: rs(12),
+    paddingVertical: vs(4),
+    paddingHorizontal: rs(8),
     width: '100%',
+    alignItems: 'center',
   },
+
   modalTimeBadgeSmall: {
-    fontSize: 8,
+    fontSize: rf(8),
     color: 'rgba(255,255,255,0.8)',
-    fontWeight: '700',
   },
+
   modalTimeBadgeText: {
-    fontSize: 11,
+    fontSize: rf(11),
     color: C.white,
     fontWeight: '800',
-    letterSpacing: 0.4,
   },
 
   modalInfo: {
     flex: 1,
     justifyContent: 'center',
-    gap: 6,
+    gap: vs(6),
   },
+
   modalTitle: {
-    fontSize: 15,
+    fontSize: rf(15),
     fontWeight: '800',
     color: C.white,
   },
+
   modalDate: {
-    fontSize: 12,
+    fontSize: rf(12),
     color: 'rgba(255,255,255,0.75)',
-    fontWeight: '600',
   },
+
   modalAmountBadge: {
     backgroundColor: 'rgba(255,255,255,0.15)',
-    borderRadius: 14,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    alignItems: 'flex-start',
-    marginTop: 4,
+    borderRadius: rs(14),
+    paddingVertical: vs(8),
+    paddingHorizontal: rs(12),
+    marginTop: vs(4),
   },
+
   modalAmountLabel: {
-    fontSize: 9,
+    fontSize: rf(9),
     color: 'rgba(255,255,255,0.75)',
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 2,
   },
+
   modalAmountValue: {
-    fontSize: 28,
+    fontSize: rf(28),
     fontWeight: '900',
     color: C.white,
-    letterSpacing: 0.5,
   },
 
   // Buttons
   confirmButton: {
     backgroundColor: C.purple,
-    borderRadius: 50,
-    paddingVertical: 15,
+    borderRadius: rs(50),
+    paddingVertical: vs(15),
     alignItems: 'center',
-    marginBottom: 10,
-    shadowColor: C.purpleDark,
-    shadowOpacity: 0.45,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 6,
+    marginBottom: vs(10),
   },
+
   confirmButtonText: {
     color: C.white,
-    fontSize: 15,
+    fontSize: rf(15),
     fontWeight: '800',
-    letterSpacing: 0.3,
   },
+
   cancelButton: {
     backgroundColor: C.purpleLight,
-    borderRadius: 50,
-    paddingVertical: 13,
+    borderRadius: rs(50),
+    paddingVertical: vs(13),
     alignItems: 'center',
   },
+
   cancelButtonText: {
     color: C.purple,
-    fontSize: 14,
+    fontSize: rf(14),
     fontWeight: '800',
-    letterSpacing: 0.3,
   },
 });
 
