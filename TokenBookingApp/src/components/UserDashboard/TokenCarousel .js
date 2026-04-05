@@ -12,6 +12,8 @@ import { C, rs, vs, rf } from "./Constants";
 
 const dash1 = require("../../../assets/dash1.jpg");
 const dash2 = require("../../../assets/dash2.jpg");
+const videoIcon = require("../../../assets/video_icon.png");
+const nurseImg = require("../../../assets/Nurse_img.png");
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width - rs(36); // account for paddingHorizontal 18 on each side
@@ -49,34 +51,40 @@ const TokenCard = ({ seconds }) => {
 };
 
 // ─── Card 2: Emergency Call Card ─────────────────────────────────────────────
-// ─── Card 2: Emergency Call Card ─────────────────────────────────────────────
 const EmergencyCallCard = () => (
   <View style={[styles.card, styles.emergencyCard]}>
-    {/* Doctor image */}
-    <View style={styles.doctorImageWrapper}>
-      <View style={styles.doctorImagePlaceholder}>
-        {/* Top half: light gray bg */}
-        <View style={styles.doctorBgTop} />
-        {/* Doctor emoji centered, large */}
-        <Text style={styles.doctorEmoji}>👩‍⚕️</Text>
-      </View>
-    </View>
+
+    {/* Doctor image — tall rounded rectangle filling left side */}
+   <View style={styles.doctorImageWrapper}>
+  <Image 
+    source={nurseImg} 
+    style={styles.doctorImage}
+    resizeMode="cover"
+  />
+</View>
 
     {/* Right info panel */}
     <View style={styles.emergencyInfo}>
+
+      {/* Zoom-style icon + title */}
       <View style={styles.emergencyTopRow}>
-        {/* Circle video badge */}
+        {/* Blue filled circle with camera — like Zoom logo */}
         <View style={styles.videoBadge}>
-          <Text style={styles.videoBadgeIcon}>📹</Text>
-        </View>
-        <View>
+  <Image
+    source={videoIcon}
+    style={styles.videoIcon}
+    resizeMode="contain"
+  />
+</View>
+        <View style={{ flex: 1 }}>
           <Text style={styles.emergencyTitle}>Emergency</Text>
           <Text style={styles.emergencyTitle}>Call Meet</Text>
         </View>
       </View>
 
+      {/* Meta: specialist pill + token badge */}
       <View style={styles.emergencyMeta}>
-        <View style={styles.specialistBadge}>
+        <View >
           <Text style={styles.specialistText}>(Cardiocologist)</Text>
         </View>
         <View style={styles.tokenBadge}>
@@ -85,14 +93,15 @@ const EmergencyCallCard = () => (
       </View>
     </View>
 
-    {/* Tap to Call button — inside card, absolute bottom */}
+    {/* Tap to Call — absolute bottom full width */}
     <TouchableOpacity style={styles.tapToCallBtn} activeOpacity={0.85}>
       <View style={styles.callIconCircle}>
-        <Text style={{ fontSize: rf(16) }}>❗</Text>
+        <Text style={{ fontSize: rf(15) }}>❗</Text>
       </View>
       <Text style={styles.tapToCallText}>Tap to Call</Text>
-      <Text style={styles.chevrons}>{"<<<"}</Text>
+      <Text style={styles.chevrons}>{"«««"}</Text>
     </TouchableOpacity>
+
   </View>
 );
 
@@ -145,12 +154,12 @@ const styles = StyleSheet.create({
 
   // Shared card base
   card: {
-    borderRadius: rs(24),
-    padding: rs(14),
-    elevation: 8,
-    minHeight: vs(190),
-    marginBottom: vs(0),
-  },
+  borderRadius: rs(24),
+  padding: rs(14),
+  elevation: 8,
+  height: vs(190),      // fixed height for both cards
+  marginBottom: vs(0),
+},
 
   // ── Token Card ──────────────────────────────────────────────────────────────
   tokenCard: {
@@ -230,56 +239,37 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
 
-  // ── Emergency Card ──────────────────────────────────────────────────────────
+  // ── Emergency Card ────────────────────────────────────────────────
   emergencyCard: {
-    backgroundColor: C.purple,
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: rs(10),
-    paddingBottom: vs(58),
-    paddingTop: rs(14),
-    paddingHorizontal: rs(14),
-    position: "relative",
-    overflow: "hidden",
-    minHeight: vs(190),
-  },
+  backgroundColor: "#7B5FEB",
+  flexDirection: "row",
+  alignItems: "flex-start",
+  gap: rs(10),
+  paddingBottom: vs(70),
+  paddingTop: rs(12),
+  paddingHorizontal: rs(12),
+  position: "relative",
+  overflow: "hidden",       // change from "visible" to "hidden"
+},
 
-  doctorImageWrapper: {
-    width: rs(115),
-    alignSelf: "stretch",          // fills full card height
-    borderRadius: rs(18),
-    overflow: "hidden",
-  },
+  // Tall rounded rectangle — fills from top almost to button
+doctorImageWrapper: {
+  width: rs(145),
+  height: vs(90),
+  borderRadius: rs(18),
+  overflow: "hidden",  // this clips the image to rounded corners
+},
 
-  doctorImagePlaceholder: {
-    flex: 1,
-    backgroundColor: "#E8E0FF",   // light lavender like target
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: vs(140),
-    position: "relative",
-  },
+doctorImage: {
+  width: "100%",
+  height: "100%",
+},
 
-  doctorBgTop: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: "55%",
-    backgroundColor: "#D6CCEE",   // slightly darker top portion (headset area)
-  },
-
-  doctorEmoji: {
-    fontSize: rf(64),
-    textAlign: "center",
-    zIndex: 1,
-    marginTop: vs(10),            // push slightly down so head is centered
-  },
 
   emergencyInfo: {
     flex: 1,
-    paddingTop: vs(4),
-    gap: vs(10),
+    paddingTop: vs(8),
+    gap: vs(14),
   },
 
   emergencyTopRow: {
@@ -288,83 +278,81 @@ const styles = StyleSheet.create({
     gap: rs(8),
   },
 
-  videoBadge: {
-    width: rs(36),
-    height: rs(36),
-    borderRadius: rs(18),          // perfect circle
-    backgroundColor: C.white,     // solid white circle like target
-    justifyContent: "center",
-    alignItems: "center",
-  },
+ videoBadge: {
+  width: rs(36),
+  height: rs(36),
+  borderRadius: rs(18),
+  justifyContent: "center",
+  alignItems: "center",
+  flexShrink: 0,
+},
 
-  videoBadgeIcon: { fontSize: rf(16) },
+videoIcon: {
+  width: rs(30),
+  height: rs(30),
+},
 
   emergencyTitle: {
-    fontSize: rf(17),
-    fontWeight: "900",
+    fontSize: rf(16),
+    fontWeight: "600",
+    fontFamily:"Poppins",
     color: C.white,
-    lineHeight: vs(22),
-    letterSpacing: 0.2,
+    lineHeight: vs(21),
+    letterSpacing: 0.1,
   },
 
   emergencyMeta: {
     flexDirection: "row",
     alignItems: "center",
-    gap: rs(6),
-    flexWrap: "wrap",
-  },
-
-  specialistBadge: {
-    backgroundColor: "rgba(255,255,255,0.18)",
-    borderRadius: rs(20),
-    paddingVertical: vs(4),
-    paddingHorizontal: rs(8),
+    gap: rs(3),
+    flexWrap: "nowrap",
   },
 
   specialistText: {
-    fontSize: rf(10),
+    fontSize: rf(12),
     color: C.white,
     fontWeight: "600",
   },
 
+  // Solid white pill
   tokenBadge: {
-    backgroundColor: C.white,     // solid white like target
+    backgroundColor: C.white,
     borderRadius: rs(20),
-    paddingVertical: vs(4),
-    paddingHorizontal: rs(10),
+    paddingVertical: vs(2),
+    paddingHorizontal: rs(12),
   },
 
   tokenBadgeText: {
-    fontSize: rf(12),
+    fontSize: rf(10),
     fontWeight: "900",
     color: C.textDark,
   },
 
-  // ── Tap to Call ─────────────────────────────────────────────────────────────
+  // ── Tap to Call button ─────────────────────────────────────────────
   tapToCallBtn: {
     position: "absolute",
     bottom: rs(12),
-    left: rs(12),
-    right: rs(12),
-    backgroundColor: C.red,
+    left: rs(50),
+    right: rs(50),
+    backgroundColor: "#E53E3E",
     borderRadius: rs(50),
-    paddingVertical: vs(8),
-    paddingLeft: rs(4),
-    paddingRight: rs(14),
+    paddingVertical: vs(2),
+    paddingLeft: rs(5),
+    paddingRight: rs(16),
     flexDirection: "row",
     alignItems: "center",
-    elevation: 6,
-    shadowColor: C.red,
-    shadowOffset: { width: 0, height: vs(3) },
-    shadowOpacity: 0.45,
-    shadowRadius: rs(8),
+    elevation: 8,
+    shadowColor: "#E53E3E",
+    shadowOffset: { width: 0, height: vs(4) },
+    shadowOpacity: 0.5,
+    shadowRadius: rs(10),
   },
 
   callIconCircle: {
-    width: rs(40),
-    height: rs(40),
-    borderRadius: rs(20),
-    backgroundColor: "rgba(255,255,255,0.25)",
+    width: rs(42),
+    height: rs(42),
+    borderRadius: rs(21),
+    backgroundColor: "rgb(255, 255, 255)",
     justifyContent: "center",
     alignItems: "center",
     marginRight: rs(4),
@@ -372,18 +360,21 @@ const styles = StyleSheet.create({
 
   tapToCallText: {
     flex: 1,
-    fontSize: rf(15),
-    fontWeight: "800",
+    fontSize: rf(18),
+    fontWeight: "500",
     color: C.white,
-    letterSpacing: 0.3,
+    letterSpacing: 0.4,
     textAlign: "center",
   },
 
+  // «« left-pointing, tightly spaced
   chevrons: {
-    fontSize: rf(15),
+    fontSize: rf(30),
     color: C.white,
     fontWeight: "900",
-    letterSpacing: -3,
+    letterSpacing: -4,
+    marginBottom: rs(5),
+
   },
 
   // Dots

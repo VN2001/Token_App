@@ -17,6 +17,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { rs, vs, rf } from '../../utils/responsive';
 import Svg, { Path, Circle, Rect } from 'react-native-svg';
+const videoIconImg = require('../../../assets/video_icon.png');
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const doctorImg = require('../../../assets/Doctor_img.png');
@@ -367,22 +368,27 @@ export default function DoctorBookingScreen({ navigation, route }) {
 
           {/* Schedule Banner */}
           <View style={styles.scheduleBanner}>
-            <View style={styles.bannerLeft}>
-              <TeamPlaceholder />
-            </View>
-            <View style={styles.bannerRight}>
-              <View style={styles.bannerIconWrap}>
-                <VideoIcon size={rs(20)} />
-              </View>
-              <Text style={styles.bannerTitle}>Schedule Live{'\n'}Video Meet</Text>
-              <View style={styles.bannerBottom}>
-                <Text style={styles.bannerAvail}>Now Available</Text>
-                <View style={styles.bannerSlotBadge}>
-                  <Text style={styles.bannerSlotText}>02/50</Text>
-                </View>
-              </View>
-            </View>
-          </View>
+  <View style={styles.bannerLeft}>
+    <Image source={grpDoctor} style={styles.bannerDoctorImage} resizeMode="cover" />
+  </View>
+
+  <View style={styles.bannerRight}>
+    {/* Icon + Title on same row like target */}
+    <View style={styles.bannerTopRow}>
+      <View style={styles.bannerIconWrap}>
+        <Image source={videoIconImg} style={styles.bannerVideoIcon} resizeMode="contain" />
+      </View>
+      <Text style={styles.bannerTitle}>Schedule Live{'\n'}Video Meet</Text>
+    </View>
+
+    <View style={styles.bannerBottom}>
+      <Text style={styles.bannerAvail}>Now Available</Text>
+      <View style={styles.bannerSlotBadge}>
+        <Text style={styles.bannerSlotText}>02/50</Text>
+      </View>
+    </View>
+  </View>
+</View>
 
           {/* Bottom Info Row — Date / Time / Count */}
           <View style={styles.bottomRow}>
@@ -545,7 +551,7 @@ const styles = StyleSheet.create({
 
   // ── Hero ──
   heroBg: {
-    backgroundColor: '#EEF0FF',
+    backgroundColor: '#e7dbff',
     paddingTop: Platform.OS === 'ios' ? vs(54) : vs(40),
     paddingHorizontal: rs(20),
     paddingBottom: vs(28),
@@ -614,61 +620,119 @@ const styles = StyleSheet.create({
   alertSlotText: { fontSize: rf(13), color: '#7B5FEB', fontWeight: '500' },
 
   // ── Tab Toggle ──
-  tabRow: {
-    flexDirection: 'row',
-    backgroundColor: '#F2F2F2',
-    borderRadius: rs(50),
-    padding: rs(4),
-    marginBottom: vs(18),
-  },
-  tabBtn: { flex: 1, paddingVertical: vs(10), alignItems: 'center', borderRadius: rs(50) },
-  tabBtnActive: {
-    backgroundColor: '#7B5FEB',
-    shadowColor: '#7B5FEB',
-    shadowOpacity: 0.3,
-    shadowRadius: rs(8),
-    shadowOffset: { width: 0, height: vs(3) },
-    elevation: 5,
-  },
-  tabText: { fontSize: rf(14), fontWeight: '600', color: '#888' },
-  tabTextActive: { color: '#fff' },
+  // ── Tab Toggle ──
+tabRow: {
+  flexDirection: 'row',
+  gap: rs(12),
+  marginBottom: vs(18),
+},
+tabBtn: {
+  flex: 1,
+  paddingVertical: vs(8),
+  alignItems: 'center',
+  borderRadius: rs(25),
+  backgroundColor: '#F2F2F2',
+},
+tabBtnActive: {
+  backgroundColor: '#7B5FEB',
+  shadowColor: '#7B5FEB',
+  shadowOpacity: 0.35,
+  shadowRadius: rs(10),
+  shadowOffset: { width: 0, height: vs(4) },
+  elevation: 6,
+},
+tabText: { fontSize: rf(14), fontWeight: '600', color: '#888' },
+tabTextActive: { color: '#fff', fontWeight: '800' },
 
   // ── Schedule Banner ──
-  scheduleBanner: {
-    backgroundColor: '#7B5FEB',
-    borderRadius: rs(20),
-    flexDirection: 'row',
-    overflow: 'hidden',
-    marginBottom: vs(20),
-    minHeight: vs(110),
-  },
-  bannerLeft: { width: '40%', justifyContent: 'flex-end', alignItems: 'flex-start', paddingLeft: rs(10), paddingBottom: vs(12) },
-  teamPlaceholder: { flexDirection: 'row', alignItems: 'center' },
-  teamAvatarCircle: {
-    width: AVATAR_SIZE,
-    height: AVATAR_SIZE,
-    borderRadius: AVATAR_SIZE / 2,
-    overflow: 'hidden',
-    borderWidth: rs(2.5),
-    borderColor: '#7B5FEB',
-    backgroundColor: '#9B59B6',
-  },
-  teamAvatarImage: { width: AVATAR_SIZE * 3, height: AVATAR_SIZE },
-  bannerRight: { flex: 1, padding: rs(14), justifyContent: 'center' },
-  bannerIconWrap: {
-    width: rs(34), height: rs(34), borderRadius: rs(17),
-    backgroundColor: 'rgba(255,255,255,0.25)', alignItems: 'center', justifyContent: 'center', marginBottom: vs(6),
-  },
-  bannerTitle: { fontSize: rf(15), fontWeight: '800', color: '#fff', lineHeight: rf(21), marginBottom: vs(8) },
-  bannerBottom: { flexDirection: 'row', alignItems: 'center', gap: rs(8) },
-  bannerAvail: { fontSize: rf(12), color: 'rgba(255,255,255,0.8)' },
-  bannerSlotBadge: { backgroundColor: '#fff', borderRadius: rs(20), paddingHorizontal: rs(10), paddingVertical: vs(3) },
-  bannerSlotText: { fontSize: rf(12), color: '#333', fontWeight: '700' },
+ // ── Schedule Banner ──
+scheduleBanner: {
+  backgroundColor: '#7B5FEB',
+  borderRadius: rs(20),
+  flexDirection: 'row',
+  overflow: 'hidden',
+  marginBottom: vs(20),
+  height: vs(100),
+},
+
+bannerLeft: {
+  width: '45%',
+},
+
+bannerDoctorImage: {
+  width: '100%',
+  height: '100%',
+  resizeMode: 'cover',
+},
+
+bannerRight: {
+  flex: 1,
+  paddingHorizontal: rs(12),
+  paddingVertical: vs(16),
+  justifyContent: 'center',
+  gap: vs(8),
+},
+
+// Icon + title on same row
+bannerTopRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: rs(8),
+},
+
+bannerIconWrap: {
+  width: rs(28),
+  height: rs(28),
+  borderRadius: rs(14),
+  backgroundColor: 'rgba(255,255,255,0.25)',
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+
+bannerVideoIcon: {
+  width: rs(16),
+  height: rs(16),
+},
+
+bannerTitle: {
+  fontSize: rf(14),
+  fontWeight: '800',
+  color: '#fff',
+  lineHeight: rf(20),
+  flexShrink: 1,
+},
+
+bannerBottom: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: rs(8),
+},
+
+bannerAvail: {
+  fontSize: rf(11),
+  color: 'rgba(255,255,255,0.85)',
+  fontWeight: '500',
+},
+
+bannerSlotBadge: {
+  backgroundColor: '#fff',
+  borderRadius: rs(20),
+  paddingHorizontal: rs(10),
+  paddingVertical: vs(3),
+},
+
+bannerSlotText: {
+  fontSize: rf(11),
+  color: '#333',
+  fontWeight: '700',
+},
+
+  
 
   // ── Bottom Row (Date/Time/Count) ──
   bottomRow: { flexDirection: 'row', gap: rs(8), marginBottom: vs(20) },
   bottomCard: {
-    flex: 1, backgroundColor: '#F4F4F8', borderRadius: rs(14),
+    flex: 1, backgroundColor: '#f0e9ff', borderRadius: rs(14),
     paddingVertical: vs(10), paddingHorizontal: rs(10),
   },
   bottomCardLabel: { fontSize: rf(11), color: '#999', marginBottom: vs(3) },
@@ -690,7 +754,7 @@ const styles = StyleSheet.create({
 
   // ── Profiles Card (Dark) ──
   profilesCard: {
-    backgroundColor: '#2D1B6B',
+    backgroundColor: '#2a0e6c',
     borderRadius: rs(24),
     padding: rs(18),
     paddingTop: vs(16),
