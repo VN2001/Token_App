@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 import { rs, vs, rf } from "../../utils/responsive";
 import Svg, { Path } from 'react-native-svg';
-
+import OtpModal from '../../components/OtpModal';
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const CheckMark = () => (
@@ -48,7 +48,8 @@ export default function LoginScreen({ navigation }) {
   const [contact, setContact]       = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors]         = useState({});
-
+  const [showOtp, setShowOtp]       = useState(false);
+const TOP_GAP = vs(160);
   const validate = () => {
     const e = {};
     if (!contact.trim()) e.contact = 'Email or mobile number is required';
@@ -58,7 +59,7 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = () => {
     if (!validate()) return;
-    // proceed with login / OTP flow
+    setShowOtp(true);
   };
 
   return (
@@ -77,7 +78,6 @@ export default function LoginScreen({ navigation }) {
               showsVerticalScrollIndicator={false}
               keyboardDismissMode="interactive"
             >
-              {/* Header */}
               <Text style={s.title}>Log in</Text>
               <Text style={s.subtitle}>Hi Welcome back, you've been missed</Text>
 
@@ -99,7 +99,6 @@ export default function LoginScreen({ navigation }) {
                 }
               </View>
 
-              {/* Remember me */}
               <TouchableOpacity
                 style={s.rememberRow}
                 onPress={() => setRememberMe(p => !p)}
@@ -126,7 +125,6 @@ export default function LoginScreen({ navigation }) {
                 <View style={s.divLine} />
               </View>
 
-              {/* Social Buttons */}
               <View style={s.socialRow}>
                 <TouchableOpacity style={s.socialBtn} activeOpacity={0.75}>
                   <GoogleIcon />
@@ -136,7 +134,6 @@ export default function LoginScreen({ navigation }) {
                 </TouchableOpacity>
               </View>
 
-              {/* Sign up link */}
               <View style={s.signupRow}>
                 <Text style={s.signupText}>Create an account? </Text>
                 <TouchableOpacity onPress={() => navigation?.navigate('Register')}>
@@ -147,6 +144,19 @@ export default function LoginScreen({ navigation }) {
             </ScrollView>
           </View>
         </KeyboardAvoidingView>
+
+        {/* ── OtpModal — identical usage to RegisterForm ── */}
+        <OtpModal
+          visible={showOtp}
+          phone={contact}
+          onClose={() => setShowOtp(false)}
+          onVerify={(code) => {
+            setShowOtp(false);
+            navigation.navigate('UserDashboard');
+          }}
+          topGap={TOP_GAP}
+        />
+
       </View>
     </TouchableWithoutFeedback>
   );
