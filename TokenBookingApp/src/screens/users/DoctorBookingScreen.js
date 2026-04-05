@@ -16,7 +16,7 @@ import Svg, { Path, Circle, Rect } from 'react-native-svg';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const doctorImg = require('../../../assets/Doctor_img.png');
-
+const grpDoctor = require('../../../assets/grpDoctor.jpeg');
 // ─── SVG Icons ────────────────────────────────────────────────────────────────
 
 const StarIcon = ({ size = 16, color = '#7B5FEB' }) => (
@@ -75,11 +75,7 @@ const TeamPlaceholder = () => (
           { marginLeft: i === 0 ? 0 : -rs(10), zIndex: 3 - i },
         ]}
       >
-        <Svg width={rs(36)} height={rs(36)} viewBox="0 0 40 40">
-          <Circle cx="20" cy="20" r="20" fill={['#7B5FEB', '#9B7FFF', '#C3AAFF'][i]} />
-          <Circle cx="20" cy="15" r="8" fill="#fff" opacity="0.7" />
-          <Path d="M6 36 Q6 26 20 26 Q34 26 34 36Z" fill="#fff" opacity="0.7" />
-        </Svg>
+        <Image source={grpDoctor} style={{ width: '100%', height: '100%' }} />
       </View>
     ))}
   </View>
