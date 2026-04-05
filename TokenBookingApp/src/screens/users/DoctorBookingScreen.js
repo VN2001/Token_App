@@ -17,7 +17,6 @@ import Svg, { Path, Circle, Rect } from 'react-native-svg';
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const doctorImg = require('../../../assets/Doctor_img.png');
 const grpDoctor = require('../../../assets/grpDoctor.jpeg');
-
 // ─── SVG Icons ────────────────────────────────────────────────────────────────
 
 const StarIcon = ({ size = 16, color = '#7B5FEB' }) => (
@@ -64,53 +63,19 @@ const BackIcon = ({ size = 20, color = '#333' }) => (
   </Svg>
 );
 
+
 // ─── Team Placeholder ─────────────────────────────────────────────────────────
-/**
- * Displays 3 overlapping circular avatars using the grpDoctor image.
- * Each circle uses a different `objectPosition`-style offset via negative
- * left/top margins on the Image so that each avatar crops to a different
- * "face" region of the group photo, mimicking the reference design.
- *
- * Layout: avatars sit at the bottom of the left panel, overlapping by ~35%,
- * identical to the screenshot provided.
- */
-const AVATAR_SIZE = rs(46); // diameter of each circle — responsive
-const OVERLAP    = rs(16);  // how much each circle slides under the previous
-
-// X-offset percentages into the group photo width for each "face" crop
-const CROP_OFFSETS = [
-  { x: 0,    y: 0 },   // left-most person
-  { x: -rs(36), y: 0 }, // middle person
-  { x: -rs(72), y: 0 }, // right-most person
-];
-
 const TeamPlaceholder = () => (
   <View style={styles.teamPlaceholder}>
-    {CROP_OFFSETS.map((offset, i) => (
+    {[0, 1, 2].map((i) => (
       <View
         key={i}
         style={[
           styles.teamAvatarCircle,
-          {
-            marginLeft: i === 0 ? 0 : -OVERLAP,
-            zIndex: CROP_OFFSETS.length - i,
-          },
+          { marginLeft: i === 0 ? 0 : -rs(10), zIndex: 3 - i },
         ]}
       >
-        {/*
-          We render the full group image inside each circle and shift it
-          horizontally so each circle reveals a different face.
-          The width of the image is set wider than the circle so there's
-          enough image to pan across.
-        */}
-        <Image
-          source={grpDoctor}
-          style={[
-            styles.teamAvatarImage,
-            { transform: [{ translateX: offset.x }, { translateY: offset.y }] },
-          ]}
-          resizeMode="cover"
-        />
+        <Image source={grpDoctor} style={{ width: '100%', height: '100%' }} />
       </View>
     ))}
   </View>
@@ -353,6 +318,13 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 
+  avatarPlaceholder: {
+    width: rs(140),
+    height: rs(160),
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+
   heroInfo: {
     flex: 1,
     paddingLeft: rs(8),
@@ -510,7 +482,7 @@ const styles = StyleSheet.create({
 
   // ── Schedule Banner ──
   scheduleBanner: {
-    backgroundColor: '#7B5FEB',
+    backgroundColor: '#7B2FBE',
     borderRadius: rs(20),
     flexDirection: 'row',
     overflow: 'hidden',
@@ -519,37 +491,26 @@ const styles = StyleSheet.create({
   },
 
   bannerLeft: {
-    width: '40%',
-    justifyContent: 'flex-end',   // push avatars to bottom
-    alignItems: 'flex-start',
-    paddingLeft: rs(10),
-    paddingBottom: vs(12),
+    width: '38%',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingBottom: 0,
   },
 
-  // ── Team Placeholder (fixed) ──
   teamPlaceholder: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
+    paddingLeft: rs(8),
+    paddingBottom: vs(8),
   },
 
   teamAvatarCircle: {
-    width: AVATAR_SIZE,
-    height: AVATAR_SIZE,
-    borderRadius: AVATAR_SIZE / 2,
+    width: rs(44),
+    height: rs(44),
+    borderRadius: rs(22),
     overflow: 'hidden',
-    borderWidth: rs(2.5),
-    borderColor: '#7B5FEB',     // matches banner bg → seamless outline
-    backgroundColor: '#9B59B6', // fallback while image loads
-  },
-
-  /**
-   * The image is rendered wider than the circle so we can pan (translateX)
-   * to reveal different face regions across the 3 avatars.
-   * Width = AVATAR_SIZE * 3 gives enough canvas to shift across 3 columns.
-   */
-  teamAvatarImage: {
-    width: AVATAR_SIZE * 3,
-    height: AVATAR_SIZE,
+    borderWidth: 2,
+    borderColor: '#7B2FBE',
   },
 
   bannerRight: {

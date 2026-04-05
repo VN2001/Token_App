@@ -6,7 +6,9 @@ import {
   TouchableOpacity,
   StatusBar,
   ScrollView,
+  Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { rs, vs, rf } from "../../utils/responsive";
@@ -42,6 +44,25 @@ const RadioButton = ({ selected }) => (
 export default function PaymentScreen({ navigation }) {
   const [upiMethod, setUpiMethod] = useState('googlepay');
   const [preferredMethod, setPreferredMethod] = useState('googlepay');
+
+  const handlePayNow = async () => {
+    try {
+      const savedBooking = await AsyncStorage.getItem('LastDoctorBooking');
+      if (savedBooking) {
+        await AsyncStorage.setItem('ConfirmedDoctorBooking', savedBooking);
+      }
+
+      Alert.alert('Booking Confirmed', 'Your appointment is confirmed. Returning to dashboard.', [
+        {
+          text: 'OK',
+          onPress: () => navigation.reset({ index: 0, routes: [{ name: 'UserDashboard' }] }),
+        },
+      ]);
+    } catch (error) {
+      console.warn('Payment confirmation error', error);
+      Alert.alert('Error', 'Unable to complete payment confirmation. Please try again.');
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -126,7 +147,7 @@ export default function PaymentScreen({ navigation }) {
         </View>
 
         {/* Pay Now Button — centered with horizontal margin like screenshot */}
-        <TouchableOpacity style={styles.payButton} activeOpacity={0.85}>
+        <TouchableOpacity style={styles.payButton} activeOpacity={0.85} onPress={handlePayNow}>
           <Text style={styles.payButtonText}>Pay Now</Text>
         </TouchableOpacity>
 
