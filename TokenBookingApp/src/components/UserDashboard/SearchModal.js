@@ -16,7 +16,7 @@ import { C, rs, vs, rf, height, HOSPITALS } from "./Constants";
 
 const icon4 = require("../../../assets/4.png");
 
-const SearchModal = ({ visible, onClose, onSelect }) => {
+const SearchModal = ({ visible, onClose, onSelect, navigation }) => {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(null);
   const slideAnim = useRef(new Animated.Value(height)).current;
@@ -117,6 +117,7 @@ const SearchModal = ({ visible, onClose, onSelect }) => {
                 activeOpacity={0.85}
                 onPress={() => {
                   onSelect(selected);
+                  navigation.navigate("DoctorBooking", { hospital: selected });
                   onClose();
                 }}
               >

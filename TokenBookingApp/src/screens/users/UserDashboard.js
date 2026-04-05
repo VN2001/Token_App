@@ -46,14 +46,15 @@ const UserDashboard = () => {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={C.bg} />
 
-      <SearchModal
-        visible={searchVisible}
-        onClose={() => {
-          setSearchVisible(false);
-          setActiveTab("home");
-        }}
-        onSelect={handleHospitalSelect}
-      />
+    <SearchModal
+  visible={searchVisible}
+  onClose={() => {
+    setSearchVisible(false);
+    setActiveTab("home");
+  }}
+  onSelect={handleHospitalSelect}
+  navigation={navigation}  // ← add this
+/>
 
       <ScrollView
         style={styles.container}
