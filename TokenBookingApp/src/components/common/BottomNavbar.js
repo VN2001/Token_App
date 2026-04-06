@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { C, rs, vs, rf } from "../UserDashboard/Constants";
 
