@@ -116,26 +116,37 @@ const RecentlyAddedSection = ({
         );
 
       case "booked":
-        return (
-          <>
-            <View style={styles.hospitalRow}>
-              <View style={styles.hospitalAvatar}>
-                <Text style={{ fontSize: rf(24) }}>{hospital?.avatar}</Text>
-              </View>
-              <View style={styles.hospitalInfo}>
-                <Text style={styles.hospitalName}>{hospital?.name}</Text>
-                <Text style={styles.hospitalSub}>{hospital?.shortAddress}</Text>
-              </View>
-              <Text style={styles.bookedBadge}>Booked</Text>
-            </View>
-            <View style={styles.confirmedButton}>
-              <View style={styles.confirmedIconCircle}>
-                <Text style={styles.confirmedIcon}>✓</Text>
-              </View>
-              <Text style={styles.confirmedText}>Token Confirmed</Text>
-            </View>
-          </>
-        );
+  return (
+    <>
+      <View style={styles.hospitalRow}>
+        {/* ✅ Use Image instead of emoji text */}
+        <View style={styles.hospitalAvatar}>
+          {hospital?.image ? (
+            <Image
+              source={hospital.image}
+              style={{ width: rs(32), height: rs(32), resizeMode: "contain" }}
+            />
+          ) : (
+            <Text style={{ fontSize: rf(24) }}>{hospital?.avatar}</Text>
+          )}
+        </View>
+        <View style={styles.hospitalInfo}>
+          <Text style={styles.hospitalName}>{hospital?.name}</Text>
+          <Text style={styles.hospitalSub}>{hospital?.shortAddress}</Text>
+        </View>
+        {/* ✅ Green "Booked" badge */}
+        <Text style={styles.bookedBadge}>Booked</Text>
+      </View>
+
+      {/* ✅ Token Confirmed row */}
+      <View style={styles.confirmedButton}>
+        <View style={styles.confirmedIconCircle}>
+          <Text style={styles.confirmedIcon}>✓</Text>
+        </View>
+        <Text style={styles.confirmedText}>Token Confirmed</Text>
+      </View>
+    </>
+  );
 
       default:
         return null;

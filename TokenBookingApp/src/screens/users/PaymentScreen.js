@@ -41,28 +41,38 @@ const RadioButton = ({ selected }) => (
   </View>
 );
 
-export default function PaymentScreen({ navigation }) {
+export default function PaymentScreen({ navigation, route }) {
   const [upiMethod, setUpiMethod] = useState('googlepay');
   const [preferredMethod, setPreferredMethod] = useState('googlepay');
 
-  const handlePayNow = async () => {
-    try {
-      const savedBooking = await AsyncStorage.getItem('LastDoctorBooking');
-      if (savedBooking) {
-        await AsyncStorage.setItem('ConfirmedDoctorBooking', savedBooking);
-      }
-
-      Alert.alert('Booking Confirmed', 'Your appointment is confirmed. Returning to dashboard.', [
-        {
-          text: 'OK',
-          onPress: () => navigation.reset({ index: 0, routes: [{ name: 'UserDashboard' }] }),
-        },
-      ]);
-    } catch (error) {
-      console.warn('Payment confirmation error', error);
-      Alert.alert('Error', 'Unable to complete payment confirmation. Please try again.');
+  // In PaymentScreen, update handlePayNow:
+const handlePayNow = async () => {
+  try {
+    const savedBooking = await AsyncStorage.getItem('LastDoctorBooking');
+    if (savedBooking) {
+      await AsyncStorage.setItem('ConfirmedDoctorBooking', savedBooking);
     }
-  };
+
+    Alert.alert('Booking Confirmed', 'Your appointment is confirmed.', [
+      {
+        text: 'OK',
+        onPress: () =>
+          navigation.reset({
+            index: 0,
+            routes: [{
+              name: 'UserDashboard',
+              params: {
+                bookingConfirmed: true,
+                hospital: route?.params?.hospital, // ✅ pass hospital back
+              },
+            }],
+          }),
+      },
+    ]);
+  } catch (error) {
+    console.warn('Payment confirmation error', error);
+  }
+};
 
   return (
     <SafeAreaView style={styles.safe}>

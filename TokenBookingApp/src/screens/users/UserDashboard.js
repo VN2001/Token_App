@@ -15,13 +15,21 @@ import RecentlyAddedSection from "../../components/UserDashboard/RecentlyAddedSe
 import SearchModal from "../../components/UserDashboard/SearchModal";
 import BottomNavBar from "../../components/common/BottomNavbar";
 
-const UserDashboard = () => {
+const UserDashboard = ({ route }) => {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState("home");
   const [seconds, setSeconds] = useState(89);
   const [bookingState, setBookingState] = useState("empty");
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [searchVisible, setSearchVisible] = useState(false);
+
+  // ✅ Restore state when returning from Payment
+  useEffect(() => {
+    if (route?.params?.bookingConfirmed && route?.params?.hospital) {
+      setSelectedHospital(route.params.hospital);
+      setBookingState("booked");
+    }
+  }, [route?.params?.bookingConfirmed]);
 
   // Countdown timer
   useEffect(() => {
