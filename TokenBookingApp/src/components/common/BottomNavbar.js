@@ -1,4 +1,12 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import React from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Platform,
+} from "react-native";
 import { C, rs, vs, rf } from "../UserDashboard/Constants";
 
 const icon2 = require("../../../assets/2.png");
@@ -24,14 +32,17 @@ const BottomNavBar = ({ activeTab, onTabPress }) => (
           key={tab.id}
           style={styles.navItem}
           onPress={() => onTabPress(tab.id)}
+          activeOpacity={0.7}
         >
-          <Image
-            source={tab.icon}
-            style={[
-              styles.navIcon,
-              { tintColor: isActive ? C.purple : C.textDark },
-            ]}
-          />
+          <View style={[styles.iconWrap, isActive && styles.iconWrapActive]}>
+            <Image
+              source={tab.icon}
+              style={[
+                styles.navIcon,
+                { tintColor: isActive ? C.purple : C.textDark },
+              ]}
+            />
+          </View>
           {isActive && <View style={styles.navDot} />}
         </TouchableOpacity>
       );
@@ -44,24 +55,43 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: C.white,
     paddingVertical: vs(10),
-    paddingHorizontal: rs(16),
+    paddingHorizontal: rs(8),
     borderTopLeftRadius: rs(24),
     borderTopRightRadius: rs(24),
-    elevation: 10,
+    elevation: 12,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: -vs(3) },
+    shadowOffset: { width: 0, height: -vs(4) },
     shadowOpacity: 0.08,
-    shadowRadius: rs(10),
+    shadowRadius: rs(12),
+    paddingBottom: Platform.OS === "ios" ? vs(20) : vs(10),
   },
-  navItem: { flex: 1, alignItems: "center", paddingVertical: vs(4) },
-  navIcon: { width: rs(24), height: rs(24), resizeMode: "contain" },
+  navItem: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: vs(4),
+  },
+  iconWrap: {
+    width: rs(42),
+    height: rs(42),
+    borderRadius: rs(12),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconWrapActive: {
+    backgroundColor: "#F0ECFF",
+  },
+  navIcon: {
+    width: rs(22),
+    height: rs(22),
+    resizeMode: "contain",
+  },
   navDot: {
-    width: rs(6),
-    height: rs(6),
+    width: rs(5),
+    height: rs(5),
     borderRadius: rs(3),
     backgroundColor: C.purple,
-    marginTop: vs(4),
+    marginTop: vs(3),
   },
 });
-
 export default BottomNavBar;

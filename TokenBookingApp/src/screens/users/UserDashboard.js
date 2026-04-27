@@ -42,7 +42,13 @@ const UserDashboard = ({ route }) => {
 
   const handleTabPress = (tabId) => {
     setActiveTab(tabId);
-    if (tabId === "search") setSearchVisible(true);
+    if (tabId === "search") {
+      setSearchVisible(true);
+    } else if (tabId === "profile") {
+      navigation.navigate("Profile");
+    } else if (tabId === "bell") {
+      navigation.navigate("Notifications");
+    }
   };
 
   const handleHospitalSelect = (hospital) => {

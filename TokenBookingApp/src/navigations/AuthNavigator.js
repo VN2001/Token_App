@@ -4,6 +4,8 @@ import RegisterScreen from "../screens/auth/RegisterScreen";
 import SplashScreen from "../screens/auth/SplashScreen";
 import WelcomeScreen from "../screens/WelcomScreen";
 import UserDashboard from "../screens/users/UserDashboard";
+import ProfileScreen from "../components/UserDashboard/ProfileScreen";
+import NotificationScreen from "../components/UserDashboard/NotificationScreen";
 import TokenSlotBooking from "../screens/users/TokenSlotBooking";
 import PaymentScreen from "../screens/users/PaymentScreen";
 import DoctorBookingScreen from "../screens/users/DoctorBookingScreen";
@@ -21,6 +23,8 @@ const AuthNavigator = () => {
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="UserDashboard" component={UserDashboard} />
+      <Stack.Screen name="Notifications" component={NotificationScreen} />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="BookingSlot" component={TokenSlotBooking} />
       <Stack.Screen name="Payment" component={PaymentScreen} />
       <Stack.Screen name="DoctorBooking" component={DoctorBookingScreen} />

@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   emptyBox: {
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: vs(20),
+    paddingVertical: vs(60),
     marginBottom: vs(8),
   },
   emptyText: {
