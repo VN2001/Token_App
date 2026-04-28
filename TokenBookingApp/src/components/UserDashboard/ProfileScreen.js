@@ -295,7 +295,7 @@ const ProfileScreen = () => {
     if (tabId === "home") {
       navigation?.navigate("UserDashboard", { activeTab: "home" });
     } else if (tabId === "list") {
-      navigation?.navigate("UserDashboard", { activeTab: "list" });
+      navigation?.navigate("AddedProfiles", { activeTab: "list" });
     } else if (tabId === "search") {
       navigation?.navigate("UserDashboard", { activeTab: "search" });
     } else if (tabId === "bell") {

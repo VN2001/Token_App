@@ -48,6 +48,8 @@ const UserDashboard = ({ route }) => {
       navigation.navigate("Profile");
     } else if (tabId === "bell") {
       navigation.navigate("Notifications");
+    }else if (tabId === "list") {
+      navigation.navigate("AddedProfiles");
     }
   };
 
