@@ -7,6 +7,7 @@ import {
 import OtpModal from '../../components/OtpModal';
 import Svg, { Path } from 'react-native-svg';
 import { rs, vs, rf } from "../../utils/responsive";
+import { LinearGradient } from 'expo-linear-gradient';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const TOP_GAP = vs(160);
@@ -143,12 +144,19 @@ export default function RegisterForm({ navigation }) {
                 : null
               }
 
-              {/* Sign In Button */}
-              <View style={s.btnWrap}>
-                <TouchableOpacity style={s.signInBtn} onPress={handleSignIn} activeOpacity={0.85}>
-                  <Text style={s.signInText}>Sign In</Text>
-                </TouchableOpacity>
-              </View>
+             {/* Sign In Button */}
+<View style={s.btnWrap}>
+  <TouchableOpacity onPress={handleSignIn} activeOpacity={0.85} style={s.btnShadow}>
+    <LinearGradient
+      colors={['#763ef9', '#814afe', '#763ff7']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      style={s.signInBtn}
+    >
+      <Text style={s.signInText}>Sign In</Text>
+    </LinearGradient>
+  </TouchableOpacity>
+</View>
 
               {/* Divider */}
               <View style={s.divRow}>
@@ -333,19 +341,26 @@ const s = StyleSheet.create({
     alignItems: 'center',
     marginBottom: vs(22),
   },
+  btnShadow: {
+  borderRadius: rs(50),
+  shadowColor: '#7B5FEB',
+  shadowOpacity: 0.38,
+  shadowRadius: rs(12),
+  shadowOffset: { width: 0, height: vs(4) },
+  elevation: 7,
+},
 
   signInBtn: {
-    backgroundColor: '#7B5FEB',
-    borderRadius: rs(50),
-    paddingVertical: vs(16),
-    paddingHorizontal: rs(80),     // wider than before
-    alignItems: 'center',
-    shadowColor: '#7B5FEB',
-    shadowOpacity: 0.38,
-    shadowRadius: rs(12),
-    shadowOffset: { width: 0, height: vs(4) },
-    elevation: 7,
-  },
+  borderRadius: rs(50),
+  paddingVertical: vs(16),
+  paddingHorizontal: rs(80),
+  alignItems: 'center',
+  shadowColor: '#7B5FEB',
+  shadowOpacity: 0.38,
+  shadowRadius: rs(12),
+  shadowOffset: { width: 0, height: vs(4) },
+  elevation: 7,
+},
 
   signInText: {
     color: '#fff',

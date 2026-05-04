@@ -117,7 +117,7 @@ const SearchModal = ({ visible, onClose, onSelect, navigation }) => {
                 activeOpacity={0.85}
                 onPress={() => {
                   onSelect(selected);
-                  navigation.navigate("DoctorBooking", { hospital: selected });
+                  navigation.navigate("Clinic", { hospital: selected });
                   onClose();
                 }}
               >

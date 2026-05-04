@@ -129,12 +129,16 @@ const PaginationDots = ({ total = 3, active = 0 }) => (
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 const AddedProfilesScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState("list"); // ✅ single source of truth
+    const [searchVisible, setSearchVisible] = useState(false);
+
 
   const handleTabPress = (tabId) => {
     setActiveTab(tabId); // ✅ updates visual highlight
     if (tabId === "home") navigation.navigate("UserDashboard");
     if (tabId === "list") navigation.navigate("AddedProfiles");
-    if (tabId === "search") navigation.navigate("Search");
+    if (tabId === "search") {
+      setSearchVisible(true);
+    }
     if (tabId === "bell") navigation.navigate("Notifications");
     if (tabId === "profile") navigation.navigate("Profile");
     // "list" stays on this screen
