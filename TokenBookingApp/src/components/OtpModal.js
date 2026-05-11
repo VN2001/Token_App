@@ -1,4 +1,4 @@
-import  { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,24 +10,28 @@ import {
   Keyboard,
   ActivityIndicator,
   Alert,
+  StatusBar,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
-import { rs, vs, rf } from "../utils/responsive";
+import { rs, vs, rf } from '../utils/responsive';
 
 const BackArrow = () => (
-  <Svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+  <Svg width={rs(18)} height={vs(18)} viewBox="0 0 24 24" fill="none">
     <Path
       d="M19 12H5M5 12L12 19M5 12L12 5"
-      stroke="#707070"
-      strokeWidth="2.5"
+      stroke="#4a4a4a"
+      strokeWidth="2.2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
   </Svg>
 );
 
-const OtpModal = ({ visible, phone, onClose, onVerify, topGap = 200 }) => {
+const OtpModal = ({ visible, phone, onClose, onVerify }) => {
   const [otp, setOtp] = useState(['', '', '', '']);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [timer, setTimer] = useState(143);
@@ -92,155 +96,201 @@ const OtpModal = ({ visible, phone, onClose, onVerify, topGap = 200 }) => {
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.overlay}>
-          <View style={[styles.topBar, { height: topGap }]} />
-          <View style={styles.card}>
+    <Modal visible={visible} transparent={false} animationType="slide">
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
-            {/* Back Button */}
-            <TouchableOpacity style={styles.backBtn} onPress={onClose}>
+      {/* Gradient fills the entire screen, sits behind everything */}
+      <LinearGradient
+        colors={['#e7dbff', '#f5f1ff', '#f4efff', '#ffffff', '#f6f2ff']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.screen}
+      >
+        {/*
+          KeyboardAvoidingView shrinks the available space above the keyboard.
+          ScrollView lets the inner content scroll up so nothing overlaps.
+          TouchableWithoutFeedback wraps the scroll content to dismiss keyboard on tap.
+        */}
+        <KeyboardAvoidingView
+          style={styles.kav}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        >
+          {/* Go Back — absolutely pinned to top-left, never moves */}
+          <View style={styles.header} pointerEvents="box-none">
+            <TouchableOpacity style={styles.backBtn} onPress={onClose} activeOpacity={0.7}>
               <BackArrow />
-              <Text style={styles.backText}>Go back</Text>
+              <Text style={styles.backText}>Go Back</Text>
             </TouchableOpacity>
-
-            <Text style={styles.title}>Check your phone</Text>
-            <Text style={styles.subtitle}>We've send a code to your number</Text>
-
-            {/* OTP Boxes */}
-            <View style={styles.otpRow}>
-              {otp.map((v, i) => (
-                <LinearGradient
-                  key={i}
-                  colors={['#f6f6f6', '#f6f6f6']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={[
-                    styles.boxGradient,
-                    focusedIndex === i && styles.boxFocused,
-                  ]}
-                >
-                  <TextInput
-                    ref={(el) => (inputRefs.current[i] = el)}
-                    style={styles.boxInput}
-                    value={v}
-                    onChangeText={(t) => handleChange(t, i)}
-                    onKeyPress={(e) => handleKey(e, i)}
-                    onFocus={() => setFocusedIndex(i)}
-                    keyboardType="number-pad"
-                    maxLength={1}
-                    textAlign="center"
-                    selectTextOnFocus
-                    caretHidden
-                  />
-                </LinearGradient>
-              ))}
-            </View>
-
-            {/* Timer */}
-            <Text style={styles.timer}>
-              Code expires in :{' '}
-              <Text style={styles.timerBold}>{fmt(timer)}</Text>
-            </Text>
-
-            {/* Verify Button */}
-            <TouchableOpacity
-              onPress={handleSubmit}
-              disabled={loading}
-              activeOpacity={0.85}
-              style={styles.btnWrapper}
-            >
-              <LinearGradient
-                colors={['#763ef9', '#814afe', '#763ff7']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={styles.btn}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={styles.btnText}>Verify Code</Text>
-                )}
-              </LinearGradient>
-            </TouchableOpacity>
-
-            {/* Resend Button */}
-            <TouchableOpacity
-              onPress={handleResend}
-              activeOpacity={0.85}
-              style={styles.btnWrapper}
-            >
-              <LinearGradient
-                colors={
-                  timer > 0
-                    ? ['#b89ffc', '#c4b0fd', '#b89ffc']
-                    : ['#763ef9', '#814afe', '#763ff7']
-                }
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={styles.btn}
-              >
-                <Text style={styles.btnText}>Resend Code</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-
           </View>
-        </View>
-      </TouchableWithoutFeedback>
+
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+          >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <View style={styles.inner}>
+
+                {/* Title block — sits below the Go Back header area */}
+                <Text style={styles.title}>Check your phone</Text>
+                <Text style={styles.subtitle}>We've send a code to your number</Text>
+
+                {/* OTP Boxes */}
+                <View style={styles.otpRow}>
+                  {otp.map((v, i) => (
+                    <View
+                      key={i}
+                      style={[
+                        styles.boxWrapper,
+                        focusedIndex === i && styles.boxFocused,
+                      ]}
+                    >
+                      <TextInput
+                        ref={(el) => (inputRefs.current[i] = el)}
+                        style={styles.boxInput}
+                        value={v}
+                        onChangeText={(t) => handleChange(t, i)}
+                        onKeyPress={(e) => handleKey(e, i)}
+                        onFocus={() => setFocusedIndex(i)}
+                        keyboardType="number-pad"
+                        maxLength={1}
+                        textAlign="center"
+                        selectTextOnFocus
+                        caretHidden
+                      />
+                    </View>
+                  ))}
+                </View>
+
+                {/* Timer */}
+                <Text style={styles.timer}>
+                  Code expires in :{' '}
+                  <Text style={styles.timerBold}>{fmt(timer)}</Text>
+                </Text>
+
+                {/* Verify Button */}
+                <TouchableOpacity
+                  onPress={handleSubmit}
+                  disabled={loading}
+                  activeOpacity={0.85}
+                  style={styles.btnWrapper}
+                >
+                  <LinearGradient
+                    colors={['#7c3aed', '#8b5cf6', '#7c3aed']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0, y: 1 }}
+                    style={styles.btn}
+                  >
+                    {loading ? (
+                      <ActivityIndicator color="#fff" />
+                    ) : (
+                      <Text style={styles.btnText}>Verify Code</Text>
+                    )}
+                  </LinearGradient>
+                </TouchableOpacity>
+
+                {/* Resend Button */}
+                <TouchableOpacity
+                  onPress={handleResend}
+                  activeOpacity={0.85}
+                  style={styles.btnWrapper}
+                >
+                  <LinearGradient
+                    colors={['#7c3aed', '#8b5cf6', '#7c3aed']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0, y: 1 }}
+                    style={styles.btn}
+                  >
+                    <Text style={styles.btnText}>Resend Code</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+
+                {/* Bottom home indicator spacer */}
+                <View style={styles.bottomSpacer} />
+              </View>
+            </TouchableWithoutFeedback>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </LinearGradient>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  overlay: {
+  // ── Screen & KAV ───────────────────
+  screen: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.25)',
-    justifyContent: 'flex-end',
   },
 
-  topBar: {
-    width: '100%',
+  kav: {
+    flex: 1,
   },
 
-  card: {
-    backgroundColor: '#fff',
-    borderTopLeftRadius: rs(30),
-    borderTopRightRadius: rs(30),
-    paddingHorizontal: rs(26),
-    paddingTop: vs(26),
-    paddingBottom: vs(50),
-    elevation: 24,
+  // ── Go Back header — sits above scroll, never moves ──
+  header: {
+    position: 'absolute',
+    top: vs(58),
+    left: rs(20),
+    zIndex: 10,
   },
 
-  // ── Back Button ─────────────────────
   backBtn: {
     flexDirection: 'row',
     alignItems: 'center',
+    alignSelf: 'flex-start',
     gap: rs(8),
-    marginBottom: vs(22),
+    backgroundColor: '#ffffff',
+    paddingVertical: vs(8),
+    paddingHorizontal: rs(16),
+    borderRadius: rs(100),
+    shadowColor: '#763ef9',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.10,
+    shadowRadius: 6,
+    elevation: 3,
   },
 
   backText: {
     fontFamily: 'Poppins-Regular',
-    fontSize: rf(16),
-    color: '#707070',
+    fontSize: rf(15),
+    color: '#4a4a4a',
+    fontWeight: '700',
+  },
+
+  // ── ScrollView content ─────────────
+  // minHeight: full screen so content stays centered when keyboard is closed
+  scrollContent: {
+    flexGrow: 1,
+  },
+
+  // inner View takes full height and centers content below the header area
+  inner: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: rs(28),
+    // top padding reserves space for the absolutely-positioned Go Back button
+    paddingTop: vs(120),
+    paddingBottom: vs(20),
   },
 
   // ── Titles ─────────────────────────
   title: {
-    fontFamily: 'Poppins-Regular',
-    fontSize: rf(19),
-    color: '#000000',
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: rf(22),
+    color: '#1a1a1a',
     textAlign: 'center',
     marginBottom: vs(8),
+    fontWeight: '700',
   },
 
   subtitle: {
     fontFamily: 'Poppins-Regular',
     fontSize: rf(14),
-    color: '#707070',
+    color: '#6b6b6b',
     textAlign: 'center',
-    marginBottom: vs(32),
+    marginBottom: vs(40),
   },
 
   // ── OTP Boxes ──────────────────────
@@ -248,31 +298,41 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     gap: rs(14),
-    marginBottom: vs(22),
+    marginBottom: vs(28),
   },
 
-  boxGradient: {
-    width: rs(72),
-    height: rs(72),
-    borderRadius: rs(20),
+  boxWrapper: {
+    width: rs(70),
+    height: rs(70),
+    borderRadius: rs(18),
+    backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#763ef9',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: rs(1.5),
+    borderColor: 'transparent',
   },
 
   boxFocused: {
-    borderWidth: rs(2),
-    borderColor: '#763ef9',
+    borderColor: '#7c3aed',
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    elevation: 6,
   },
 
   boxInput: {
     width: '100%',
     height: '100%',
-    fontFamily: 'Poppins-Regular',
-    fontSize: rf(25),
-    fontWeight: '400',
-    color: '#000000',
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: rf(26),
+    color: '#1a1a1a',
     textAlign: 'center',
-    borderRadius: rs(20),
+    borderRadius: rs(18),
+    backgroundColor: 'transparent',
   },
 
   // ── Timer ──────────────────────────
@@ -280,21 +340,26 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     textAlign: 'center',
     fontSize: rf(14),
-    color: '#707070',
-    marginBottom: vs(24),
+    color: '#6b6b6b',
+    marginBottom: vs(32),
   },
 
   timerBold: {
     fontFamily: 'Poppins-Bold',
-    color: '#707070',
+    color: '#3d3d3d',
     fontWeight: '700',
   },
 
   // ── Buttons ────────────────────────
   btnWrapper: {
-    marginBottom: vs(13),
+    marginBottom: vs(14),
     borderRadius: rs(100),
     overflow: 'hidden',
+    shadowColor: '#7c3aed',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 5,
   },
 
   btn: {
@@ -304,10 +369,16 @@ const styles = StyleSheet.create({
   },
 
   btnText: {
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-SemiBold',
     color: '#ffffff',
     fontSize: rf(16),
-    fontWeight: '400',
+    fontWeight: '600',
+    letterSpacing: 0.3,
+  },
+
+  // ── Bottom spacer ──────────────────
+  bottomSpacer: {
+    height: vs(34),
   },
 });
 

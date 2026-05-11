@@ -4,6 +4,7 @@ import {
   ScrollView, KeyboardAvoidingView, Platform, StatusBar,
   TouchableWithoutFeedback, Keyboard, Dimensions,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { rs, vs, rf } from "../../utils/responsive";
 import Svg, { Path } from 'react-native-svg';
 import OtpModal from '../../components/OtpModal';
@@ -64,8 +65,13 @@ const TOP_GAP = vs(160);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={s.root}>
-        <StatusBar barStyle="dark-content" backgroundColor="#EBEBEB" />
+      <LinearGradient
+  colors={['#e7dbff', '#f5f1ff', '#f4efff', '#ffffff', '#f6f2ff']}
+  start={{ x: 0, y: 0 }}
+  end={{ x: 1, y: 1 }}
+  style={s.root}
+>
+  <StatusBar barStyle="dark-content" backgroundColor="#e7dbff" />
 
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -157,17 +163,16 @@ const TOP_GAP = vs(160);
           topGap={TOP_GAP}
         />
 
-      </View>
+      </LinearGradient>
     </TouchableWithoutFeedback>
   );
 }
 
 const s = StyleSheet.create({
   // Grey background — only a small peek visible at top
-  root: {
-    flex: 1,
-    backgroundColor: '#EBEBEB',
-  },
+root:{
+flex: 1,
+},
 
   // KAV fills full screen, card pushed to bottom so grey shows at top
   kavWrapper: {

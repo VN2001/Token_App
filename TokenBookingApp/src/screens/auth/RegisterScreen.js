@@ -64,8 +64,13 @@ export default function RegisterForm({ navigation }) {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={s.root}>
-        <StatusBar barStyle="dark-content" backgroundColor="#EBEBEB" />
+      <LinearGradient
+  colors={['#e7dbff', '#f5f1ff', '#f4efff', '#ffffff', '#f6f2ff']}
+  start={{ x: 0, y: 0 }}
+  end={{ x: 1, y: 1 }}
+  style={s.root}
+>
+  <StatusBar barStyle="dark-content" backgroundColor="#e7dbff" />
 
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -203,7 +208,7 @@ export default function RegisterForm({ navigation }) {
           }}
           topGap={TOP_GAP}
         />
-      </View>
+      </LinearGradient>
     </TouchableWithoutFeedback>
   );
 }
@@ -213,7 +218,6 @@ const s = StyleSheet.create({
   // Grey background visible behind card
   root: {
     flex: 1,
-    backgroundColor: '#EBEBEB',
   },
 
   kavWrapper: {
@@ -343,7 +347,7 @@ const s = StyleSheet.create({
   },
   btnShadow: {
   borderRadius: rs(50),
-  shadowColor: '#7B5FEB',
+  shadowColor: '#010003',
   shadowOpacity: 0.38,
   shadowRadius: rs(12),
   shadowOffset: { width: 0, height: vs(4) },

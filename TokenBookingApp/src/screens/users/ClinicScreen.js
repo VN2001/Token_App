@@ -19,12 +19,12 @@ const DOCTORS = [
 ];
 
 // ─── Color Tokens ────────────────────────────────────────────────────────────
-const PURPLE     = '#7B5FEB'; // ← updated primary color
+const PURPLE     = '#7B5FEB';
 const TEXT_DARK  = '#1A1A2E';
 const TEXT_MID   = '#555570';
 const TEXT_LIGHT = '#8888A0';
 const GREEN      = '#4CAF50';
-const FEE_PURPLE = '#7B5FEB'; // ← updated to match primary
+const FEE_PURPLE = '#7B5FEB';
 
 // ─── Icon Helpers ─────────────────────────────────────────────────────────────
 const PersonsIcon = () => (
@@ -48,8 +48,9 @@ const DirectionsIcon = () => <Text style={styles.bottomIconText}>⊙</Text>;
 const PinIcon        = () => <Text style={styles.bottomIconText}>📍</Text>;
 
 // ─── Doctor Card ──────────────────────────────────────────────────────────────
-const DoctorCard = ({ doctor }) => (
-  <TouchableOpacity style={styles.doctorCard} activeOpacity={0.85}>
+// Accepts `onPress` so the parent can handle navigation
+const DoctorCard = ({ doctor, onPress }) => (
+  <TouchableOpacity style={styles.doctorCard} activeOpacity={0.85} onPress={onPress}>
     <View style={styles.doctorImageWrapper}>
       <View style={styles.doctorImagePlaceholder}>
         <Text style={styles.doctorAvatarEmoji}>👩‍⚕️</Text>
@@ -68,7 +69,8 @@ const DoctorCard = ({ doctor }) => (
 );
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
-export default function ClinicScreen() {
+// Accept `navigation` from React Navigation
+export default function ClinicScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar barStyle="light-content" />
@@ -149,10 +151,16 @@ export default function ClinicScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Doctor cards */}
+          {/* Doctor cards — navigate to DoctorsBooking on press */}
           <View style={styles.doctorsRow}>
             {DOCTORS.map((doc) => (
-              <DoctorCard key={doc.id} doctor={doc} />
+              <DoctorCard
+                key={doc.id}
+                doctor={doc}
+                onPress={() =>
+                  navigation.navigate('DoctorBooking', { doctor: doc })
+                }
+              />
             ))}
           </View>
 
