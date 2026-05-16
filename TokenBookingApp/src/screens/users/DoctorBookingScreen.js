@@ -742,7 +742,7 @@ const genderStyles = StyleSheet.create({
     fontWeight: "500",
   },
   optionTextSelected: {
-    color: "#7B5FEB",
+    color: "#6a5b8e",
     fontWeight: "700",
   },
 });
