@@ -771,7 +771,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-end",
   },
-  doctorImage: { width: rs(140), height: rs(180), resizeMode: "contain" },
+  doctorImage: { width: rs(170), height: rs(200), top: vs(28), resizeMode: "contain" },
   heroInfo: { flex: 1, paddingLeft: rs(8), paddingBottom: vs(8) },
   ratingBadge: {
     flexDirection: "row",

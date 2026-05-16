@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: rf(15),
-    fontWeight: "700",
+    fontWeight: "500",
     color: C.red,
     letterSpacing: 0.2,
   },
@@ -225,6 +225,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: vs(4) },
     shadowOpacity: 0.35,
     shadowRadius: rs(10),
+    top: rs(-50),
   },
   bookIconCircle: {
     width: rs(50),

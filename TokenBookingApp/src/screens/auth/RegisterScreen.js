@@ -25,7 +25,7 @@ const PillInput = ({ errorStyle, ...props }) => (
     <View style={[s.inputWrapper, errorStyle]}>
       <TextInput
         style={s.input}
-        placeholderTextColor="#B0B0B8"
+        placeholderTextColor="#818183"
         {...props}
       />
     </View>

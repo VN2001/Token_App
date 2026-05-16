@@ -79,19 +79,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   iconWrapActive: {
-    backgroundColor: "#F0ECFF",
+    // backgroundColor: "#F0ECFF",
   },
   navIcon: {
     width: rs(22),
     height: rs(22),
     resizeMode: "contain",
   },
-  navDot: {
-    width: rs(5),
-    height: rs(5),
-    borderRadius: rs(3),
-    backgroundColor: C.purple,
-    marginTop: vs(3),
-  },
+  // navDot: {
+  //   width: rs(5),
+  //   height: rs(5),
+  //   borderRadius: rs(3),
+  //   backgroundColor: C.purple,
+  //   marginTop: vs(3),
+  // },
 });
 export default BottomNavBar;
