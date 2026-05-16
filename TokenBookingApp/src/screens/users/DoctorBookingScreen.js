@@ -776,7 +776,7 @@ const modalStyles = StyleSheet.create({
   title: {
     fontSize: rf(20),
     fontWeight: "800",
-    color: "#111",
+    color: "#54437d",
     marginBottom: vs(8),
   },
   titleUnderline: {
