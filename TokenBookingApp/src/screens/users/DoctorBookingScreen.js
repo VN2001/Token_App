@@ -228,10 +228,12 @@ const AddProfileModal = ({ visible, onClose, onSave }) => {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
-  const [additionalInfo, setAdditionalInfo] = useState("");
+  const [time, setTime] = useState("");
+  const [showGenderOptions, setShowGenderOptions] = useState(false);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
+  const genderOptions = ["Male", "Female", "Other"];
 
-  useEffect(() => {
+ useEffect(() => {
     Animated.spring(slideAnim, {
       toValue: visible ? 0 : SCREEN_HEIGHT,
       useNativeDriver: true,
@@ -239,10 +241,7 @@ const AddProfileModal = ({ visible, onClose, onSave }) => {
       friction: 11,
     }).start();
     if (visible) {
-      setName("");
-      setAge("");
-      setGender("");
-      setAdditionalInfo("");
+      setName(""); setAge(""); setGender(""); setTime("");
     }
   }, [visible]);
 
@@ -253,33 +252,88 @@ const AddProfileModal = ({ visible, onClose, onSave }) => {
     else setGender("");
   };
 
-  const handleSave = () => {
+   const handleSave = () => {
     if (!name.trim() || !age.trim() || !gender.trim()) {
       Alert.alert("Missing Details", "Please fill Name, Age and Gender.");
       return;
     }
-    onSave({ name: name.trim(), age: age.trim(), gender, additionalInfo: additionalInfo.trim() });
+    onSave({ name: name.trim(), age: age.trim(), gender, additionalInfo: time.trim() });
     onClose();
   };
 
   return (
-    <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
+     <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
       <View style={modalStyles.overlay}>
         <TouchableOpacity style={StyleSheet.absoluteFill} onPress={onClose} activeOpacity={1} />
         <Animated.View style={[modalStyles.sheet, { transform: [{ translateY: slideAnim }] }]}>
+          {/* Handle bar */}
           <View style={modalStyles.handle} />
-          <Text style={modalStyles.title}>Add New Profile</Text>
+
+          {/* Title with underline accent */}
+          <View style={modalStyles.titleWrap}>
+            <Text style={modalStyles.title}>Add Profile details</Text>
+            <View style={modalStyles.titleUnderline} />
+          </View>
+
+          {/* Row 1: Name + Age */}
           <View style={styles.formRow}>
             <UnderlineInput placeholder="Name" value={name} onChangeText={setName} half />
             <UnderlineInput placeholder="Age" value={age} onChangeText={setAge} keyboardType="numeric" half />
           </View>
-          <View style={[styles.formRow, { marginBottom: vs(24) }]}>
-            <UnderlineDropdown placeholder="Gender" value={gender} onPress={cycleGender} half />
-            <UnderlineInput placeholder="Additional Info" value={additionalInfo} onChangeText={setAdditionalInfo} half />
+
+          {/* Row 2: Gender + Time */}
+          <View style={[styles.formRow, { marginBottom: vs(28) }]}>
+            {/* Gender inline dropdown */}
+            <View style={{ width: "47%", position: "relative", zIndex: 10 }}>
+              <TouchableOpacity
+                style={styles.underlineInputWrap}
+                activeOpacity={0.7}
+                onPress={() => setShowGenderOptions(!showGenderOptions)}
+              >
+                <View style={styles.dropdownRow}>
+                  <Text style={[styles.dropdownPlaceholder, gender && { color: "#333" }]}>
+                    {gender || "Gender"}
+                  </Text>
+                  <ChevronDown color="#999" />
+                </View>
+                <View style={styles.underlineLine} />
+              </TouchableOpacity>
+              {showGenderOptions && (
+                <View style={genderStyles.optionsBox}>
+                  {genderOptions.map((option) => (
+                    <TouchableOpacity
+                      key={option}
+                      style={[genderStyles.optionItem, gender === option && genderStyles.optionItemSelected]}
+                      onPress={() => { setGender(option); setShowGenderOptions(false); }}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={[genderStyles.optionText, gender === option && genderStyles.optionTextSelected]}>
+                        {option}
+                      </Text>
+                      {gender === option && <CheckIcon size={rs(16)} color="#7B5FEB" />}
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+            </View>
+
+            <UnderlineInput
+              placeholder="Time"
+              value={time}
+              onChangeText={setTime}
+              half
+            />
           </View>
-          <TouchableOpacity style={modalStyles.saveBtn} activeOpacity={0.85} onPress={handleSave}>
-            <Text style={modalStyles.saveBtnText}>Save Profile</Text>
-          </TouchableOpacity>
+
+          {/* Footer: Submit + skip link */}
+          <View style={modalStyles.footerRow}>
+            <TouchableOpacity style={modalStyles.saveBtn} activeOpacity={0.85} onPress={handleSave}>
+              <Text style={modalStyles.saveBtnText}>Submit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onClose} activeOpacity={0.7}>
+              <Text style={modalStyles.skipText}>Skip for now</Text>
+            </TouchableOpacity>
+          </View>
         </Animated.View>
       </View>
     </Modal>
@@ -713,20 +767,35 @@ const modalStyles = StyleSheet.create({
     borderRadius: rs(2),
     backgroundColor: "#E0E0E0",
     alignSelf: "center",
-    marginBottom: vs(20),
+    marginBottom: vs(24),
+  },
+  titleWrap: {
+    alignItems: "center",
+    marginBottom: vs(28),
   },
   title: {
     fontSize: rf(20),
     fontWeight: "800",
     color: "#111",
-    marginBottom: vs(24),
+    marginBottom: vs(8),
+  },
+  titleUnderline: {
+    width: rs(40),
+    height: vs(3),
+    borderRadius: rs(2),
+    backgroundColor: "#7B5FEB",
+  },
+  footerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: rs(16),
   },
   saveBtn: {
     backgroundColor: "#7B5FEB",
     borderRadius: rs(50),
-    paddingVertical: vs(15),
+    paddingVertical: vs(14),
+    paddingHorizontal: rs(36),
     alignItems: "center",
-    marginTop: vs(8),
     elevation: 6,
     shadowColor: "#7B5FEB",
     shadowOpacity: 0.35,
@@ -738,6 +807,12 @@ const modalStyles = StyleSheet.create({
     fontSize: rf(16),
     fontWeight: "700",
     letterSpacing: 0.3,
+  },
+  skipText: {
+    fontSize: rf(13),
+    color: "#BBBBBB",
+    fontWeight: "500",
+    textDecorationLine: "underline",
   },
 });
 
