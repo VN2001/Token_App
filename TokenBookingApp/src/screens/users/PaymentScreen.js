@@ -53,6 +53,9 @@ const handlePayNow = async () => {
       await AsyncStorage.setItem('ConfirmedDoctorBooking', savedBooking);
     }
 
+    const bookedHospital =
+      route?.params?.hospital || route?.params?.bookingInfo?.hospital;
+
     Alert.alert('Booking Confirmed', 'Your appointment is confirmed.', [
       {
         text: 'OK',
@@ -63,7 +66,7 @@ const handlePayNow = async () => {
               name: 'UserDashboard',
               params: {
                 bookingConfirmed: true,
-                hospital: route?.params?.hospital, // ✅ pass hospital back
+                hospital: bookedHospital,
               },
             }],
           }),

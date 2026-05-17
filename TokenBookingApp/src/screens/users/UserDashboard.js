@@ -25,11 +25,13 @@ const UserDashboard = ({ route }) => {
 
   // ✅ Restore state when returning from Payment
   useEffect(() => {
-    if (route?.params?.bookingConfirmed && route?.params?.hospital) {
-      setSelectedHospital(route.params.hospital);
+    const params = route?.params;
+    if (params?.bookingConfirmed && params?.hospital) {
+      setSelectedHospital(params.hospital);
       setBookingState("booked");
+      navigation.setParams({ bookingConfirmed: false });
     }
-  }, [route?.params?.bookingConfirmed]);
+  }, [route?.params]);
 
   // Countdown timer
   useEffect(() => {

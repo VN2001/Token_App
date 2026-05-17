@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { C, rs, vs, rf } from "./Constants";
 
 const RecentlyAddedSection = ({
@@ -122,7 +122,11 @@ const RecentlyAddedSection = ({
         <View style={styles.hospitalAvatar}>
           {hospital?.image ? (
             <Image
-              source={hospital.image}
+              source={
+                typeof hospital.image === "string"
+                  ? { uri: hospital.image }
+                  : hospital.image
+              }
               style={{ width: rs(32), height: rs(32), resizeMode: "contain" }}
             />
           ) : (
@@ -152,21 +156,56 @@ const RecentlyAddedSection = ({
     }
   };
 
-  return <View style={styles.bottomCard}>{renderContent()}</View>;
+  return (
+    <View style={styles.sectionWrapper}>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>Recently Added</Text>
+        <View style={styles.sectionAction}>
+          <Text style={styles.sectionActionText}>⋯</Text>
+        </View>
+      </View>
+      <View style={styles.bottomCard}>{renderContent()}</View>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
+  sectionWrapper: {
+    marginBottom: vs(24),
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: vs(12),
+  },
+  sectionTitle: {
+    fontSize: rf(16),
+    fontWeight: "800",
+    color: C.textDark,
+  },
+  sectionAction: {
+    width: rs(36),
+    height: rs(36),
+    borderRadius: rs(18),
+    backgroundColor: "rgba(123,94,167,0.1)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  sectionActionText: {
+    fontSize: rf(18),
+    color: C.purple,
+  },
   bottomCard: {
-    backgroundColor: "#f1f1f1",
+    backgroundColor: C.white,
     borderRadius: rs(28),
     padding: rs(20),
-    paddingTop: vs(14),
-    elevation: 2,
+    minHeight: vs(150),
+    elevation: 4,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: vs(2) },
-    shadowOpacity: 0.06,
-    shadowRadius: rs(8),
-    marginBottom: vs(20),
+    shadowOffset: { width: 0, height: vs(4) },
+    shadowOpacity: 0.08,
+    shadowRadius: rs(16),
   },
   emptyBox: {
     alignItems: "center",
@@ -183,22 +222,22 @@ const styles = StyleSheet.create({
   hospitalRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: rs(12),
-    marginBottom: vs(16),
+    gap: rs(14),
+    marginBottom: vs(18),
   },
   hospitalAvatar: {
-    width: rs(52),
-    height: rs(52),
-    borderRadius: rs(26),
-    backgroundColor: C.purpleLight,
+    width: rs(68),
+    height: rs(68),
+    borderRadius: rs(34),
+    backgroundColor: "rgba(123,94,167,0.12)",
     justifyContent: "center",
     alignItems: "center",
   },
   hospitalInfo: { flex: 1 },
-  hospitalName: { fontSize: rf(15), fontWeight: "800", color: C.textDark },
-  hospitalSub: { fontSize: rf(11), color: C.textMid, marginTop: vs(2) },
-  hospitalRight: { alignItems: "flex-end", gap: vs(4) },
-  hospitalCount: { fontSize: rf(13), fontWeight: "800", color: C.purple },
+  hospitalName: { fontSize: rf(16), fontWeight: "800", color: C.textDark },
+  hospitalSub: { fontSize: rf(12), color: C.textMid, marginTop: vs(4) },
+  hospitalRight: { alignItems: "flex-end", gap: vs(6) },
+  hospitalCount: { fontSize: rf(12), fontWeight: "700", color: C.green, backgroundColor: "rgba(34,197,94,0.12)", paddingHorizontal: rs(14), paddingVertical: vs(6), borderRadius: rs(999) },
   arrowCircle: {
     width: rs(30),
     height: rs(30),
@@ -308,17 +347,27 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   payArrowText: { fontSize: rf(18), color: C.white, fontWeight: "700" },
-  bookedBadge: { fontSize: rf(13), fontWeight: "800", color: C.green },
+  bookedBadge: {
+    fontSize: rf(12),
+    fontWeight: "800",
+    color: C.green,
+    backgroundColor: "rgba(34,197,94,0.12)",
+    paddingHorizontal: rs(14),
+    paddingVertical: vs(6),
+    borderRadius: rs(999),
+  },
   confirmedButton: {
-    borderRadius: rs(50),
-    borderWidth: rs(1.5),
-    borderColor: "#E0E0E0",
-    paddingVertical: vs(14),
+    borderRadius: rs(24),
+    borderWidth: 1,
+    borderColor: "rgba(34,197,94,0.24)",
+    paddingVertical: vs(16),
+    paddingHorizontal: rs(16),
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: rs(12),
-    backgroundColor: C.white,
+    backgroundColor: "rgba(34,197,94,0.08)",
+    width: "100%",
   },
   confirmedIconCircle: {
     width: rs(32),
