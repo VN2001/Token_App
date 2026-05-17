@@ -1,21 +1,36 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView,
-  KeyboardAvoidingView, Platform, StatusBar,
-  TouchableWithoutFeedback, Keyboard, Image, Dimensions,
-} from 'react-native';
-import OtpModal from '../../components/OtpModal';
-import Svg, { Path } from 'react-native-svg';
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  StatusBar,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Image,
+  Dimensions,
+} from "react-native";
+import OtpModal from "../../components/OtpModal";
+import Svg, { Path } from "react-native-svg";
 import { rs, vs, rf } from "../../utils/responsive";
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from "expo-linear-gradient";
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const TOP_GAP = vs(160);
 
 const CheckMark = () => (
   <Svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-    <Path d="M20 6L9 17L4 12"
-      stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+    <Path
+      d="M20 6L9 17L4 12"
+      stroke="#fff"
+      strokeWidth="3.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </Svg>
 );
 
@@ -23,39 +38,36 @@ const PillInput = ({ errorStyle, ...props }) => (
   // shadowClip trims left/right shadow bleed on iOS so only bottom shadow shows
   <View style={s.shadowClip}>
     <View style={[s.inputWrapper, errorStyle]}>
-      <TextInput
-        style={s.input}
-        placeholderTextColor="#818183"
-        {...props}
-      />
+      <TextInput style={s.input} placeholderTextColor="#818183" {...props} />
     </View>
   </View>
 );
 
 export default function RegisterForm({ navigation }) {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail]       = useState('');
-  const [contact, setContact]   = useState('');
-  const [agreed, setAgreed]     = useState(false);
-  const [errors, setErrors]     = useState({});
-  const [showOtp, setShowOtp]   = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [contact, setContact] = useState("");
+  const [agreed, setAgreed] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [showOtp, setShowOtp] = useState(false);
 
   const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-  const isValidPhone = (v) => /^\d{10}$/.test(v.replace(/[^\d]/g, ''));
+  const isValidPhone = (v) => /^\d{10}$/.test(v.replace(/[^\d]/g, ""));
 
   const validate = () => {
     const e = {};
-    if (!fullName.trim())            e.fullName = 'Full name is required';
-    if (!email.trim())               e.email    = 'Email is required';
-    else if (!isValidEmail(email))   e.email    = 'Enter a valid email';
-    if (!contact.trim())             e.contact  = 'Contact is required';
-    else if (!isValidPhone(contact)) e.contact  = 'Enter a valid 10-digit number';
-    if (!agreed)                     e.agreed   = 'Please accept the terms';
+    if (!fullName.trim()) e.fullName = "Full name is required";
+    if (!email.trim()) e.email = "Email is required";
+    else if (!isValidEmail(email)) e.email = "Enter a valid email";
+    if (!contact.trim()) e.contact = "Contact is required";
+    else if (!isValidPhone(contact))
+      e.contact = "Enter a valid 10-digit number";
+    if (!agreed) e.agreed = "Please accept the terms";
     setErrors(e);
     return !Object.keys(e).length;
   };
 
-  const clear = (f) => errors[f] && setErrors(p => ({ ...p, [f]: '' }));
+  const clear = (f) => errors[f] && setErrors((p) => ({ ...p, [f]: "" }));
 
   const handleSignIn = () => {
     if (!validate()) return;
@@ -65,15 +77,15 @@ export default function RegisterForm({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <LinearGradient
-  colors={['#e7dbff', '#f5f1ff', '#f4efff', '#ffffff', '#f6f2ff']}
-  start={{ x: 0, y: 0 }}
-  end={{ x: 1, y: 1 }}
-  style={s.root}
->
-  <StatusBar barStyle="dark-content" backgroundColor="#e7dbff" />
+        colors={["#EAE0FF", "#EDE4FF", "#ffff", "#F5F1FF", "#F4F0FF"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={s.root}
+      >
+        <StatusBar barStyle="dark-content" backgroundColor="#e7dbff" />
 
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
           style={s.kavWrapper}
         >
           {/* White card sitting on grey background */}
@@ -91,50 +103,65 @@ export default function RegisterForm({ navigation }) {
               <PillInput
                 placeholder="Full name"
                 value={fullName}
-                onChangeText={t => { setFullName(t); clear('fullName'); }}
+                onChangeText={(t) => {
+                  setFullName(t);
+                  clear("fullName");
+                }}
                 autoCapitalize="words"
                 autoCorrect={false}
                 errorStyle={errors.fullName ? s.inputErr : null}
               />
-              {errors.fullName
-                ? <Text style={s.err}>⚠ {errors.fullName}</Text>
-                : <View style={s.spacer} />
-              }
+              {errors.fullName ? (
+                <Text style={s.err}>⚠ {errors.fullName}</Text>
+              ) : (
+                <View style={s.spacer} />
+              )}
 
               {/* Email */}
               <PillInput
                 placeholder="Email"
                 value={email}
-                onChangeText={t => { setEmail(t); clear('email'); }}
+                onChangeText={(t) => {
+                  setEmail(t);
+                  clear("email");
+                }}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
                 errorStyle={errors.email ? s.inputErr : null}
               />
-              {errors.email
-                ? <Text style={s.err}>⚠ {errors.email}</Text>
-                : <View style={s.spacer} />
-              }
+              {errors.email ? (
+                <Text style={s.err}>⚠ {errors.email}</Text>
+              ) : (
+                <View style={s.spacer} />
+              )}
 
               {/* Contact */}
               <PillInput
                 placeholder="Contact"
                 value={contact}
-                onChangeText={t => { setContact(t); clear('contact'); }}
+                onChangeText={(t) => {
+                  setContact(t);
+                  clear("contact");
+                }}
                 keyboardType="phone-pad"
                 maxLength={15}
                 errorStyle={errors.contact ? s.inputErr : null}
               />
-              {errors.contact
-                ? <Text style={s.err}>⚠ {errors.contact}</Text>
-                : <View style={s.spacer} />
-              }
+              {errors.contact ? (
+                <Text style={s.err}>⚠ {errors.contact}</Text>
+              ) : (
+                <View style={s.spacer} />
+              )}
 
               {/* Terms */}
               <View style={s.termsRow}>
                 <TouchableOpacity
                   style={[s.checkbox, agreed && s.checked]}
-                  onPress={() => { setAgreed(p => !p); clear('agreed'); }}
+                  onPress={() => {
+                    setAgreed((p) => !p);
+                    clear("agreed");
+                  }}
                   activeOpacity={0.75}
                 >
                   {agreed && <CheckMark />}
@@ -144,29 +171,34 @@ export default function RegisterForm({ navigation }) {
                   <Text style={s.termsLink}>Terms & conditions</Text>
                 </TouchableOpacity>
               </View>
-              {errors.agreed
-                ? <Text style={[s.err, { marginTop: -8, marginBottom: 10 }]}>⚠ {errors.agreed}</Text>
-                : null
-              }
+              {errors.agreed ? (
+                <Text style={[s.err, { marginTop: -8, marginBottom: 10 }]}>
+                  ⚠ {errors.agreed}
+                </Text>
+              ) : null}
 
-             {/* Sign In Button */}
-<View style={s.btnWrap}>
-  <TouchableOpacity onPress={handleSignIn} activeOpacity={0.85} style={s.btnShadow}>
-    <LinearGradient
-      colors={['#763ef9', '#814afe', '#763ff7']}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0, y: 1 }}
-      style={s.signInBtn}
-    >
-      <Text style={s.signInText}>Sign In</Text>
-    </LinearGradient>
-  </TouchableOpacity>
-</View>
+              {/* Sign In Button */}
+              <View style={s.btnWrap}>
+                <TouchableOpacity
+                  onPress={handleSignIn}
+                  activeOpacity={0.85}
+                  style={s.btnShadow}
+                >
+                  <LinearGradient
+                    colors={["#8048FD", "#7B43FB", "#7F48FD"]}
+                    start={{ x: 1, y: 0 }}
+                    end={{ x: 0, y: 1 }}
+                    style={s.signInBtn}
+                  >
+                    <Text style={s.signInText}>Sign In</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
 
               {/* Divider */}
               <View style={s.divRow}>
                 <View style={s.divLine} />
-                <Text style={s.divText}>  or  </Text>
+                <Text style={s.divText}> or </Text>
                 <View style={s.divLine} />
               </View>
 
@@ -174,13 +206,13 @@ export default function RegisterForm({ navigation }) {
               <View style={s.socialRow}>
                 <TouchableOpacity style={s.socialBtn} activeOpacity={0.75}>
                   <Image
-                    source={require('../../../assets/icons/google.png')}
+                    source={require("../../../assets/icons/google.png")}
                     style={s.socialIcon}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity style={s.socialBtn} activeOpacity={0.75}>
                   <Image
-                    source={require('../../../assets/icons/apple.png')}
+                    source={require("../../../assets/icons/apple.png")}
                     style={s.socialIcon}
                   />
                 </TouchableOpacity>
@@ -189,11 +221,10 @@ export default function RegisterForm({ navigation }) {
               {/* Login Link */}
               <View style={s.loginRow}>
                 <Text style={s.loginText}>Already have an account? </Text>
-                <TouchableOpacity onPress={() => navigation?.navigate('Login')}>
+                <TouchableOpacity onPress={() => navigation?.navigate("Login")}>
                   <Text style={s.loginLink}>Log in</Text>
                 </TouchableOpacity>
               </View>
-
             </ScrollView>
           </View>
         </KeyboardAvoidingView>
@@ -204,7 +235,7 @@ export default function RegisterForm({ navigation }) {
           onClose={() => setShowOtp(false)}
           onVerify={(code) => {
             setShowOtp(false);
-            navigation.navigate('UserDashboard');
+            navigation.navigate("UserDashboard");
           }}
           topGap={TOP_GAP}
         />
@@ -214,7 +245,6 @@ export default function RegisterForm({ navigation }) {
 }
 
 const s = StyleSheet.create({
-
   // Grey background visible behind card
   root: {
     flex: 1,
@@ -222,17 +252,17 @@ const s = StyleSheet.create({
 
   kavWrapper: {
     flex: 1,
-    justifyContent: 'flex-end',   // card sits at bottom, grey shows at top
+    justifyContent: "flex-end", // card sits at bottom, grey shows at top
   },
 
   // White card with visible rounded top corners on grey bg
   whiteCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderTopLeftRadius: rs(36),
     borderTopRightRadius: rs(36),
     flex: 1,
-    maxHeight: SCREEN_HEIGHT * 0.85,  // grey peeks at top
-    shadowColor: '#000',
+    maxHeight: SCREEN_HEIGHT * 0.85, // grey peeks at top
+    shadowColor: "#000",
     shadowOpacity: 0.07,
     shadowRadius: rs(10),
     shadowOffset: { width: 0, height: -vs(3) },
@@ -248,9 +278,9 @@ const s = StyleSheet.create({
   // Title
   title: {
     fontSize: rf(26),
-    fontWeight: '700',
-    color: '#111111',
-    textAlign: 'center',
+    fontWeight: "700",
+    color: "#111111",
+    textAlign: "center",
     marginBottom: vs(28),
     letterSpacing: -0.3,
   },
@@ -258,11 +288,11 @@ const s = StyleSheet.create({
   // Input — pill shaped with more radius
   inputWrapper: {
     borderRadius: rs(18),
-    backgroundColor: '#F2F2F2',
+    backgroundColor: "#F2F2F2",
     // Bottom-only shadow
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: vs(4) },  // only downward
-    shadowOpacity: 0.10,
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: vs(4) }, // only downward
+    shadowOpacity: 0.1,
     shadowRadius: rs(4),
     elevation: 3,
   },
@@ -270,15 +300,15 @@ const s = StyleSheet.create({
   input: {
     borderRadius: rs(18),
     paddingHorizontal: rs(22),
-    paddingVertical: Platform.OS === 'ios' ? vs(17) : vs(15),
+    paddingVertical: Platform.OS === "ios" ? vs(17) : vs(15),
     fontSize: rf(15),
-    color: '#333333',
-    backgroundColor: 'transparent',
+    color: "#333333",
+    backgroundColor: "transparent",
   },
 
   inputErr: {
     borderWidth: rs(1.5),
-    borderColor: '#FF5A5A',
+    borderColor: "#FF5A5A",
   },
 
   // Clips left/right shadow — only bottom shadow shows
@@ -294,18 +324,18 @@ const s = StyleSheet.create({
   },
 
   err: {
-    color: '#FF5A5A',
+    color: "#FF5A5A",
     fontSize: rf(12),
     marginTop: vs(4),
     marginBottom: vs(8),
     marginLeft: rs(4),
-    fontWeight: '500',
+    fontWeight: "500",
   },
 
   // Terms row
   termsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: vs(4),
     marginBottom: vs(22),
     marginLeft: rs(2),
@@ -316,87 +346,90 @@ const s = StyleSheet.create({
     height: rs(17),
     borderRadius: rs(3),
     borderWidth: rs(1.5),
-    borderColor: '#C0C0C0',
+    borderColor: "#C0C0C0",
     marginRight: rs(8),
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fff",
   },
 
   checked: {
-    backgroundColor: '#7B5FEB',
-    borderColor: '#7B5FEB',
+    backgroundColor: "#7B5FEB",
+    borderColor: "#7B5FEB",
   },
 
   termsText: {
     fontSize: rf(14),
-    color: '#555',
+    color: "#555",
   },
 
   termsLink: {
     fontSize: rf(14),
-    color: '#7B5FEB',
-    fontWeight: '600',
-    textDecorationLine: 'underline',
+    color: "#7B5FEB",
+    fontWeight: "600",
+    textDecorationLine: "underline",
   },
 
   // Sign In button — wider pill
   btnWrap: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: vs(22),
   },
   btnShadow: {
-  borderRadius: rs(50),
-  shadowColor: '#010003',
-  shadowOpacity: 0.38,
-  shadowRadius: rs(12),
-  shadowOffset: { width: 0, height: vs(4) },
-  elevation: 7,
-},
+    borderRadius: rs(50),
+    shadowColor: "#010003",
+    shadowOpacity: 0.38,
+    shadowRadius: rs(12),
+    shadowOffset: { width: 0, height: vs(4) },
+    elevation: 7,
+  },
 
   signInBtn: {
   borderRadius: rs(50),
   paddingVertical: vs(16),
   paddingHorizontal: rs(80),
-  alignItems: 'center',
-  shadowColor: '#7B5FEB',
+  alignItems: "center",
+  justifyContent: "center",
+  shadowColor: "#7B5FEB",
   shadowOpacity: 0.38,
   shadowRadius: rs(12),
   shadowOffset: { width: 0, height: vs(4) },
   elevation: 7,
-},
+  },
 
   signInText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: rf(17),
-    fontWeight: '700',
+    fontWeight: "500",
     letterSpacing: 0.2,
   },
 
   // Divider
   divRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: vs(18),
-    paddingHorizontal: rs(10),
-  },
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+  marginBottom: vs(18),
+  paddingHorizontal: rs(20),
+},
 
-  divLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#E0E0E0',
-  },
+divLine: {
+  width: rs(55),
+  height: 1,
+  backgroundColor: "#E0E0E0",
+},
 
-  divText: {
-    fontSize: rf(13),
-    color: '#AAAAAA',
-    fontWeight: '500',
-  },
+divText: {
+  marginHorizontal: rs(10),
+  fontSize: rf(13),
+  color: "#AAAAAA",
+  fontWeight: "500",
+},
 
   // Social — NO background box, just icons
   socialRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     gap: rs(35),
     marginBottom: vs(26),
   },
@@ -404,33 +437,33 @@ const s = StyleSheet.create({
   socialBtn: {
     width: rs(30),
     height: rs(30),
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     // no backgroundColor — bare icons
   },
 
   socialIcon: {
     width: rs(30),
     height: rs(30),
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
 
   // Login link
   loginRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   loginText: {
     fontSize: rf(14),
-    color: '#888',
+    color: "#888",
   },
 
   loginLink: {
     fontSize: rf(14),
-    color: '#7B5FEB',
-    fontWeight: '700',
-    textDecorationLine: 'underline',
+    color: "#7B5FEB",
+    fontWeight: "600",
+    textDecorationLine: "underline",
   },
 });
