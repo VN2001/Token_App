@@ -742,7 +742,7 @@ const genderStyles = StyleSheet.create({
     fontWeight: "500",
   },
   optionTextSelected: {
-    color: "#7B5FEB",
+    color: "#6a5b8e",
     fontWeight: "700",
   },
 });
@@ -776,7 +776,7 @@ const modalStyles = StyleSheet.create({
   title: {
     fontSize: rf(20),
     fontWeight: "800",
-    color: "#111",
+    color: "#54437d",
     marginBottom: vs(8),
   },
   titleUnderline: {
@@ -954,15 +954,17 @@ const styles = StyleSheet.create({
     gap: vs(8),
   },
   bannerTopRow: { flexDirection: "row", alignItems: "center", gap: rs(8) },
-  bannerIconWrap: {
-    width: rs(28),
-    height: rs(28),
-    borderRadius: rs(14),
-    backgroundColor: "rgba(255,255,255,0.25)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  bannerVideoIcon: { width: rs(16), height: rs(16) },
+  // bannerIconWrap: {
+  //   width: rs(28),
+  //   height: rs(28),
+  //   borderRadius: rs(14),
+  //   backgroundColor: "rgba(255,255,255,0.25)",
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  // },
+  bannerVideoIcon: { width: rs(25
+    
+  ), height: rs(30) },
   bannerTitle: {
     fontSize: rf(14),
     fontWeight: "800",
