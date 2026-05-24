@@ -287,15 +287,14 @@ const s = StyleSheet.create({
 
   // Input — pill shaped with more radius
   inputWrapper: {
-    borderRadius: rs(18),
-    backgroundColor: "#F2F2F2",
-    // Bottom-only shadow
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: vs(4) }, // only downward
-    shadowOpacity: 0.1,
-    shadowRadius: rs(4),
-    elevation: 3,
-  },
+  borderRadius: rs(18),
+  backgroundColor: "#F2F2F2",
+  shadowColor: "#000000",
+  shadowOffset: { width: vs(3), height: vs(6) }, // right + bottom
+  shadowOpacity: 0.18,
+  shadowRadius: rs(8),
+  elevation: 6,
+},
 
   input: {
     borderRadius: rs(18),
@@ -315,6 +314,7 @@ const s = StyleSheet.create({
   shadowClip: {
     overflow: "hidden",
     paddingBottom: 6,
+    paddingRight: 6,
     marginBottom: 0,
   },
 

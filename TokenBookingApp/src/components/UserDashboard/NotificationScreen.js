@@ -166,7 +166,7 @@ const NotificationScreen = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.subTitle}>Recent updates for your bookings</Text>
+        {/* <Text style={styles.subTitle}>Recent updates for your bookings</Text> */}
         {notifications.map((item) => (
           <NotificationCard item={item} key={item.id} />
         ))}
