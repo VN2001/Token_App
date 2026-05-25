@@ -4,19 +4,21 @@ import { C, rs, vs, rf } from "./Constants";
 const icon5 = require("../../../assets/5.png");
 const icon7 = require("../../../assets/7.png");
 
-const DashboardHeader = () => (
-  <View style={styles.header}>
-    <View style={styles.headerLeft}>
-      <View style={styles.clockIcon}>
-        <Image source={icon7} style={{ width: rs(46), height: rs(46) }} />
+const DashboardHeader = ({ userName }) => {
+  const displayName = userName?.trim() ? userName : "User";
+  return (
+    <View style={styles.header}>
+      <View style={styles.headerLeft}>
+        <View style={styles.clockIcon}>
+          <Image source={icon7} style={{ width: rs(46), height: rs(46) }} />
+        </View>
+        <View>
+          <Text style={styles.greeting}>
+            Hello <Text style={styles.greetingName}>{displayName}!</Text>
+          </Text>
+          <Text style={styles.subGreeting}>Complete Your Profile Now...</Text>
+        </View>
       </View>
-      <View>
-        <Text style={styles.greeting}>
-          Hello <Text style={styles.greetingName}>Karthik!</Text>
-        </Text>
-        <Text style={styles.subGreeting}>Complete Your Profile Now...</Text>
-      </View>
-    </View>
     <View style={styles.notifWrapper}>
       <TouchableOpacity style={styles.notifButton}>
         <Image source={icon5} style={{ width: rs(32), height: rs(32) }} />
@@ -25,6 +27,8 @@ const DashboardHeader = () => (
     </View>
   </View>
 );
+
+};
 
 const styles = StyleSheet.create({
   header: {

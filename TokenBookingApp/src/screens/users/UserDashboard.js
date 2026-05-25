@@ -5,8 +5,7 @@ import {
   ScrollView,
   StatusBar,
   SafeAreaView,
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
+} from "react-native";import AsyncStorage from "@react-native-async-storage/async-storage";import { useNavigation } from "@react-navigation/native";
 
 import { C, rs, vs } from "../../components/UserDashboard/Constants";
 import DashboardHeader from "../../components/UserDashboard/DashboardHeader";
@@ -15,6 +14,8 @@ import RecentlyAddedSection from "../../components/UserDashboard/RecentlyAddedSe
 import SearchModal from "../../components/UserDashboard/SearchModal";
 import BottomNavBar from "../../components/common/BottomNavbar";
 
+const LAST_BOOKING_KEY = "LastDoctorBooking";
+
 const UserDashboard = ({ route }) => {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState("home");
@@ -22,14 +23,63 @@ const UserDashboard = ({ route }) => {
   const [bookingState, setBookingState] = useState("empty");
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [searchVisible, setSearchVisible] = useState(false);
+  const [userName, setUserName] = useState("");
 
-  // ✅ Restore state when returning from Payment
+  const loadLastBooking = async () => {
+    try {
+      const raw = await AsyncStorage.getItem(LAST_BOOKING_KEY);
+      if (!raw) return;
+      const lastBooking = JSON.parse(raw);
+      if (!lastBooking) return;
+
+      setSelectedHospital({
+        name: lastBooking.hospital || "Last booking",
+        shortAddress:
+          lastBooking.date && lastBooking.time
+            ? `${lastBooking.date} • ${lastBooking.time}`
+            : "",
+        avatar: lastBooking.avatar || "👨‍⚕️",
+        token: lastBooking.count || "",
+        total: lastBooking.amount || "",
+        date: lastBooking.date,
+        time: lastBooking.time,
+        amount: lastBooking.amount,
+      });
+      setBookingState("booked");
+    } catch (error) {
+      console.warn("Failed to load last booking", error);
+    }
+  };
+
+  const loadStoredUserName = async () => {
+    try {
+      const savedName = await AsyncStorage.getItem("CurrentUserName");
+      if (savedName) setUserName(savedName);
+    } catch (error) {
+      console.warn("Failed to load saved user name", error);
+    }
+  };
+
+  // ✅ Restore state when returning from Payment or on login/signup entry
   useEffect(() => {
     const params = route?.params;
     if (params?.bookingConfirmed && params?.hospital) {
       setSelectedHospital(params.hospital);
       setBookingState("booked");
-      navigation.setParams({ bookingConfirmed: false });
+      navigation.setParams({ bookingConfirmed: false, hospital: undefined });
+    } else if (params?.source === "signup") {
+      setBookingState("empty");
+      setSelectedHospital(null);
+      setUserName(params?.userName || "");
+      navigation.setParams({ source: undefined, userName: undefined });
+    } else if (params?.source === "login") {
+      if (params?.userName) {
+        setUserName(params.userName);
+      } else {
+        loadStoredUserName();
+      }
+      loadLastBooking();
+      navigation.setParams({ source: undefined, userName: undefined });
     }
   }, [route?.params]);
 
@@ -71,7 +121,7 @@ const UserDashboard = ({ route }) => {
     setActiveTab("home");
   }}
   onSelect={handleHospitalSelect}
-  navigation={navigation}  // ← add this
+  navigation={navigation}  // ← pass it back
 />
 
       <ScrollView
@@ -79,7 +129,7 @@ const UserDashboard = ({ route }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <DashboardHeader />
+        <DashboardHeader userName={userName} />
 
         <TokenCarousel seconds={seconds} />
 

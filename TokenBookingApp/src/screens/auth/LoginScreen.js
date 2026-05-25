@@ -13,6 +13,7 @@ import {
   Keyboard,
   Dimensions,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { rs, vs, rf } from "../../utils/responsive";
 import Svg, { Path } from "react-native-svg";
@@ -192,9 +193,19 @@ export default function LoginScreen({ navigation }) {
           visible={showOtp}
           phone={contact}
           onClose={() => setShowOtp(false)}
-          onVerify={(code) => {
+          onVerify={async (code) => {
             setShowOtp(false);
-            navigation.navigate("UserDashboard");
+            let userName = "";
+            try {
+              const stored = await AsyncStorage.getItem("CurrentUserName");
+              if (stored) userName = stored;
+            } catch (error) {
+              console.warn("Failed to load user name", error);
+            }
+            navigation.navigate("UserDashboard", {
+              source: "login",
+              userName,
+            });
           }}
           topGap={TOP_GAP}
         />

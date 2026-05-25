@@ -14,6 +14,7 @@ import {
   Image,
   Dimensions,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import OtpModal from "../../components/OtpModal";
 import Svg, { Path } from "react-native-svg";
 import { rs, vs, rf } from "../../utils/responsive";
@@ -233,9 +234,18 @@ export default function RegisterForm({ navigation }) {
           visible={showOtp}
           phone={contact}
           onClose={() => setShowOtp(false)}
-          onVerify={(code) => {
+          onVerify={async (code) => {
             setShowOtp(false);
-            navigation.navigate("UserDashboard");
+            const normalizedName = fullName.trim();
+            try {
+              await AsyncStorage.setItem("CurrentUserName", normalizedName);
+            } catch (error) {
+              console.warn("Failed to save user name", error);
+            }
+            navigation.navigate("UserDashboard", {
+              source: "signup",
+              userName: normalizedName,
+            });
           }}
           topGap={TOP_GAP}
         />
