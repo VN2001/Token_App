@@ -35,11 +35,18 @@ const CheckMark = () => (
   </Svg>
 );
 
+// ─── Pill Input ───────────────────────────────────────────────────────────────
+// Shadow strategy:
+//   • The outer `shadowShell` carries the shadow (elevation / iOS props)
+//   • overflow:"visible" so the shadow is NOT clipped
+//   • The inner `inputWrapper` gives the pill shape & background
+//   • On iOS the shadow is pure bottom+right; on Android elevation gives a
+//     natural bottom-biased shadow that matches the screenshot.
+
 const PillInput = ({ errorStyle, ...props }) => (
-  // shadowClip trims left/right shadow bleed on iOS so only bottom shadow shows
-  <View style={s.shadowClip}>
+  <View style={s.shadowShell}>
     <View style={[s.inputWrapper, errorStyle]}>
-      <TextInput style={s.input} placeholderTextColor="#818183" {...props} />
+      <TextInput style={s.input} placeholderTextColor="#A0A0A0" {...props} />
     </View>
   </View>
 );
@@ -61,8 +68,7 @@ export default function RegisterForm({ navigation }) {
     if (!email.trim()) e.email = "Email is required";
     else if (!isValidEmail(email)) e.email = "Enter a valid email";
     if (!contact.trim()) e.contact = "Contact is required";
-    else if (!isValidPhone(contact))
-      e.contact = "Enter a valid 10-digit number";
+    else if (!isValidPhone(contact)) e.contact = "Enter a valid 10-digit number";
     if (!agreed) e.agreed = "Please accept the terms";
     setErrors(e);
     return !Object.keys(e).length;
@@ -78,7 +84,7 @@ export default function RegisterForm({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <LinearGradient
-        colors={["#EAE0FF", "#EDE4FF", "#ffff", "#F5F1FF", "#F4F0FF"]}
+        colors={["#EAE0FF", "#EDE4FF", "#ffffff", "#F5F1FF", "#F4F0FF"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={s.root}
@@ -89,7 +95,6 @@ export default function RegisterForm({ navigation }) {
           behavior={Platform.OS === "ios" ? "padding" : undefined}
           style={s.kavWrapper}
         >
-          {/* White card sitting on grey background */}
           <View style={s.whiteCard}>
             <ScrollView
               contentContainerStyle={s.scroll}
@@ -104,65 +109,47 @@ export default function RegisterForm({ navigation }) {
               <PillInput
                 placeholder="Full name"
                 value={fullName}
-                onChangeText={(t) => {
-                  setFullName(t);
-                  clear("fullName");
-                }}
+                onChangeText={(t) => { setFullName(t); clear("fullName"); }}
                 autoCapitalize="words"
                 autoCorrect={false}
                 errorStyle={errors.fullName ? s.inputErr : null}
               />
-              {errors.fullName ? (
-                <Text style={s.err}>⚠ {errors.fullName}</Text>
-              ) : (
-                <View style={s.spacer} />
-              )}
+              {errors.fullName
+                ? <Text style={s.err}>⚠ {errors.fullName}</Text>
+                : <View style={s.spacer} />}
 
               {/* Email */}
               <PillInput
                 placeholder="Email"
                 value={email}
-                onChangeText={(t) => {
-                  setEmail(t);
-                  clear("email");
-                }}
+                onChangeText={(t) => { setEmail(t); clear("email"); }}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
                 errorStyle={errors.email ? s.inputErr : null}
               />
-              {errors.email ? (
-                <Text style={s.err}>⚠ {errors.email}</Text>
-              ) : (
-                <View style={s.spacer} />
-              )}
+              {errors.email
+                ? <Text style={s.err}>⚠ {errors.email}</Text>
+                : <View style={s.spacer} />}
 
               {/* Contact */}
               <PillInput
-                placeholder="Contact"
+                placeholder="Mobile number"
                 value={contact}
-                onChangeText={(t) => {
-                  setContact(t);
-                  clear("contact");
-                }}
+                onChangeText={(t) => { setContact(t); clear("contact"); }}
                 keyboardType="phone-pad"
                 maxLength={15}
                 errorStyle={errors.contact ? s.inputErr : null}
               />
-              {errors.contact ? (
-                <Text style={s.err}>⚠ {errors.contact}</Text>
-              ) : (
-                <View style={s.spacer} />
-              )}
+              {errors.contact
+                ? <Text style={s.err}>⚠ {errors.contact}</Text>
+                : <View style={s.spacer} />}
 
               {/* Terms */}
               <View style={s.termsRow}>
                 <TouchableOpacity
                   style={[s.checkbox, agreed && s.checked]}
-                  onPress={() => {
-                    setAgreed((p) => !p);
-                    clear("agreed");
-                  }}
+                  onPress={() => { setAgreed((p) => !p); clear("agreed"); }}
                   activeOpacity={0.75}
                 >
                   {agreed && <CheckMark />}
@@ -172,11 +159,9 @@ export default function RegisterForm({ navigation }) {
                   <Text style={s.termsLink}>Terms & conditions</Text>
                 </TouchableOpacity>
               </View>
-              {errors.agreed ? (
-                <Text style={[s.err, { marginTop: -8, marginBottom: 10 }]}>
-                  ⚠ {errors.agreed}
-                </Text>
-              ) : null}
+              {errors.agreed
+                ? <Text style={[s.err, { marginTop: -8, marginBottom: 10 }]}>⚠ {errors.agreed}</Text>
+                : null}
 
               {/* Sign In Button */}
               <View style={s.btnWrap}>
@@ -203,7 +188,7 @@ export default function RegisterForm({ navigation }) {
                 <View style={s.divLine} />
               </View>
 
-              {/* Social — bare icons, no background box */}
+              {/* Social Icons */}
               <View style={s.socialRow}>
                 <TouchableOpacity style={s.socialBtn} activeOpacity={0.75}>
                   <Image
@@ -255,23 +240,22 @@ export default function RegisterForm({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  // Grey background visible behind card
   root: {
     flex: 1,
   },
 
   kavWrapper: {
     flex: 1,
-    justifyContent: "flex-end", // card sits at bottom, grey shows at top
+    justifyContent: "flex-end",
   },
 
-  // White card with visible rounded top corners on grey bg
   whiteCard: {
     backgroundColor: "#FFFFFF",
     borderTopLeftRadius: rs(36),
     borderTopRightRadius: rs(36),
     flex: 1,
-    maxHeight: SCREEN_HEIGHT * 0.85, // grey peeks at top
+    maxHeight: SCREEN_HEIGHT * 0.85,
+    // subtle upward shadow for the card lift
     shadowColor: "#000",
     shadowOpacity: 0.07,
     shadowRadius: rs(10),
@@ -285,7 +269,6 @@ const s = StyleSheet.create({
     paddingBottom: vs(36),
   },
 
-  // Title
   title: {
     fontSize: rf(26),
     fontWeight: "700",
@@ -295,19 +278,32 @@ const s = StyleSheet.create({
     letterSpacing: -0.3,
   },
 
-  // Input — pill shaped with more radius
+  // ─── Shadow Shell ───────────────────────────────────────────────────────────
+  // Matches screenshot: wide, very soft, light-gray shadow ONLY at the bottom.
+  // The pill itself has no shadow — all shadow lives on this wrapper.
+  shadowShell: {
+    paddingBottom: vs(12),      // space below pill for shadow to render fully
+    paddingHorizontal: rs(2),   // tiny horizontal room so shadow isn't clipped
+    marginBottom: vs(2),
+    // iOS
+    shadowColor: "#A0A0A0",     // gray (not black) → lighter, truer to image
+    shadowOffset: { width: 0, height: vs(10) },   // pure downward
+    shadowOpacity: 0.22,         // visible but not harsh
+    shadowRadius: rs(8),        // wide spread — bleeds far below the box
+    // Android
+    elevation: 20,           // Android's shadow is naturally bottom-biased, so no offset needed
+    overflow: "visible",
+    backgroundColor: "transparent",
+  },
+
+  // ─── Pill itself ────────────────────────────────────────────────────────────
   inputWrapper: {
-  borderRadius: rs(18),
-  backgroundColor: "#F2F2F2",
-  shadowColor: "#000000",
-  shadowOffset: { width: vs(3), height: vs(6) }, // right + bottom
-  shadowOpacity: 0.18,
-  shadowRadius: rs(8),
-  elevation: 6,
-},
+    borderRadius: rs(18),
+    backgroundColor: "#F3F3F3",
+    overflow: "hidden", // clips the TextInput to the rounded pill
+  },
 
   input: {
-    borderRadius: rs(18),
     paddingHorizontal: rs(22),
     paddingVertical: Platform.OS === "ios" ? vs(17) : vs(15),
     fontSize: rf(15),
@@ -320,15 +316,6 @@ const s = StyleSheet.create({
     borderColor: "#FF5A5A",
   },
 
-  // Clips left/right shadow — only bottom shadow shows
-  shadowClip: {
-    overflow: "hidden",
-    paddingBottom: 6,
-    paddingRight: 6,
-    marginBottom: 0,
-  },
-
-  // More vertical space between fields
   spacer: {
     height: vs(16),
   },
@@ -342,7 +329,6 @@ const s = StyleSheet.create({
     fontWeight: "500",
   },
 
-  // Terms row
   termsRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -380,31 +366,26 @@ const s = StyleSheet.create({
     textDecorationLine: "underline",
   },
 
-  // Sign In button — wider pill
   btnWrap: {
     alignItems: "center",
     marginBottom: vs(22),
   },
+
   btnShadow: {
     borderRadius: rs(50),
-    shadowColor: "#010003",
-    shadowOpacity: 0.38,
+    shadowColor: "#7B5FEB",
+    shadowOpacity: 0.42,
     shadowRadius: rs(12),
-    shadowOffset: { width: 0, height: vs(4) },
-    elevation: 7,
+    shadowOffset: { width: 0, height: vs(5) },
+    elevation: 8,
   },
 
   signInBtn: {
-  borderRadius: rs(50),
-  paddingVertical: vs(16),
-  paddingHorizontal: rs(80),
-  alignItems: "center",
-  justifyContent: "center",
-  shadowColor: "#7B5FEB",
-  shadowOpacity: 0.38,
-  shadowRadius: rs(12),
-  shadowOffset: { width: 0, height: vs(4) },
-  elevation: 7,
+    borderRadius: rs(50),
+    paddingVertical: vs(16),
+    paddingHorizontal: rs(80),
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   signInText: {
@@ -414,29 +395,27 @@ const s = StyleSheet.create({
     letterSpacing: 0.2,
   },
 
-  // Divider
   divRow: {
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "center",
-  marginBottom: vs(18),
-  paddingHorizontal: rs(20),
-},
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: vs(18),
+    paddingHorizontal: rs(20),
+  },
 
-divLine: {
-  width: rs(55),
-  height: 1,
-  backgroundColor: "#E0E0E0",
-},
+  divLine: {
+    width: rs(55),
+    height: 1,
+    backgroundColor: "#E0E0E0",
+  },
 
-divText: {
-  marginHorizontal: rs(10),
-  fontSize: rf(13),
-  color: "#AAAAAA",
-  fontWeight: "500",
-},
+  divText: {
+    marginHorizontal: rs(10),
+    fontSize: rf(13),
+    color: "#AAAAAA",
+    fontWeight: "500",
+  },
 
-  // Social — NO background box, just icons
   socialRow: {
     flexDirection: "row",
     justifyContent: "center",
@@ -449,7 +428,6 @@ divText: {
     height: rs(30),
     alignItems: "center",
     justifyContent: "center",
-    // no backgroundColor — bare icons
   },
 
   socialIcon: {
@@ -458,7 +436,6 @@ divText: {
     resizeMode: "contain",
   },
 
-  // Login link
   loginRow: {
     flexDirection: "row",
     justifyContent: "center",

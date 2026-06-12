@@ -9,9 +9,8 @@ import {
   Switch,
   Dimensions,
   StatusBar,
-  Platform,
 } from "react-native";
-import Svg, { Path, Circle, Rect, G } from "react-native-svg";
+import Svg, { Path } from "react-native-svg";
 import { useNavigation } from "@react-navigation/native";
 import BottomNavBar from "../common/BottomNavbar";
 import { C, rs, vs, rf } from "./Constants";
@@ -21,7 +20,7 @@ const { width: SCREEN_W } = Dimensions.get("window");
 
 const grpDoctor = require("../../../assets/grpDoctor.jpeg");
 
-// ─── Black SVG Icons ──────────────────────────────────────────────────────────
+// ─── Icons ────────────────────────────────────────────────────────────────────
 
 const BellIcon = () => (
   <Svg width={rs(18)} height={vs(18)} viewBox="0 0 24 24" fill="none">
@@ -63,32 +62,26 @@ const ChevronIcon = () => (
   <Svg width={rs(16)} height={vs(16)} viewBox="0 0 24 24" fill="none">
     <Path
       d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"
-      fill="#111827"
+      fill="#9CA3AF"
     />
   </Svg>
 );
 
 // ─── Profile Card ─────────────────────────────────────────────────────────────
-const CARD_HEIGHT = vs(102);
 
 const ProfileCard = () => (
   <View style={cardStyles.card}>
-    <View style={cardStyles.decorCircle} />
+    {/* Decorative circles */}
+    <View style={cardStyles.decorCircle1} />
     <View style={cardStyles.decorCircle2} />
 
     <View style={cardStyles.row}>
-      {/* Group photo — flush left, full card height */}
+      {/* Photo */}
       <View style={cardStyles.photoWrapper}>
-        
-          {/* Replace with real image: */}
-          <Image source={grpDoctor} style={cardStyles.photo} />
-       
-        <View style={cardStyles.photoFallback}>
-          <Text style={cardStyles.photoInitials}>WL</Text>
-        </View>
+        <Image source={grpDoctor} style={cardStyles.photo} />
       </View>
 
-      {/* User Info */}
+      {/* Info */}
       <View style={cardStyles.info}>
         <Text style={cardStyles.name}>William Lorem</Text>
         <Text style={cardStyles.phone}>1234567890</Text>
@@ -108,46 +101,44 @@ const ProfileCard = () => (
 const cardStyles = StyleSheet.create({
   card: {
     marginHorizontal: rs(16),
-    marginTop: vs(8),
-    height: CARD_HEIGHT,
-    borderRadius: rs(18),
-    backgroundColor: "#100fod",
+    marginTop: vs(10),
+    borderRadius: rs(20),
+    backgroundColor: "#5B2EAF",
     overflow: "hidden",
     elevation: 8,
-    shadowColor: "#6E44E8",
-    shadowOffset: { width: 0, height: vs(5) },
-    shadowOpacity: 0.42,
-    shadowRadius: rs(12),
+    shadowColor: "#5B2EAF",
+    shadowOffset: { width: 0, height: vs(6) },
+    shadowOpacity: 0.38,
+    shadowRadius: rs(14),
   },
-  decorCircle: {
+  decorCircle1: {
     position: "absolute",
-    right: -rs(18),
-    top: -rs(22),
-    width: rs(100),
-    height: rs(100),
-    borderRadius: rs(50),
-    backgroundColor: "rgba(255,255,255,0.08)",
+    right: -rs(20),
+    top: -rs(24),
+    width: rs(110),
+    height: rs(110),
+    borderRadius: rs(55),
+    backgroundColor: "rgba(255,255,255,0.09)",
   },
   decorCircle2: {
     position: "absolute",
-    right: rs(55),
+    right: rs(60),
     bottom: -rs(28),
-    width: rs(75),
-    height: rs(75),
-    borderRadius: rs(37),
-    backgroundColor: "rgba(255,255,255,0.05)",
+    width: rs(80),
+    height: rs(80),
+    borderRadius: rs(40),
+    backgroundColor: "rgba(255,255,255,0.06)",
   },
   row: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     paddingRight: rs(14),
+    paddingVertical: vs(8),
   },
   photoWrapper: {
-    width: rs(105),
-    height: rs(90),
-    borderRadius: rs(35),
-    // borderBottomLeftRadius: rs(18),
+    width: rs(108),
+    height: rs(92),
+    borderRadius: rs(14),
     overflow: "hidden",
     marginRight: rs(12),
     marginLeft: rs(8),
@@ -157,19 +148,6 @@ const cardStyles = StyleSheet.create({
     height: "100%",
     resizeMode: "cover",
   },
-  photoFallback: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(255,255,255,0.20)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  photoInitials: {
-    fontSize: rf(24),
-    fontWeight: "800",
-    color: "#fff",
-    letterSpacing: 1.5,
-  },
   info: {
     flex: 1,
     justifyContent: "center",
@@ -178,8 +156,8 @@ const cardStyles = StyleSheet.create({
     fontSize: rf(15),
     fontWeight: "700",
     color: "#FFFFFF",
-    letterSpacing: 0.3,
-    marginBottom: vs(4),
+    letterSpacing: 0.2,
+    marginBottom: vs(5),
   },
   phone: {
     fontSize: rf(11),
@@ -192,7 +170,7 @@ const cardStyles = StyleSheet.create({
   },
   editBtn: {
     backgroundColor: "rgba(255,255,255,0.95)",
-    paddingHorizontal: rs(16),
+    paddingHorizontal: rs(18),
     paddingVertical: vs(7),
     borderRadius: rs(20),
     elevation: 2,
@@ -201,12 +179,13 @@ const cardStyles = StyleSheet.create({
   editText: {
     fontSize: rf(12),
     fontWeight: "700",
-    color: "#6E44E8",
-    letterSpacing: 0.2,
+    color: "#5B2EAF",
+    letterSpacing: 0.1,
   },
 });
 
 // ─── Section Header ───────────────────────────────────────────────────────────
+
 const SectionHeader = ({ title }) => (
   <Text style={sectionStyles.title}>{title}</Text>
 );
@@ -224,6 +203,7 @@ const sectionStyles = StyleSheet.create({
 });
 
 // ─── Settings Card Wrapper ────────────────────────────────────────────────────
+
 const SettingsCard = ({ children }) => (
   <View style={settingsCardStyles.card}>{children}</View>
 );
@@ -243,14 +223,11 @@ const settingsCardStyles = StyleSheet.create({
 });
 
 // ─── Setting Row ──────────────────────────────────────────────────────────────
-// Matches screenshot:
-//  • Black SVG icon, no background box, directly beside label
-//  • Toggle (black when ON) or dark chevron on right
-//  • Hairline divider between rows
+
 const SettingRow = ({
   IconComponent,
   label,
-  type = "arrow",   // "arrow" | "toggle" | "plain"
+  type = "arrow",
   value,
   onValueChange,
   onPress,
@@ -302,7 +279,6 @@ const rowStyles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
   },
-  // No background box — icon sits directly in the row
   iconWrap: {
     width: rs(22),
     alignItems: "center",
@@ -317,6 +293,7 @@ const rowStyles = StyleSheet.create({
 });
 
 // ─── Profile Screen ───────────────────────────────────────────────────────────
+
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const { logout } = useContext(AuthContext);
@@ -328,17 +305,18 @@ const ProfileScreen = () => {
   };
 
   const handleTabPress = (tabId) => {
-    if (tabId === "home") navigation?.navigate("UserDashboard", { activeTab: "home" });
-    else if (tabId === "list") navigation?.navigate("AddedProfiles", { activeTab: "list" });
-    else if (tabId === "search") navigation?.navigate("UserDashboard", { activeTab: "search" });
+    if (tabId === "home")
+      navigation?.navigate("UserDashboard", { activeTab: "home" });
+    else if (tabId === "list")
+      navigation?.navigate("AddedProfiles", { activeTab: "list" });
+    else if (tabId === "search")
+      navigation?.navigate("UserDashboard", { activeTab: "search" });
     else if (tabId === "bell") navigation?.navigate("Notifications");
   };
 
   return (
     <View style={screenStyles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F4F5FA" />
-
-     
+      <StatusBar barStyle="dark-content" backgroundColor="#F0F2F8" />
 
       {/* Header */}
       <View style={screenStyles.header}>
@@ -364,7 +342,7 @@ const ProfileScreen = () => {
           />
           <SettingRow
             IconComponent={ThemeIcon}
-            label="Theam"
+            label="Theme"
             type="arrow"
             onPress={() => {}}
           />
@@ -401,17 +379,16 @@ const ProfileScreen = () => {
 const screenStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4F5FA",
+    backgroundColor: "#F0F2F8",
   },
-
   header: {
     paddingTop: vs(50),
     paddingBottom: vs(10),
     alignItems: "center",
-    backgroundColor: "#F4F5FA",
+    backgroundColor: "#F0F2F8",
   },
   headerTitle: {
-    fontSize: rf(25),
+    fontSize: rf(22),
     fontWeight: "700",
     color: "#111827",
     letterSpacing: 0.2,
