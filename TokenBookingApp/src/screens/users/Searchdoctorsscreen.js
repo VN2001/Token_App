@@ -10,7 +10,7 @@ import {
   Image,
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import Svg, { Path, Circle, Rect, Ellipse } from 'react-native-svg';
+import Svg, { Path, Circle, Line } from 'react-native-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { rs, vs, rf } from '../../utils/responsive';
 
@@ -29,21 +29,31 @@ const SearchIcon = () => (
   </Svg>
 );
 
+// Sliders/filter icon matching the screenshot
 const FilterIcon = () => (
   <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-    <Path d="M4 6h16M7 12h10M10 18h4" stroke="#555" strokeWidth="2" strokeLinecap="round" />
+    <Line x1="4" y1="6" x2="20" y2="6" stroke="#555" strokeWidth="2" strokeLinecap="round" />
+    <Line x1="4" y1="12" x2="20" y2="12" stroke="#555" strokeWidth="2" strokeLinecap="round" />
+    <Line x1="4" y1="18" x2="20" y2="18" stroke="#555" strokeWidth="2" strokeLinecap="round" />
+    <Circle cx="8" cy="6" r="2.5" fill="#fff" stroke="#555" strokeWidth="1.5" />
+    <Circle cx="16" cy="12" r="2.5" fill="#fff" stroke="#555" strokeWidth="1.5" />
+    <Circle cx="10" cy="18" r="2.5" fill="#fff" stroke="#555" strokeWidth="1.5" />
   </Svg>
 );
 
-const MapIcon = () => (
-  <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-    <Path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4M9 7l6-3" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+const MapPinIcon = () => (
+  <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+    <Path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="#fff" strokeWidth="2" />
+    <Circle cx="12" cy="10" r="3" stroke="#fff" strokeWidth="2" />
   </Svg>
 );
 
-const StarIcon = () => (
-  <Svg width={12} height={12} viewBox="0 0 24 24">
-    <Path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#f5a623" />
+const StarIcon = ({ size = 12, color = '#f5a623' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path
+      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+      fill={color}
+    />
   </Svg>
 );
 
@@ -71,17 +81,17 @@ const DoctorCard = ({ item, onPress }) => (
     <Image source={item.image} style={styles.docImage} resizeMode="cover" />
     <View style={styles.docInfo}>
       <Text style={styles.docName} numberOfLines={2}>{item.name}</Text>
-      <Text style={styles.docSpec}>{item.spec}</Text>
-      <View style={styles.ratingRow}>
-        <StarIcon />
-        <Text style={styles.ratingVal}>{item.rating}</Text>
+      <View style={styles.docMeta}>
+        <Text style={styles.docSpec}>{item.spec}</Text>
+        <View style={styles.ratingRow}>
+          <StarIcon />
+          <Text style={styles.ratingVal}>{item.rating}</Text>
+        </View>
       </View>
       <Text style={styles.docPrice}>{item.price}</Text>
     </View>
   </TouchableOpacity>
 );
-
-// ─── Screen ───────────────────────────────────────────────────────────────────
 
 export default function SearchDoctorsScreen({ navigation }) {
   return (
@@ -110,7 +120,7 @@ export default function SearchDoctorsScreen({ navigation }) {
             <SearchIcon />
             <TextInput
               placeholder="Search for Hospitals"
-              placeholderTextColor="#bbb"
+              placeholderTextColor="#c0c0c0"
               style={styles.searchInput}
             />
           </View>
@@ -123,7 +133,7 @@ export default function SearchDoctorsScreen({ navigation }) {
         <View style={styles.sectionHeader}>
           <View>
             <Text style={styles.sectionTitle}>Hameed Clinic</Text>
-            <Text style={styles.sectionSub}>25 Doctors available</Text>
+            <Text style={styles.sectionSub}>35 Doctors available</Text>
           </View>
           <TouchableOpacity>
             <Text style={styles.viewAll}>View All</Text>
@@ -150,10 +160,10 @@ export default function SearchDoctorsScreen({ navigation }) {
           <View style={styles.mapHeader}>
             <View>
               <Text style={styles.sectionTitle}>Find in Map</Text>
-              <Text style={styles.sectionSub}>2.5km</Text>
+              <Text style={styles.sectionSub}>5.5km</Text>
             </View>
             <TouchableOpacity style={styles.viewMapBtn}>
-              <MapIcon />
+              <MapPinIcon />
               <Text style={styles.viewMapText}>View in Google maps</Text>
             </TouchableOpacity>
           </View>
@@ -182,10 +192,12 @@ export default function SearchDoctorsScreen({ navigation }) {
               />
               <View style={styles.asideInfo}>
                 <Text style={styles.asideName} numberOfLines={2}>Shahul Hameed Hameed</Text>
-                <Text style={styles.asideSpec}>Gyno</Text>
-                <View style={styles.ratingRow}>
-                  <StarIcon />
-                  <Text style={styles.ratingVal}>4.5</Text>
+                <View style={styles.asideMeta}>
+                  <Text style={styles.asideSpec}>Gyno</Text>
+                  <View style={styles.ratingRow}>
+                    <StarIcon size={10} />
+                    <Text style={styles.ratingVal}>4.5</Text>
+                  </View>
                 </View>
                 <Text style={styles.docPrice}>₹199.00</Text>
               </View>
@@ -195,17 +207,13 @@ export default function SearchDoctorsScreen({ navigation }) {
 
       </ScrollView>
 
-      {/* Bottom indicator */}
-      <View style={styles.bottomBar}>
-        <View style={styles.bottomIndicator} />
-      </View>
     </SafeAreaView>
   );
 }
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
-const PURPLE = '#7B5EA7';
+const PURPLE = '#6C4FD4';
 
 const styles = StyleSheet.create({
   safe: {
@@ -213,12 +221,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
 
+  topPill: {
+    width: rs(120),
+    height: vs(5),
+    borderRadius: rs(3),
+    backgroundColor: '#1a1a1a',
+    alignSelf: 'center',
+    marginTop: vs(8),
+    marginBottom: vs(4),
+  },
+
   scroll: {
     flex: 1,
   },
 
   scrollContent: {
-    paddingBottom: vs(20),
+    paddingBottom: vs(24),
   },
 
   // ── Header ─────────────────────────────
@@ -227,24 +245,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: rs(16),
-    paddingVertical: vs(14),
+    paddingTop: vs(16),
+    paddingBottom: vs(14),
     backgroundColor: '#fff',
   },
 
   backBtn: {
-    width: rs(32),
-    height: rs(32),
+    width: rs(34),
+    height: rs(34),
     borderRadius: rs(10),
-    borderWidth: 0.5,
-    borderColor: '#ddd',
+    borderWidth: 1,
+    borderColor: '#e8e8e8',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#fff',
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
   },
 
   headerTitle: {
-    fontSize: rf(16),
+    fontSize: rf(17),
     fontWeight: '700',
     color: '#1a1a1a',
+    letterSpacing: -0.3,
   },
 
   // ── Search ─────────────────────────────
@@ -253,7 +279,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: rs(10),
     paddingHorizontal: rs(16),
-    paddingBottom: vs(14),
+    paddingBottom: vs(18),
   },
 
   searchBox: {
@@ -261,28 +287,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: rs(8),
-    backgroundColor: '#f5f5f7',
-    borderRadius: rs(14),
-    paddingHorizontal: rs(14),
-    paddingVertical: vs(10),
-    borderWidth: 0.5,
-    borderColor: '#eaeaea',
+    backgroundColor: '#f7f7f9',
+    borderRadius: rs(28),          // pill shape
+    paddingHorizontal: rs(16),
+    paddingVertical: vs(11),
+    borderWidth: 1,
+    borderColor: '#efefef',
   },
 
   searchInput: {
     flex: 1,
-    fontSize: rf(13),
+    fontSize: rf(14),
     color: '#1a1a1a',
     padding: 0,
   },
 
   filterBtn: {
-    width: rs(38),
-    height: rs(38),
-    borderRadius: rs(10),
-    backgroundColor: '#f5f5f7',
-    borderWidth: 0.5,
-    borderColor: '#eaeaea',
+    width: rs(40),
+    height: rs(40),
+    borderRadius: rs(12),
+    backgroundColor: '#f7f7f9',
+    borderWidth: 1,
+    borderColor: '#efefef',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -293,51 +319,57 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: rs(16),
-    marginBottom: vs(10),
+    marginBottom: vs(12),
   },
 
   sectionTitle: {
-    fontSize: rf(15),
-    fontWeight: '700',
+    fontSize: rf(16),
+    fontWeight: '800',
     color: '#1a1a1a',
+    letterSpacing: -0.3,
   },
 
   sectionSub: {
     fontSize: rf(11),
     color: PURPLE,
     marginTop: vs(2),
+    fontWeight: '500',
   },
 
   viewAll: {
-    fontSize: rf(12),
+    fontSize: rf(13),
     color: PURPLE,
-    fontWeight: '600',
+    fontWeight: '700',
   },
 
   // ── Doctor cards ───────────────────────
   cardsScroll: {
     paddingHorizontal: rs(16),
-    paddingBottom: vs(16),
-    gap: rs(10),
+    paddingBottom: vs(20),
+    gap: rs(12),
   },
 
   docCard: {
-    width: rs(110),
+    width: rs(115),
     backgroundColor: '#fff',
-    borderRadius: rs(14),
+    borderRadius: rs(16),
     borderWidth: 0.5,
-    borderColor: '#eee',
+    borderColor: '#ececec',
     overflow: 'hidden',
-    elevation: 2,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.07,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
   },
 
   docImage: {
-    width: rs(110),
-    height: vs(90),
+    width: rs(115),
+    height: vs(80),
   },
 
   docInfo: {
-    padding: rs(8),
+    padding: rs(9),
   },
 
   docName: {
@@ -350,7 +382,14 @@ const styles = StyleSheet.create({
 
   docSpec: {
     fontSize: rf(10),
-    color: '#aaa',
+    color: '#b0b0b0',
+    marginBottom: vs(4),
+  },
+
+  docMeta: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: vs(4),
   },
 
@@ -358,7 +397,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: rs(3),
-    marginBottom: vs(3),
+    marginBottom: vs(4),
   },
 
   ratingVal: {
@@ -369,31 +408,31 @@ const styles = StyleSheet.create({
 
   docPrice: {
     fontSize: rf(12),
-    fontWeight: '700',
+    fontWeight: '800',
     color: PURPLE,
   },
 
   // ── Map section ────────────────────────
   mapSection: {
     paddingHorizontal: rs(16),
-    marginTop: vs(4),
+    marginTop: vs(2),
   },
 
   mapHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: vs(12),
+    marginBottom: vs(14),
   },
 
   viewMapBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: rs(6),
-    backgroundColor: PURPLE,
-    borderRadius: rs(20),
+    backgroundColor: '#1a1a2e',
+    borderRadius: rs(24),
     paddingHorizontal: rs(14),
-    paddingVertical: vs(8),
+    paddingVertical: vs(9),
   },
 
   viewMapText: {
@@ -404,48 +443,61 @@ const styles = StyleSheet.create({
 
   mapRow: {
     flexDirection: 'row',
-    gap: rs(10),
+    gap: rs(12),
+    alignItems: 'stretch',
   },
 
   mapThumb: {
     flex: 1,
-    height: vs(130),
-    borderRadius: rs(14),
+    height: vs(160),
+    borderRadius: rs(16),
     overflow: 'hidden',
-    backgroundColor: '#e8ead8',
+    backgroundColor: '#dce8d4',
   },
 
   // ── Aside doctor card ──────────────────
   asideCard: {
-    width: rs(110),
+    width: rs(115),
     backgroundColor: '#fff',
-    borderRadius: rs(14),
+    borderRadius: rs(16),
     borderWidth: 0.5,
-    borderColor: '#eee',
+    borderColor: '#ececec',
     overflow: 'hidden',
-    elevation: 2,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.07,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    alignSelf: 'flex-start',
   },
 
   asideImage: {
     width: '100%',
-    height: vs(70),
+    height: vs(80),
   },
 
   asideInfo: {
-    padding: rs(7),
+    padding: rs(8),
+  },
+
+  asideMeta: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: vs(3),
   },
 
   asideName: {
-    fontSize: rf(10),
+    fontSize: rf(11),
     fontWeight: '700',
     color: '#1a1a1a',
-    lineHeight: vs(14),
+    lineHeight: vs(15),
     marginBottom: vs(2),
   },
 
   asideSpec: {
-    fontSize: rf(9),
-    color: '#aaa',
+    fontSize: rf(10),
+    color: '#b0b0b0',
     marginBottom: vs(3),
   },
 
@@ -457,9 +509,9 @@ const styles = StyleSheet.create({
   },
 
   bottomIndicator: {
-    width: rs(100),
-    height: vs(4),
-    borderRadius: rs(2),
+    width: rs(120),
+    height: vs(5),
+    borderRadius: rs(3),
     backgroundColor: PURPLE,
   },
 });

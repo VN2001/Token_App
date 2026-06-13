@@ -95,12 +95,12 @@ const UserDashboard = ({ route }) => {
   const handleTabPress = (tabId) => {
     setActiveTab(tabId);
     if (tabId === "search") {
-      setSearchVisible(true);
+      navigation.navigate("SearchDoctors");
     } else if (tabId === "profile") {
       navigation.navigate("Profile");
     } else if (tabId === "bell") {
       navigation.navigate("Notifications");
-    }else if (tabId === "list") {
+    } else if (tabId === "list") {
       navigation.navigate("AddedProfiles");
     }
   };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,16 @@ const DOCTORS = [
   { id: 1, name: 'Shahul Hameed\nHameed', specialty: 'Gyno', rating: 4.5, fee: '₹199.00' },
   { id: 2, name: 'Shahul Hameed\nHameed', specialty: 'Gyno', rating: 4.5, fee: '₹199.00' },
   { id: 3, name: 'Shahul Hameed\nHameed', specialty: 'Gyno', rating: 4.5, fee: '₹199.00' },
+];
+
+const WORKING_HOURS = [
+  { day: 'Monday',    time: '09.00 AM – 05.00 PM', isOpen: true },
+  { day: 'Tuesday',   time: '09.00 AM – 05.00 PM', isOpen: true },
+  { day: 'Wednesday', time: '09.00 AM – 05.00 PM', isOpen: true },
+  { day: 'Thursday',  time: '09.00 AM – 05.00 PM', isOpen: true },
+  { day: 'Friday',    time: '09.00 AM – 03.00 PM', isOpen: true },
+  { day: 'Saturday',  time: 'Closed',               isOpen: false },
+  { day: 'Sunday',    time: 'Closed',               isOpen: false },
 ];
 
 // ─── Color Tokens ────────────────────────────────────────────────────────────
@@ -48,7 +58,6 @@ const DirectionsIcon = () => <Text style={styles.bottomIconText}>⊙</Text>;
 const PinIcon        = () => <Text style={styles.bottomIconText}>📍</Text>;
 
 // ─── Doctor Card ──────────────────────────────────────────────────────────────
-// Accepts `onPress` so the parent can handle navigation
 const DoctorCard = ({ doctor, onPress }) => (
   <TouchableOpacity style={styles.doctorCard} activeOpacity={0.85} onPress={onPress}>
     <View style={styles.doctorImageWrapper}>
@@ -68,8 +77,92 @@ const DoctorCard = ({ doctor, onPress }) => (
   </TouchableOpacity>
 );
 
+// ─── Map Section ──────────────────────────────────────────────────────────────
+const MapSection = () => (
+  <View style={styles.mapSection}>
+    {/* Map image */}
+    <View style={styles.mapContainer}>
+      <ImageBackground
+        source={{ uri: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&q=80' }}
+        style={styles.mapImage}
+        imageStyle={{ borderRadius: rs(16) }}
+        resizeMode="cover"
+      >
+        {/* Map pin */}
+        <View style={styles.mapPinContainer}>
+          <View style={styles.mapPin}>
+            <Text style={styles.mapPinEmoji}>📍</Text>
+          </View>
+        </View>
+      </ImageBackground>
+    </View>
+
+    {/* Direction strip */}
+    <View style={styles.directionStrip}>
+      <TouchableOpacity style={styles.directionBtn} activeOpacity={0.85}>
+        <Text style={styles.directionIcon}>⊙</Text>
+        <Text style={styles.directionText}>Get Directions</Text>
+      </TouchableOpacity>
+
+      <View style={styles.directionDivider} />
+
+      <TouchableOpacity style={styles.directionBtn} activeOpacity={0.85}>
+        <Text style={styles.directionPinIcon}>📍</Text>
+        <Text style={styles.directionDistText}>5km from Here</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+);
+
+// ─── About Section ────────────────────────────────────────────────────────────
+const AboutSection = () => {
+  const [expanded, setExpanded] = useState(false);
+  const fullText =
+    'Hameed Clinic has been serving the community for over 20 years with dedicated healthcare professionals. ' +
+    'Our multi-specialty clinic provides a wide range of medical services with state-of-the-art facilities. ' +
+    'We are committed to delivering compassionate and quality care to every patient.';
+  const preview = fullText.slice(0, 120) + '...';
+
+  return (
+    <View style={styles.aboutSection}>
+      <Text style={styles.sectionTitle}>About</Text>
+      <Text style={styles.aboutText}>
+        {expanded ? fullText : preview}
+        {'  '}
+        <Text style={styles.readMore} onPress={() => setExpanded(!expanded)}>
+          {expanded ? 'Read Less' : 'Read More'}
+        </Text>
+      </Text>
+    </View>
+  );
+};
+
+// ─── Working Hours Section ────────────────────────────────────────────────────
+const WorkingHoursSection = () => (
+  <View style={styles.hoursSection}>
+    <Text style={styles.sectionTitle}>Working Hours</Text>
+    <View style={styles.hoursCard}>
+      {WORKING_HOURS.map((item, index) => (
+        <View
+          key={item.day}
+          style={[
+            styles.hoursRow,
+            index < WORKING_HOURS.length - 1 && styles.hoursRowBorder,
+          ]}
+        >
+          <Text style={[styles.hoursDay, item.isOpen ? styles.hoursDayOpen : styles.hoursDayClosed]}>
+            {item.day}
+          </Text>
+          <Text style={[styles.hoursTime, !item.isOpen && styles.hoursTimeClosed]}>
+            {item.time}
+          </Text>
+        </View>
+      ))}
+    </View>
+  </View>
+);
+
 // ─── Main Screen ──────────────────────────────────────────────────────────────
-// Accept `navigation` from React Navigation
 export default function ClinicScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.safe}>
@@ -90,8 +183,6 @@ export default function ClinicScreen({ navigation }) {
             resizeMode="cover"
           >
             <View style={styles.heroOverlay} />
-
-            {/* Rating badge */}
             <View style={styles.ratingBadge}>
               <StarIcon size={rf(16)} color={PURPLE} />
               <Text style={styles.ratingBadgeText}>4.5</Text>
@@ -151,7 +242,7 @@ export default function ClinicScreen({ navigation }) {
             </TouchableOpacity>
           </View>
 
-          {/* Doctor cards — navigate to DoctorsBooking on press */}
+          {/* Doctor cards */}
           <View style={styles.doctorsRow}>
             {DOCTORS.map((doc) => (
               <DoctorCard
@@ -164,23 +255,17 @@ export default function ClinicScreen({ navigation }) {
             ))}
           </View>
 
+          {/* ── Map Section ── */}
+          <MapSection />
+
+          {/* ── About Section ── */}
+          <AboutSection />
+
+          {/* ── Working Hours Section ── */}
+          <WorkingHoursSection />
+
         </View>
       </ScrollView>
-
-      {/* ── Bottom Bar ── */}
-      <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.bottomBtn} activeOpacity={0.85}>
-          <DirectionsIcon />
-          <Text style={styles.bottomBtnText}>Get Directions</Text>
-        </TouchableOpacity>
-
-        <View style={styles.bottomDivider} />
-
-        <TouchableOpacity style={styles.bottomBtn} activeOpacity={0.85}>
-          <PinIcon />
-          <Text style={styles.bottomBtnText}>5km from Here</Text>
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 }
@@ -195,7 +280,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: vs(16),
+    flexGrow: 1,
+    paddingBottom: 0,
   },
 
   // ── Hero ──────────────────────────────────────────────────────────────────
@@ -377,6 +463,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: TEXT_DARK,
     letterSpacing: -0.3,
+    marginBottom: vs(12),
   },
   viewAll: {
     fontSize: rf(13),
@@ -386,6 +473,7 @@ const styles = StyleSheet.create({
   doctorsRow: {
     flexDirection: 'row',
     gap: rs(8),
+    marginBottom: vs(28),
   },
 
   // ── Doctor Card ───────────────────────────────────────────────────────────
@@ -450,40 +538,132 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
 
-  // ── Bottom Bar ────────────────────────────────────────────────────────────
-  bottomBar: {
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderTopColor: '#F0F0F8',
-    paddingVertical: vs(16),
-    paddingHorizontal: rs(20),
-    paddingBottom: vs(20),
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: rs(12),
-    shadowOffset: { width: 0, height: -vs(3) },
-    elevation: 8,
+  // ── Map Section ───────────────────────────────────────────────────────────
+  mapSection: {
+    marginBottom: vs(28),
   },
-  bottomBtn: {
+  mapContainer: {
+    width: '100%',
+    height: vs(180),
+    borderRadius: rs(16),
+    overflow: 'hidden',
+    marginBottom: vs(12),
+  },
+  mapImage: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  mapPinContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mapPin: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: rs(20),
+    padding: rs(6),
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: rs(8),
+    shadowOffset: { width: 0, height: vs(2) },
+    elevation: 5,
+  },
+  mapPinEmoji: {
+    fontSize: rf(22),
+  },
+  directionStrip: {
+    flexDirection: 'row',
+    backgroundColor: '#FAFAFA',
+    borderRadius: rs(14),
+    borderWidth: 1,
+    borderColor: '#F0F0F8',
+    paddingVertical: vs(12),
+  },
+  directionBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: rs(8),
+    gap: rs(6),
   },
-  bottomIconText: {
-    fontSize: rf(18),
+  directionDivider: {
+    width: 1,
+    backgroundColor: '#E0E0EE',
+    alignSelf: 'stretch',
   },
-  bottomBtnText: {
-    fontSize: rf(14),
+  directionIcon: {
+    fontSize: rf(16),
+    color: TEXT_DARK,
+  },
+  directionText: {
+    fontSize: rf(13),
     fontWeight: '700',
     color: TEXT_DARK,
   },
-  bottomDivider: {
-    width: 1,
-    height: vs(24),
-    backgroundColor: '#E0E0EE',
-    alignSelf: 'center',
+  directionPinIcon: {
+    fontSize: rf(16),
   },
+  directionDistText: {
+    fontSize: rf(13),
+    fontWeight: '700',
+    color: TEXT_DARK,
+  },
+
+  // ── About Section ─────────────────────────────────────────────────────────
+  aboutSection: {
+    marginBottom: vs(28),
+  },
+  aboutText: {
+    fontSize: rf(13),
+    color: TEXT_MID,
+    lineHeight: vs(21),
+    fontWeight: '400',
+  },
+  readMore: {
+    color: PURPLE,
+    fontWeight: '600',
+    fontSize: rf(13),
+  },
+
+  // ── Working Hours Section ─────────────────────────────────────────────────
+  hoursSection: {
+    marginBottom: vs(12),
+  },
+  hoursCard: {
+    backgroundColor: '#FAFAFA',
+    borderRadius: rs(16),
+    borderWidth: 1,
+    borderColor: '#F0F0F8',
+    paddingHorizontal: rs(16),
+    paddingVertical: vs(4),
+  },
+  hoursRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: vs(12),
+  },
+  hoursRowBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F8',
+  },
+  hoursDay: {
+    fontSize: rf(13),
+    fontWeight: '600',
+  },
+  hoursDayOpen: {
+    color: PURPLE,
+  },
+  hoursDayClosed: {
+    color: TEXT_MID,
+  },
+  hoursTime: {
+    fontSize: rf(13),
+    color: TEXT_MID,
+    fontWeight: '500',
+  },
+  hoursTimeClosed: {
+    color: TEXT_LIGHT,
+  },
+
 });
