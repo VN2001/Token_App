@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { C, rs, vs, rf } from "./Constants";
 
 const icon5 = require("../../../assets/5.png");
-const icon7 = require("../../../assets/7.png");
+const icon7 = require("../../../assets/grpDoctor.jpeg");
 
 const DashboardHeader = ({ userName }) => {
   const displayName = userName?.trim() ? userName : "User";
@@ -10,7 +10,7 @@ const DashboardHeader = ({ userName }) => {
     <View style={styles.header}>
       <View style={styles.headerLeft}>
         <View style={styles.clockIcon}>
-          <Image source={icon7} style={{ width: rs(46), height: rs(46) }} />
+          <Image source={icon7} style={{ width: rs(46), height: rs(46),borderRadius: rs(23) }} />
         </View>
         <View>
           <Text style={styles.greeting}>
